@@ -61,7 +61,7 @@ class UserManager:
 		# search_list = [match for match in self._patients if
 		# 			   patient_name in match.surname
 		# 			   or patient_name in match.given_name]
-		
+		#
 		# Append 'near' matches to search list.
 		# Or make own list?
 		# near match search mechanism... speak to team about
@@ -74,7 +74,7 @@ class UserManager:
 		# search_list = [match for match in self._providers if
 		# 			   provider_name in match.surname
 		# 			   or patient_name in match.given_name]
-		
+		#
 		# Append 'near' matches to search list.
 		# Or make own list?
 		# near match search mechanism... speak to team about
