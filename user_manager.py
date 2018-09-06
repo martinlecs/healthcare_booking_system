@@ -55,13 +55,29 @@ class UserManager:
 		pass
 
 	def search_by_patient_name(self, patient_name):
-		# exact match
+		# List of 'exact' match.
+		# Creates a list of patient objects which contain the patient_name
+		# substring in their surname or given_name attributes.
+		# search_list = [match for match in self._patients if
+		# 			   patient_name in match.surname
+		# 			   or patient_name in match.given_name]
 		
-		# near match
+		# Append 'near' matches to search list.
+		# Or make own list?
+		# near match search mechanism... speak to team about
 		pass
 
 	def search_by_provider_name(self, provider_name):
-		# exact and near match
+		# List of 'exact' match.
+		# Creates a list of patient objects which contain the provider_name
+		# substring in their surname or given_name attributes.
+		# search_list = [match for match in self._providers if
+		# 			   provider_name in match.surname
+		# 			   or patient_name in match.given_name]
+		
+		# Append 'near' matches to search list.
+		# Or make own list?
+		# near match search mechanism... speak to team about
 		pass
 
 	def search_by_service(self, service):
