@@ -31,10 +31,40 @@ class UserManager:
 			return False	# Failed (already in patients)
 
 	def remove_patient(self, patient_email):
-		# patient in patients
 		# if any(patient.email == patient_email for patient in patients):
-		# 	remove
-		#	return True
-		# else
-		#	return False
+		#	remove
+		#	return true
+		# OR
+		# for i, patient in self._patients:
+		# 	if patient.email == patient_email:
+		# 		del self._patients[i]
+		# 		return True
+		# return False
 		pass
+
+	def remove_provider(self, provider_email):
+		# if any(provider.email == provider_email for provider in providers):
+		#	remove
+		#	return true
+		# OR
+		# for i, provider in self._providers:
+		# 	if provider.email == provider_email:
+		# 		del self._providers[i]
+		# 		return True
+		# return False
+		pass
+
+	def search_by_patient_name(self, patient_name):
+		# exact match
+		
+		# near match
+		pass
+
+	def search_by_provider_name(self, provider_name):
+		# exact and near match
+		pass
+
+	def search_by_service(self, service):
+		pass
+
+
