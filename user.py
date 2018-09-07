@@ -21,3 +21,10 @@ class User(ABC):
 	@password.setter
 	def password(self, pwd):
 		self._password = pwd
+
+	# authentication functions #
+	#
+	#
+	#
+	# authentication functions #
+
