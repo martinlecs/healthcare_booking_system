@@ -16,12 +16,56 @@ class UserManager:
 	def providers(self):
 		return self._providers
 	
+	def verify_user(self, email, password):
+		for patient in self._patients:
+			if patient.email == email and patient.password == password:
+				return patient
+		for provider in self._providers:
+			if provider.email == email and provider.password == password:
+				return provider
+		return None
+
+	def get_user_by_email(self, email):
+		for patient in self._patients:
+			if patient.email == email:
+				return patient
+		for provider in self._providers:
+			if provider.email == email:
+				return provider
+		return None
+
+	def get_user_by_name(self, surname, given_name):
+		for patient in self._patients:
+			if patient.surname == surname and patient.given_name == given_name:
+				return patient
+		for provider in self._providers:
+			if provider.surname == surname and provider.given_name == given_name:
+				return provider
+		return None
+
+	# Pass in a patient object and it gets added.
+	# instead, (maybe) gonna have patient info passed through
+	#  and add_patient makes the class instance and addes
+	#  the object to patients list instead.
+	# e.g.:
+	# If new patient info doesn't exist in self._patients
+	#  then make new patient instance and add to self._patients
+	''' 
+	def add_patient_by_info(self, patient_email, other_pat_info):
+		if not any(patient.email == patient_email for patient in self._patients:
+			patient = Patient(patient_email, other_pat_info)
+			self._providers.append(provider)
+			return True		# Success
+		else:
+			return False	# Failed (already in patients)
+	'''
 	def add_patient(self, patient):
 		if patient not in self._patients:	
 			self._patients.append(patient)
 			return True		# Success
 		else:
 			return False	# Failed (already in patients)
+
 
 	def add_provider(self, provider):
 		if provider not in self._providers:	
@@ -31,7 +75,7 @@ class UserManager:
 			return False	# Failed (already in patients)
 
 	def remove_patient(self, patient_email):
-		# if any(patient.email == patient_email for patient in patients):
+		# if any(patient.email == patient_email for patient in self._patients):
 		#	remove
 		#	return true
 		# OR
