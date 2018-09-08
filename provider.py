@@ -2,12 +2,12 @@ from user import User
 
 class Provider(User):
 	"Provider class"
-	def __init__(self, email, password, surname, givenName, providerNo, service,
+	def __init__(self, email, password, surname, given_name, provider_no, service,
     centres=[], availability=[]):
 		super().__init__(email, password)
 		self._surname = surname
-		self._givenName = givenName
-		self._providerNo = providerNo
+		self._given_name = given_name
+		self._provider_no = provider_no
 		self._service = service
 		self._centres = centres
 		self._availability = availability
@@ -19,12 +19,12 @@ class Provider(User):
 		return self._surname
 
 	@property
-	def givenName(self):
-		return self._givenName
+	def given_name(self):
+		return self._given_name
 
 	@property
-	def providerNo(self):
-		return self._providerNo
+	def provider_no(self):
+		return self._provider_no
 
 	@property
 	def service(self):
@@ -46,9 +46,9 @@ class Provider(User):
 	def rating(self):
 		return self._rating
 
-	@providerNo.setter
-	def providerNo(self, providerNo):
-		self._providerNo = providerNo
+	@provider_no.setter
+	def provider_no(self, provider_no):
+		self._provider_no = provider_no
 
 	@centres.setter
 	def centres(self, centres):
