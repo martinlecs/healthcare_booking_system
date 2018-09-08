@@ -65,3 +65,5 @@ class Provider(User):
 	# @rating.setter
 	# def rating(self, rating):
 	# 	self._rating = rating
+
+
