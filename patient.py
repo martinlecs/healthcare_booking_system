@@ -1,31 +1,33 @@
+from user import User
+
 class Patient(User):
 	"Patient class"
-	def __init__(self, email, password, surname, givenName, medicareNo, appointments):
-		user = User(self, email, password)
-        self._surname = surname
-        self._givenName = givenName
-        self._medicareNo = medicareNo
-        self._appointments = appointments
+	def __init__(self, email, password, surname, given_name, medicare_no, appointments=[]):
+		super().__init__(email, password)
+		self._surname = surname
+		self._given_name = given_name
+		self._medicare_no = medicare_no
+		self._appointments = appointments
 
 	@property
 	def surname(self):
 		return self._surname
 
 	@property
-	def givenName(self):
-		return self._givenName
+	def given_name(self):
+		return self._given_name
 
 	@property
-	def medicareNo(self):
-		return self._medicareNo
+	def medicare_no(self):
+		return self._medicare_no
 
 	@property
 	def appointments(self):
 		return self._appointments
 
-	@medicareNo.setter
-    def medicareNo(self, medicareNo):
-        self._medicareNo = medicareNo
+	@medicare_no.setter
+	def medicare_no(self, medicare_no):
+		self._medicare_no = medicare_no
 
 	@appointments.setter
 	def appointments(self, appointments):
