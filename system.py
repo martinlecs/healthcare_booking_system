@@ -1,4 +1,4 @@
-from centre_manager import *
+from centre_manager import CentreManager
 
 class SystemManager:
     def __init__(self):
@@ -13,11 +13,7 @@ class SystemManager:
         pass
 
     def search_centre_name(self):
-        pass
+        return self._centre_manager.search_name
 
-    def search_suburb(self, search):
-        centres = []
-        for centre in self._centre_manager.centres:
-            if (search in centre.suburb) and search[0] is centre.suburb[0]:
-                centres.append(centre)
-        return centres
+    def search_centre_subrub(self):
+        return self._centre_manager.search_suburb

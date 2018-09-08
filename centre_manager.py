@@ -1,5 +1,3 @@
-from provider import Provider
-from patient import Patient
 from centre import Centre
 # from appointment import Appointment
 
@@ -28,3 +26,22 @@ class CentreManager:
         else:
             #error handling
             pass
+
+    def search_name(self, search):
+        centres = []
+        for centre in self.centres:
+            if (search in centre.name) and search[0] is centre.name[0]:
+                centres.append(centre)
+            elif len(search) > centre.name:
+                #This is if the user inputs a "correct" search term plus extra letters
+                if centre.name in search:
+                    centres.append(centre)
+        return centres
+
+    #Performs prefix match on centre suburbs, returns list of centres that match
+    def search_suburb(self, search):
+        centres = []
+        for centre in self.centres:
+            if (search in centre.suburb) and search[0] is centre.suburb[0]:
+                centres.append(centre)
+        return centres
