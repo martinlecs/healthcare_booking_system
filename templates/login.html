@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block body %}
 	<h1>Login</h1>
-	<form method="POST">
+	<form method='POST' action="{{url_for('index')}}">
 		<div style="margin: 10px 0px">
 			<label>Email</label> <br/>
 			<input name="email" placeholder="example@gmail.com" value="{{email}}">
