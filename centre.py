@@ -3,7 +3,7 @@ from user import User
 from provider import Provider
 
 class Centre:
-    def __init__(self, name, suburb, open, close, providers=[], services={}):
+    def __init__(self, name, suburb, providers=[], services={}):
         self._name = name
         self._suburb = suburb
         self._providers = providers
