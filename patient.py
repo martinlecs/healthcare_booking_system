@@ -1,11 +1,13 @@
+from user import User
+
 class Patient(User):
 	"Patient class"
 	def __init__(self, email, password, surname, givenName, medicareNo, appointments):
-		user = User(self, email, password)
-        self._surname = surname
-        self._givenName = givenName
-        self._medicareNo = medicareNo
-        self._appointments = appointments
+		super().__init__(email, password)
+		self._surname = surname
+		self._givenName = givenName
+		self._medicareNo = medicareNo
+		self._appointments = appointments
 
 	@property
 	def surname(self):
@@ -24,8 +26,8 @@ class Patient(User):
 		return self._appointments
 
 	@medicareNo.setter
-    def medicareNo(self, medicareNo):
-        self._medicareNo = medicareNo
+	def medicareNo(self, medicareNo):
+		self._medicareNo = medicareNo
 
 	@appointments.setter
 	def appointments(self, appointments):

@@ -1,16 +1,18 @@
+from user import User
+
 class Provider(User):
 	"Provider class"
 	def __init__(self, email, password, surname, givenName, providerNo, service,
-    centres, availability, appointments, rating):
-		user = User(self, email, password)
-        self._surname = surname
-        self._givenName = givenName
-        self._providerNo = providerNo
-        self._service = service
-        self._centres = centres
-        self._availability = availability
-        self._appointments = appointments
-        self._rating = rating
+    centres=[], availability=[]):
+		super().__init__(email, password)
+		self._surname = surname
+		self._givenName = givenName
+		self._providerNo = providerNo
+		self._service = service
+		self._centres = centres
+		self._availability = availability
+		self._appointments = []
+		self._rating = []
 
 	@property
 	def surname(self):
@@ -45,8 +47,8 @@ class Provider(User):
 		return self._rating
 
 	@providerNo.setter
-    def providerNo(self, providerNo):
-        self._providerNo = providerNo
+	def providerNo(self, providerNo):
+		self._providerNo = providerNo
 
 	@centres.setter
 	def centres(self, centres):
@@ -56,10 +58,10 @@ class Provider(User):
 	def availability(self, availability):
 		self._availability = availability
 
-	@appointments.setter
-	def appointments(self, appointments):
-		self._appointments = appointments
+	# @appointments.setter
+	# def appointments(self, appointments):
+	# 	self._appointments = appointments
 
-	@rating.setter
-	def rating(self, rating):
-		self._rating = rating
+	# @rating.setter
+	# def rating(self, rating):
+	# 	self._rating = rating
