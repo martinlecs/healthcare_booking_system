@@ -1,20 +1,18 @@
 from user import User
-# Anything marked with *** means my own implemenation
 
 class Provider(User):
 	"Provider class"
-	# def __init__(self, email, password, surname, givenName, providerNo, service,
- 	#   			centres, availability, appointments, rating):
-	def __init__(self, email, password, surname, givenName):	#***
-		super().__init__(email, password)	#***
+	def __init__(self, email, password, surname, givenName, providerNo, service,
+    centres=[], availability=[]):
+		super().__init__(email, password)
 		self._surname = surname
 		self._givenName = givenName
-		self._providerNo = ""	#***
-		self._service = ""	#***
-		self._centres = []	#***
-		self._availability = []	#***
-		self._appointments = []	#***
-		self._rating = 0	#***
+		self._providerNo = providerNo
+		self._service = service
+		self._centres = centres
+		self._availability = availability
+		self._appointments = []
+		self._rating = []
 
 	@property
 	def surname(self):
@@ -50,7 +48,7 @@ class Provider(User):
 
 	@providerNo.setter
 	def providerNo(self, providerNo):
-	    self._providerNo = providerNo
+		self._providerNo = providerNo
 
 	@centres.setter
 	def centres(self, centres):
@@ -60,10 +58,10 @@ class Provider(User):
 	def availability(self, availability):
 		self._availability = availability
 
-	@appointments.setter
-	def appointments(self, appointments):
-		self._appointments = appointments
+	# @appointments.setter
+	# def appointments(self, appointments):
+	# 	self._appointments = appointments
 
-	@rating.setter
-	def rating(self, rating):
-		self._rating = rating
+	# @rating.setter
+	# def rating(self, rating):
+	# 	self._rating = rating

@@ -1,16 +1,13 @@
 from user import User
-# Anything marked with *** means my own implemenation
 
 class Patient(User):
-	# "Patient class"
-	# def __init__(self, email, password, surname, givenName, medicareNo, appointments):
-	def __init__(self, email, password, surname, givenName):
-	# 	user = User(self, email, password)
+	"Patient class"
+	def __init__(self, email, password, surname, givenName, medicareNo, appointments=[]):
 		super().__init__(email, password)
 		self._surname = surname
 		self._givenName = givenName
-		self._medicareNo = ""	#***
-		self._appointments = []	#
+		self._medicareNo = medicareNo
+		self._appointments = appointments
 
 	@property
 	def surname(self):
@@ -30,7 +27,7 @@ class Patient(User):
 
 	@medicareNo.setter
 	def medicareNo(self, medicareNo):
-	    self._medicareNo = medicareNo
+		self._medicareNo = medicareNo
 
 	@appointments.setter
 	def appointments(self, appointments):
