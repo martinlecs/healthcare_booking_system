@@ -32,75 +32,48 @@ class UserManager:
 
 	def get_patient(self, email):
 		for patient in self._patients:
-			if patient.email = email:
+			if patient.email == email:
 				return patient
 
 	def get_provider(self, email):
 		for provider in self._providers:
-			if provider.email = email:
+			if provider.email == email:
 				return provider
 	
 
 	# Given patient info, add it to patients list	
 	def add_patient_by_info(self, email, password, surname, given_name, medicare_no):
-		if not any(patient.email == patient_email for patient in self._patients):
-			patient = Patient(email, password, surename, given_name, medicare_no)
-			self._providers.append(patient)
-			return True	# Success, could instead return new patient object
+		if not any(patient.email == email for patient in self._patients):
+			self._patients.append(Patient(email, password, surname, given_name, medicare_no))
+			return True		# Success, could instead return new patient object
 		else:
 			return False	# Failed (already in patients)
-
-	# # Given patient object, add to patients
-	# # Less recommended
-	# def add_patient(self, patient):
-	# 	if patient not in self._patients:	
-	# 		self._patients.append(patient)
-	# 		return True 	# Success, could instead return new patient object
-	# 	else:
-	# 		return False	# Failed (already in patients)
 	
 	# Given provider info, add it to providers list
 	def add_provider_by_info(self, email, password, surname, given_name, provider_no, service):
-		if not any(provider.email == provider_email for provider in self._providers):
-			provider = provider(email, password, surename, given_name, provider_no, service)
-			self._providers.append(provider)
+		if not any(provider.email == email for provider in self._providers):
+			self._providers.append(Provider(email, password, surname, given_name, provider_no, service))
 			self.__add_provider_to_services(email, service)
 			return True		# Success, could instead return new provider object
 		else:
 			return False	# Failed (already in providers)
 
 
-	# # Given provider object, add to providers
-	# # Less recommended
-	# def add_provider(self, provider):
-	# 	if provider not in self._providers:	
-	# 		self._providers.append(provider)
-	# 		return True		# Success
-	# 	else:
-	# 		return False	# Failed (already in providers)
-
 	def remove_patient(self, patient_email):
-		for i, patient in self._patients:
+		for i, patient in enumerate(self._patients):
 			if patient.email == patient_email:
 				del self._patients[i]
 				return True
 		return False
 
 	def remove_provider(self, provider_email):
-		for i, provider in self._providers:
+		for i, provider in enumerate(self._providers):
 			if provider.email == provider_email:
 				del self._providers[i]
-				self.__remove_provider_from_services(provider_name)
+				self.__remove_provider_from_services(provider_email)
 				return True
 		return False
 
-		# or
-		'''
-		for provider in self._providers:
-			if provider.email == provider_email:
-				del self._providers[i]
-				return True
-		'''
 	
 	def search_by_patient_name(self, patient_name):
 		# List of 'exact' match.
@@ -134,13 +107,14 @@ class UserManager:
 		else:
 			return False	# no service exists
 
+	
 	## Helper Functions ##
 	def __add_provider_to_services(self, email, service):
-		if service is in self._services.keys():
+		if service in self._services.keys():
 			if email not in self._services[service]:
-				self._services[service].append(service)
+				self._services[service].append(email)
 		else:
-			self._services[services] = [email]
+			self._services[service] = [email]
 
 	def __remove_provider_from_services(self, email):
 		for service in self._services.keys():
