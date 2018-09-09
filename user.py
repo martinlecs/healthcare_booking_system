@@ -1,7 +1,7 @@
-from abc import ABC 
+from flask_login import UserMixin
 
-class User(ABC):
-	"Abstract user class"
+class User(UserMixin):
+	"User class"
 	def __init__(self, email, password):
 		self._email = email
 		self._password = password
@@ -22,9 +22,5 @@ class User(ABC):
 	def password(self, pwd):
 		self._password = pwd
 
-	# authentication functions #
-	#
-	#
-	#
-	# authentication functions #
-
+	def get_id(self):
+		return self._email
