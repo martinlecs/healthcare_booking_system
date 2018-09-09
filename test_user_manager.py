@@ -22,41 +22,43 @@ def test_empty_user_manager():
 	um = UserManager()
 	assert(len(um.patients) == 0)
 	assert(len(um.providers) == 0)
+	assert(len(um.services) == 0)
 
 
 # test adding new to patients
 def test_add_new_patient():
 	um = UserManager()
-	# um.add_patient('p1')
-	# assert('p1' in um.patients)
+	assert(um.patients == [])
+	cond = um.add_patient_by_info('example@gmail.com', 'password', 'Cena', 'John', '02141244235')
+	assert(cond == True)
+	assert(len(um.patients) == 1)
+	assert(um.patients[0].email == 'example@gmail.com')
+
+	
 
 # test adding an existing patient to patients
 def test_add_existing_patient():
-	# um = UserManager()
-	# p1 = 'p1'
-	# p2 = 'p2'
-	# um.add_patient(p1)
-	# um.add_patient(p2)
-	# um.add_patient(p1)
-	# assert(um.patients == [p1,p2])
+	um = UserManager()
+	um.add_patient_by_info('1', '1', '1', '1', '1')
+	um.add_patient_by_info('1','1','1','1','1')
+	assert(len(um.patients) == 1)
 
 
 # test adding new to providers
 def test_add_new_provider():
-	# um = UserManager()
-	# um.add_provider('p1')
-	# assert('p1' in um.providers)
+	um = UserManager()
+	cond = um.add_provider_by_info('example@gmail.com', 'password', 'Cena', 'John', '04253634223' ,'GP')
+	assert(cond == True)
+	assert(len(um.providers) == 1)
+	assert(um.providers[0].email == 'example@gmail.com')
+
 
 # test adding an existing provider to proiders
 def test_add_existing_provider():
-	# um = UserManager()
-	# p1 = 'p1'
-	# p2 = 'p2'
-	# um.add_provider(p1)
-	# um.add_provider(p2)
-	# um.add_provider(p1)
-	# assert(um.providers == [p1,p2])
-
+	um = UserManager()
+	um.add_provider_by_info('example@gmail.com', 'password', 'Cena', 'John', '04253634223' ,'GP')
+	um.add_provider_by_info('example@gmail.com', 'password', 'Cena', 'John', '04253634223' ,'GP')
+	assert(len(um.providers) == 1)
 
 # test new service and provider added to dict
 
