@@ -7,6 +7,10 @@ from user_manager import UserManager
 #	empty UserManager (1)
 #	adding to patients list (2)
 #	adding to provider list (2)
+#	services get updated appropriately
+#	getting service names (1)
+#	getting patient object by email (2)
+#	getting provider object by email (2)
 #	removing from patient list (3)
 #	removing from provider list (3)
 #	searching by patient name (4)
@@ -23,35 +27,53 @@ def test_empty_user_manager():
 # test adding new to patients
 def test_add_new_patient():
 	um = UserManager()
-	um.add_patient('p1')
-	assert('p1' in um.patients)
+	# um.add_patient('p1')
+	# assert('p1' in um.patients)
 
 # test adding an existing patient to patients
 def test_add_existing_patient():
-	um = UserManager()
-	p1 = 'p1'
-	p2 = 'p2'
-	um.add_patient(p1)
-	um.add_patient(p2)
-	um.add_patient(p1)
-	assert(um.patients == [p1,p2])
+	# um = UserManager()
+	# p1 = 'p1'
+	# p2 = 'p2'
+	# um.add_patient(p1)
+	# um.add_patient(p2)
+	# um.add_patient(p1)
+	# assert(um.patients == [p1,p2])
 
 
 # test adding new to providers
 def test_add_new_provider():
-	um = UserManager()
-	um.add_provider('p1')
-	assert('p1' in um.providers)
+	# um = UserManager()
+	# um.add_provider('p1')
+	# assert('p1' in um.providers)
 
 # test adding an existing provider to proiders
 def test_add_existing_provider():
-	um = UserManager()
-	p1 = 'p1'
-	p2 = 'p2'
-	um.add_provider(p1)
-	um.add_provider(p2)
-	um.add_provider(p1)
-	assert(um.providers == [p1,p2])
+	# um = UserManager()
+	# p1 = 'p1'
+	# p2 = 'p2'
+	# um.add_provider(p1)
+	# um.add_provider(p2)
+	# um.add_provider(p1)
+	# assert(um.providers == [p1,p2])
+
+
+# test new service and provider added to dict
+
+# test new provider added to existing dict
+
+
+# Test get service names
+
+
+# test get existing patient obejct by email
+
+# test get non-existing patient object by non-existing email
+
+
+# test get existing provider obejct by email
+
+# test get non-existing provider object by non-existing email
 
 
 # test removing existing from patients
