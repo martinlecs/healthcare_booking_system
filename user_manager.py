@@ -60,17 +60,17 @@ class UserManager:
 
 
 	def remove_patient(self, patient_email):
-		for i, patient in self._patients:
+		for i, patient in enumerate(self._patients):
 			if patient.email == patient_email:
 				del self._patients[i]
 				return True
 		return False
 
 	def remove_provider(self, provider_email):
-		for i, provider in self._providers:
+		for i, provider in enumerate(self._providers):
 			if provider.email == provider_email:
 				del self._providers[i]
-				self.__remove_provider_from_services(provider_name)
+				self.__remove_provider_from_services(provider_email)
 				return True
 		return False
 
@@ -112,7 +112,7 @@ class UserManager:
 	def __add_provider_to_services(self, email, service):
 		if service in self._services.keys():
 			if email not in self._services[service]:
-				self._services[service].append(service)
+				self._services[service].append(email)
 		else:
 			self._services[service] = [email]
 
