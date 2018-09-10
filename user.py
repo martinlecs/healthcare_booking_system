@@ -3,11 +3,11 @@ from flask_login import UserMixin
 class User(UserMixin):
 	"User class"
 	def __init__(self, email, password, surname, given_name, appointments=[]):
-		self._email = email
-		self._password = password
-		self._surname = surname
-		self._given_name = given_name
-		self._appointments = appointments
+		self._email = email.lower()
+		self._password = password.lower()
+		self._surname = surname.lower()
+		self._given_name = given_name.lower()
+		self._appointments = appointments.lower()
 
 	@property
 	def email(self):
@@ -32,19 +32,19 @@ class User(UserMixin):
 
 	@email.setter
 	def email(self, email):
-		self._email = email
+		self._email = email.lower()
 
 	@password.setter
 	def password(self, pwd):
-		self._password = pwd
+		self._password = pwd.lower()
 
 	@surname.setter
 	def surname(self, surname):
-		self._surname = surname
+		self._surname = surname.lower()
 
 	@given_name.setter
 	def given_name(self, given_name):
-		self._given_name = given_name
+		self._given_name = given_name.lower()
 
 	
 	def add_appointment(self, appt_obj):
