@@ -1,6 +1,10 @@
 from patient import Patient
 from provider import Provider
 
+# use '.lower()' for service names
+# Assuming service names passed in are correctly spelled
+#	and not not short hands (except GP)
+
 
 class UserManager:
 	"User manager skeleton"
@@ -23,23 +27,16 @@ class UserManager:
 		return self._services
 
 	# Returns List of service names
-	# Redundent if service names will be enum
-	# If service is enum, can return 'available services'
-	#	which refers to services which are associated with a
-	#	provider
 	def get_service_names(self):
-		return [*self._services]	# returns list of services
+		return [*self._services]
 
-	def get_patient(self, email):
-		for patient in self._patients:
-			if patient.email == email:
-				return patient
-
-	def get_provider(self, email):
-		for provider in self._providers:
-			if provider.email == email:
-				return provider
-	
+	def get_user(self, email):
+		user = self.__get_patient(email)
+		if user is not None:
+			return user
+		user = self.__get_provider(email)
+		if user is not None:
+			return user
 
 	# Given patient info, add it to patients list	
 	def add_patient_by_info(self, email, password, surname, given_name, medicare_no):
@@ -111,8 +108,8 @@ class UserManager:
 	## Helper Functions ##
 	def __add_provider_to_services(self, email, service):
 		if service in self._services.keys():
-			if email not in self._services[service]:
-				self._services[service].append(email)
+			if email.lower() not in self._services[service.lower()]:
+				self._services[service.lower()].append(email.lower())
 		else:
 			self._services[service] = [email]
 
@@ -121,6 +118,18 @@ class UserManager:
 			if email in self._services[service]:
 				self._services[service].remove(email)
 				break
+
+	def __get_patient(self, email):
+		for patient in self._patients:
+			if patient.email == email:
+				return patient
+
+	def __get_provider(self, email):
+		for provider in self._providers:
+			if provider.email == email:
+				return provider
+	
+
 
 '''
 So our program needs to be able to read the csv file
