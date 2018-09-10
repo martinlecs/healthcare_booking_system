@@ -1,9 +1,11 @@
+import string
 from patient import Patient
 from provider import Provider
 
 # use '.lower()' for service names
-# Assuming service names passed in are correctly spelled
-#	and not not short hands (except GP)
+# Assumptions:
+#	Service names passed in are correctly spelled and not not short hands (except GP)
+#	All strings passed are all lower case
 
 
 class UserManager:
