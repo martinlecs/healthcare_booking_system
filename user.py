@@ -46,13 +46,28 @@ class User(UserMixin):
 	def given_name(self, given_name):
 		self._given_name = given_name
 
-	def add_appointment(self, appointment_id):
-		if appointment_id is not in self._appointments:
-			self._appointments.append(appointment_id)
+	def add_appointment(self, appt_obj):
+		if not any(appointment.appointment_id == appt_obj.appointment_id for appointment in self._appointments):
+			self._appointments.append(appt_obj)
 
-	def remove_appointment(self, appointment_id):
-		if appointment_id is in self._appointments:
-			self._appointments.remove(appointment_id)
+	def remove_appointment_by_id(self, appt_id):
+		for i, appt in enumerate(self._appointments):
+			if appt.appointment_id == appt_id
+			del self._appointments[i]
+
+	def get_past_appointments(self):
+		past_appts = []
+		for appt in self._appointments:
+			if appt.past == True:
+				past_appts.append(appt)
+		return past_appts
+
+	def get_upcoming_appointments(self):
+		upcoming_appts = []
+		for appt in self._appointments:
+			if appt.past == False:
+				upcoming_appts.append(appt)
+		return upcoming_appts
 
 	def get_id(self):
 		return self._email
