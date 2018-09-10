@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% block body %}
 	{% if current_user.is_authenticated %}
-		hi {{current_user.surname}}
+		hi {{current_user.given_name.title()}} {{current_user.surname.title()}}
 	{% else %}
-		<a href="{{url_for('login')}}">go login to see more</a>
+		stuff about loging in
 	{% endif%}
 
 {% endblock %}

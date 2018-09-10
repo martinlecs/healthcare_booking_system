@@ -8,7 +8,7 @@ class User(UserMixin):
 		self._password = password.lower()
 		self._surname = surname.lower()
 		self._given_name = given_name.lower()
-		self._appointments = appointments.lower()
+		self._appointments = appointments
 
 	@property
 	def email(self):
