@@ -54,8 +54,8 @@ class User(UserMixin):
 
 	def remove_appointment_by_id(self, appt_id):
 		for i, appt in enumerate(self._appointments):
-			if appt.appointment_id == appt_id
-			del self._appointments[i]
+			if appt.appointment_id == appt_id:
+				del self._appointments[i]
 
 
 	def get_past_appointments(self):
