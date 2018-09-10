@@ -33,16 +33,16 @@ class UserManager:
 		return [*self._services]
 
 	def get_user(self, email):
-		user = self.__get_patient(email)
+		user = self.__get_patient(email.lower())
 		if user is not None:
 			return user
-		user = self.__get_provider(email)
+		user = self.__get_provider(email.lower())
 		if user is not None:
 			return user
 
 	# Given patient info, add it to patients list	
 	def add_patient_by_info(self, email, password, surname, given_name, medicare_no):
-		if not any(patient.email == email for patient in self._patients):
+		if not any(patient.email == email.lower() for patient in self._patients):
 			self._patients.append(Patient(email, password, surname, given_name, medicare_no))
 			return True		# Success, could instead return new patient object
 		else:
@@ -50,9 +50,9 @@ class UserManager:
 	
 	# Given provider info, add it to providers list
 	def add_provider_by_info(self, email, password, surname, given_name, provider_no, service):
-		if not any(provider.email == email for provider in self._providers):
+		if not any(provider.email == email.lower() for provider in self._providers):
 			self._providers.append(Provider(email, password, surname, given_name, provider_no, service))
-			self.__add_provider_to_services(email, service)
+			self.__add_provider_to_services(email.lower(), service.lower())
 			return True		# Success, could instead return new provider object
 		else:
 			return False	# Failed (already in providers)
@@ -60,21 +60,21 @@ class UserManager:
 
 	def remove_patient(self, patient_email):
 		for i, patient in enumerate(self._patients):
-			if patient.email == patient_email:
+			if patient.email == patient_email.lower():
 				del self._patients[i]
 				return True
 		return False
 
 	def remove_provider(self, provider_email):
 		for i, provider in enumerate(self._providers):
-			if provider.email == provider_email:
+			if provider.email == provider_email.lower():
 				del self._providers[i]
-				self.__remove_provider_from_services(provider_email)
+				self.__remove_provider_from_services(provider_email.lower())
 				return True
 		return False
 
 	def is_valid_user(self, email, password):
-		user = self.get_user(email)
+		user = self.get_user(email.lower())
 		if user is not None:
 			if user.password == password:
 				return user
@@ -106,8 +106,8 @@ class UserManager:
 		pass
 
 	def search_by_service(self, service):
-		if service in self._services.keys():
-			return self._services[service]
+		if service.lower() in self._services.keys():
+			return self._services[service.lower()]
 		else:
 			return False	# no service exists
 
@@ -115,8 +115,8 @@ class UserManager:
 	## Helper Functions ##
 	def __add_provider_to_services(self, email, service):
 		if service in self._services.keys():
-			if email.lower() not in self._services[service.lower()]:
-				self._services[service.lower()].append(email.lower())
+			if email not in self._services[service]:
+				self._services[service].append(email)
 		else:
 			self._services[service] = [email]
 
