@@ -73,6 +73,11 @@ class UserManager:
 				return True
 		return False
 
+	def is_valid_user(self, email, password):
+		user = self.get_user(email)
+		if user is not None:
+			if user.password == password:
+				return user
 	
 	def search_by_patient_name(self, patient_name):
 		# List of 'exact' match.
