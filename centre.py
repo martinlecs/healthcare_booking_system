@@ -33,7 +33,7 @@ class Centre:
 
     #Currently taking in provider class
     def add_provider(self, provider):
-        if provider in self._providers:
+        if not any(provider.email == p.name for p in self._providers):
             #error handling
             pass        
         else:
@@ -43,6 +43,7 @@ class Centre:
     def rem_provider(self, provider):
         if provider in self._providers:
             del(self._services[provider])
+            self._providers.remove(provider)
         else:
             #error handling
             pass
