@@ -1,4 +1,5 @@
 from flask_login import UserMixin
+import string
 
 class User(UserMixin):
 	"User class"
