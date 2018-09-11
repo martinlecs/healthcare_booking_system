@@ -12,4 +12,4 @@ class Patient(User):
 
 	@medicare_no.setter
 	def medicare_no(self, medicare_no):
-		self._medicare_no = medicare_noa
+		self._medicare_no = medicare_no
