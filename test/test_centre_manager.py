@@ -12,8 +12,6 @@ Unit Tests to run:
 4 - Remove Centre
 5 - Remove Centre that doesn't exist
 6 - Remove from empty list
-**** Done up to here *****
-
 7 - Add centre from details
 8 - Add centre from details that already exists
 9 - Add centre from details with invalid details
@@ -92,5 +90,22 @@ def test_remove_empty(centre_fixture):
     res = cm.rem_centre(centre_fixture[0])
     assert(res == False)
 
+def test_add_from_details(prov_fixture):
+    cm = CentreManager()
+    cm.add_centre_from_details("Randwick Hospital","Randwick")
+    cm.add_centre_from_details("Prince of Wales", "Randwick", [prov_fixture[0]])
+    assert(len(cm.centres) == 2)
+    assert(cm.centres[1].providers[0] is not None)
 
+def test_add_from_details_duplicate(cm, centre_fixture):
+    bef = len(cm.centres)
+    res = cm.add_centre_from_details("Randwick Hospital", "Randwick")
+    aft = len(cm.centres)
+    assert(bef == aft)
+    assert(res == False)
+
+def test_add_from_invalid_details(cm):
+    res = cm.add_centre_from_details("Randwick Hospital", 1234)
+    assert(res == False)
+    assert(len(cm.centres) == 2)
 

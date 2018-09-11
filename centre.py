@@ -3,12 +3,15 @@ from user import User
 from provider import Provider
 
 class Centre:
-    def __init__(self, name, suburb, providers=[], services={}):
+    def __init__(self, name, suburb, providers=[]):
         self._name = name
         self._suburb = suburb
         self._providers = providers
-        self._services = services
+        self._services = {}
+        
         #self._rating = []
+        for p in self._providers:
+            self._services[p]=p.service
 
     #Getter Methods
     @property
@@ -33,17 +36,21 @@ class Centre:
 
     #Currently taking in provider class
     def add_provider(self, provider):
-        if not any(provider.email == p.name for p in self._providers):
-            #error handling
-            pass        
-        else:
+        if not any(provider.email == p.email for p in self._providers):
             self._providers.append(provider)
             self._services[provider] = provider.service
-
-    def rem_provider(self, provider):
-        if provider in self._providers:
-            del(self._services[provider])
-            self._providers.remove(provider)
+            return True
         else:
             #error handling
-            pass
+            return False        
+    
+    def rem_provider(self, provider):
+        for p in self.providers:
+            if provider.email == p.email:
+                rem = p
+                self.providers.remove(rem)
+                self.services.pop(rem)
+                return rem
+        else:
+            #error handling
+            return False
