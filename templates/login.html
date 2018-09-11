@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block body %}
+	<h1>Login</h1>
+	<form method='POST' action="{{url_for('index')}}">
+		<div style="margin: 10px 0px">
+			<label>Email</label> <br/>
+			<input name="email" placeholder="example@gmail.com" value="{{email}}">
+		</div>
+		<div style="margin: 10px 0px">
+			<label>Password</label><br/>
+			<input name="password" placeholder="password" value="{{password}}" type="Password">
+		</div>
+		<div style="margin: 10px 0px">
+			<button type="submit">Submit</button>
+		</div>
+	</form>
+{% endblock %}
