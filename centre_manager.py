@@ -81,11 +81,25 @@ class CentreManager:
         try:
             with open('centres.dat', 'rb') as file:
                 centre_manager = pickle.load(file)
-            Product.set_id(warehouse.max_id())
         except IOError:
             centre_manager = CentreManager.bootstrap()
         return centre_manager
     
     @classmethod
     def bootstrap(cls):
-        
+        cm = CentreManager()
+        with open('health_centres.csv', newline='') as file:
+            reader = csv.reader(file, delimiter=',')
+            for row in reader:
+                cm.add_centre_from_details(row[2], row[4])
+                #Need to insert error handling
+        return cm
+
+
+
+'''
+****** Notes for Centre Manager  *******
+Need to add Hospital/Medical type to centre, didn't want to for now as it would require changing all the search/init and isn't too vital
+Same with centre id and ph number
+Add Error handling like EVERYWHERE
+'''
