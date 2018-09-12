@@ -11,6 +11,7 @@ from user_manager import UserManager
 #	getting service names (1)
 #	getting patient object by email (2)
 #	getting provider object by email (2)
+#	get user by email (2)
 #	removing from patient list (3)
 #	removing from provider list (3)
 #	searching by patient name (4)	-- NOT IMPLEMENTED
@@ -87,35 +88,24 @@ def test_get_service_names():
 	um.add_provider_by_info('exaample2@gmail.com', 'password', 'Cena', 'John', '04253634223' ,'Prac')
 	assert(um.get_service_names() == ['GP', 'Prac'])
 
-# test get existing patient object by email
-def test_get_existing_patient():
-	um = UserManager()
-	um.add_patient_by_info('example@gmail.com', 'password', 'Cena', 'John', '02141244235')
-	p1 = um.get_patient('example@gmail.com') 
-	assert(p1.email == 'example@gmail.com')
-	assert(p1.password == 'password')
-	
-# test get non-existing patient object by non-existing email
-def test_get_non_existing_patient():
-	um = UserManager()
-	p1 = um.get_patient('example@gmail.com') 
-	assert(p1 == None)
-
-
-# test get existing provider obejct by email
-def test_get_existing_provider():
+# test get existing user
+def test_get_existing_user():
 	um = UserManager()
 	um.add_provider_by_info('example@gmail.com', 'password', 'Cena', 'John', '02141244235' ,'GP')
-	p1 = um.get_provider('example@gmail.com') 
+	um.add_provider_by_info('example2222@gmail.com', 'password', 'Cena', 'John', '02141244235' ,'GP')
+	p1 = um.get_user('example@gmail.com')
+	assert(p1 is not None)
 	assert(p1.email == 'example@gmail.com')
 	assert(p1.password == 'password')
-	assert(p1.service == 'GP')
 
-# test get non-existing provider object by non-existing email
-def test_get_non_existing_provider():
+# test get non-existing user
+def test_get_non_existing_user():
 	um = UserManager()
-	p1 = um.get_provider('example@gmail.com') 
-	assert(p1 == None)
+	um.add_provider_by_info('example@gmail.com', 'password', 'Cena', 'John', '02141244235' ,'GP')
+	um.add_provider_by_info('example2222@gmail.com', 'password', 'Cena', 'John', '02141244235' ,'GP')
+	p1 = um.get_user('exampl23123e@gmail.com')
+	assert(p1 is None)
+
 
 # test removing existing from patients
 def test_remove_existing_patient():
@@ -123,9 +113,10 @@ def test_remove_existing_patient():
 	um.add_patient_by_info('example@gmail.com', 'password', 'Cena', 'John', '04253634223')
 	assert(len(um.patients) == 1 )
 	assert(um.patients[0].email == 'example@gmail.com')
-	assert(um.get_patient('example@gmail.com') is not None)
+	assert(um.get_user('example@gmail.com') is not None)
 	assert(um.remove_patient('example@gmail.com'))
 	assert(um.patients == [])
+	assert(um.get_service_names() == [])
 
 # test removing non-existing from patients
 def test_remove_non_existing_patient():
@@ -147,7 +138,7 @@ def test_remove_existing_provider():
 	um.add_provider_by_info('example@gmail.com', 'password', 'Cena', 'John', '04253634223', 'GP')
 	assert(len(um.providers) == 1 )
 	assert(um.providers[0].email == 'example@gmail.com')
-	assert(um.get_provider('example@gmail.com') is not None)
+	assert(um.get_user('example@gmail.com') is not None)
 	assert(um.remove_provider('example@gmail.com'))
 	assert(um.providers == [])
 
@@ -188,14 +179,46 @@ def test_search_for_existing_service():
 	um = UserManager()
 	um.add_provider_by_info('example@gmail.com', 'password', 'Cena', 'John', '04253634223' ,'GP')
 	um.add_provider_by_info('example22@gmail.com', 'password', 'Cena', 'John', '04253634223' ,'GP')
-	assert(um.search_service('GP') == ['example@gmail.com', 'example22@gmail.com'])
+	assert(um.search_by_service('GP') == ['example@gmail.com', 'example22@gmail.com'])
 	um.add_provider_by_info('example2332@gmail.com', 'password', 'Cena', 'John', '04253634223' ,'Psychology')
-	assert(um.search_service('Psychology') == ['example2332@gmail.com'])
+	assert(um.search_by_service('Psychology') == ['example2332@gmail.com'])
 
 # test search for non-existing service
 def test_search_for_non_existing_service():
 	um = UserManager()
 	um.add_provider_by_info('example@gmail.com', 'password', 'Cena', 'John', '04253634223' ,'GP')
 	um.add_provider_by_info('example22@gmail.com', 'password', 'Cena', 'John', '04253634223' ,'GP')
-	assert(um.search_service('GP') == ['example@gmail.com', 'example22@gmail.com'])
-	assert(not um.search_service('Psychology'))
+	assert(um.search_by_service('GP') == ['example@gmail.com', 'example22@gmail.com'])
+	assert(not um.search_by_service('Psychology'))
+
+## Tests of private functions ##
+# To test them, make them public again and run these tests
+# test get existing patient object by email
+# def test_get_existing_patient():
+# 	um = UserManager()
+# 	um.add_patient_by_info('example@gmail.com', 'password', 'Cena', 'John', '02141244235')
+# 	p1 = um.get_patient('example@gmail.com') 
+# 	assert(p1.email == 'example@gmail.com')
+# 	assert(p1.password == 'password')
+	
+# # test get non-existing patient object by non-existing email
+# def test_get_non_existing_patient():
+# 	um = UserManager()
+# 	p1 = um.get_patient('example@gmail.com') 
+# 	assert(p1 == None)
+
+
+# # test get existing provider obejct by email
+# def test_get_existing_provider():
+# 	um = UserManager()
+# 	um.add_provider_by_info('example@gmail.com', 'password', 'Cena', 'John', '02141244235' ,'GP')
+# 	p1 = um.get_provider('example@gmail.com') 
+# 	assert(p1.email == 'example@gmail.com')
+# 	assert(p1.password == 'password')
+# 	assert(p1.service == 'GP')
+
+# # test get non-existing provider object by non-existing email
+# def test_get_non_existing_provider():
+# 	um = UserManager()
+# 	p1 = um.get_provider('example@gmail.com') 
+# 	assert(p1 == None)
