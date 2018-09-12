@@ -1,5 +1,5 @@
 import pytest
-from centre_manager import CentreManager
+from user_manager import UserManager
 from centre import Centre
 from provider import Provider
 
@@ -23,119 +23,88 @@ Search Providers
 @pytest.fixture
 def prov_fixture():
     p1 = Provider("aa@gmail.com", "pwd", "smith", "john", 123, "GP")
-    p2 = Provider("bb@gmail.com", "pwd", "smith", "jane", 123, "GP")
+    p2 = Provider("bb@gmail.com", "pwd", "smith", "jane", 123, "Surgeon")
     p3 = Provider("cc@gmail.com", "pwd", "sss", "jane", 123, "Physio")
-    return [p1, p2, p3]
+    p4 = Provider("dd@gmail.com", "pwd", "Strange", "Stephen", 123, "GP")
+    return [p1, p2, p3, p4]
 
 
 @pytest.fixture
 def centre_fixture():
     c1 = Centre("Randwick Hospital", "Randwick")
     c2 = Centre("Prince of Wales", "Randwick")
-    c3 = Centre("Westmead Hospital", 1234)
-    c4 = Centre("Randwick Hospital", "Randwick")
-    return [c1, c2, c3, c4]
+    c3 = Centre("Randwick Hospital", "Randwick")
+    return [c1, c2, c3]
 
 
 @pytest.fixture
-def cm(prov_fixture):
-    cm = CentreManager()
-    c1 = Centre("Randwick Hospital", "Randwick")
-    c2 = Centre("Prince of Wales", "Randwick")
-    c3 = Centre("Randwick Hospital", "Randwick",
-                [prov_fixture[0], prov_fixture[2]])
-    c4 = Centre("RPA", "Camperdown", [
-                prov_fixture[0], prov_fixture[1], prov_fixture[2]])
-    for centre in [c1, c2, c3, c4]:
-        cm.add_centre(centre)
-    return cm
+def um(prov_fixture, centre_fixture):
+    um = UserManager()
+    um.add_provider_by_info("aa@gmail.com", "pwd", "smith", "john", 123, "GP")
+    um.add_provider_by_info("bb@gmail.com", "pwd", "smith", "jane", 123, "Surgeon")
+    um.add_provider_by_info("cc@gmail.com", "pwd", "sss", "jane", 123, "Physio")
+    um.add_provider_by_info("dd@gmail.com", "pwd", "Strange", "Stephen", 123, "GP")
+    return um
 
 
-def test_centre_search_all_name(cm):
-    result = cm.search_name("")
-    assert(result == cm.centres)
+
+def test_provider_search_all_name(um):
+    result = um.search_name("")
+    assert(result == um.providers)
 
 
-def test_centre_search_all_suburb(cm):
-    result = cm.search_suburb("")
-    assert(result == cm.centres)
-
-
-def test_centre_search_name_exact(cm, ):
-    text = "Randwick Hospital"
-    result = cm.search_name(text)
-    for i in result:
-        assert(text == i.name)
-
-
-def test_centre_search_name_prefix(cm):
-    text = "Rand"
-    result = cm.search_name(text)
-    for i in result:
-        assert(text in i.name)
-
-
-def test_centre_search_name_insensitive(cm):
-    text = "rAnDwick"
-    result = cm.search_name(text)
+def test_provider_search_first_name_exact(um):
+    text = "jane"
+    result = um.search_name(text)
     assert(result != [])
     for i in result:
-        assert(text.lower() in i.name.lower())
+        assert(text == i.given_name)
 
-
-def test_centre_search_name_suffix(cm):
-    text = "wick"
-    result = cm.search_name(text)
-    assert(result == [])
-
-
-def test_centre_search_name_wrong(cm):
-    text = "Royal"
-    result = cm.search_name(text)
-    assert(result == [])
-
-
-def test_centre_serach_name_longer(cm):
-    text = "RPAA"
-    result = cm.search_name(text)
+def test_provider_search_last_name_exact(um):
+    text = "smith"
+    result = um.search_name(text)
+    assert(len(result)==2)
     for i in result:
-        assert(i.name.lower() in text.lower())
+        assert(text == i.surname)
 
-
-def test_centre_search_all_suburb(cm):
-    result = cm.search_suburb("")
-    assert(result == cm.centres)
-
-
-def test_centre_search_suburb_exact(cm):
-    text = "Camperdown"
-    result = cm.search_suburb(text)
+def test_provider_search_both_name_exact(um):
+    text = "jane smith"
+    result = um.search_name(text)
+    assert(len(result) == 1)
     for i in result:
-        assert(text == i.suburb)
+        print(i.email)
 
-
-def test_centre_search_suburb_prefix(cm):
-    text = "Rand"
-    result = cm.search_suburb(text)
+def test_provider_search_name_prefix(um):
+    text = "Step"
+    result = um.search_name(text)
+    assert(len(result) == 1)
     for i in result:
-        assert(text in i.suburb)
+        assert(text in i.given_name)
 
-
-def test_centre_search_suburb_insensitive(cm):
-    text = "cAmPerDOWN"
-    result = cm.search_suburb(text)
+def test_provider_search_name_insensitive(um):
+    text = "SmITh"
+    result = um.search_name(text)
     assert(result != [])
     for i in result:
-        assert(text.lower() in i.suburb.lower())
+        assert(text.lower() in i.surname.lower())
 
 
-def test_centre_search_suburb_suffix(cm):
-    text = "wick"
-    result = cm.search_suburb(text)
+def test_provider_search_name_suffix(um):
+    text = "phen"
+    result = um.search_name(text)
     assert(result == [])
 
 
-def test_centre_search_suburb_wrong(cm):
-    text = "Parramatta"
-    result = cm.search_suburb(text)
+def test_provider_search_name_wrong(um):
+    text = "Tim"
+    result = um.search_name(text)
     assert(result == [])
+
+def test_service_all(um):
+    result = um.search_service("")
+    assert(result == um.providers)
+
+def test_provider_search_service_exact(um):
+    text = "GP"
+    result = um.search_service(text)
+    assert(len(result) == 2)

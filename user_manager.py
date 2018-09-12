@@ -74,34 +74,35 @@ class UserManager:
 				return True
 		return False
 
-	
-	def search_by_patient_name(self, patient_name):
-		# List of 'exact' match.
-		# Creates a list of patient objects which contain the patient_name
-		# substring in their surname or given_name attributes.
-		# search_list = [match for match in self._patients if
-		# 			   patient_name in match.surname
-		# 			   or patient_name in match.given_name]
-		#
-		# Append 'near' matches to search list.
-		# Or make own list?
-		# near match search mechanism... speak to team about
-		pass
+	#Searches providers by first name or last name
+	def search_name(self, search):
+        #First need to handle search term if its 1 or 2 words
+		if search == "":
+			return self._providers
+		names = search.lower().split()
+		if len(names) > 1:
+			return self.search_full_name(names)
+		else:
+			providers = []
+			for provider in self._providers:
+				first = provider.given_name.lower()
+				last = provider.surname.lower()
+				if ((names[0] in first) and names[0][0] is first[0]) or ((names[0] in last) and names[0][0] is last[0]):
+					providers.append(provider)
+			return providers
 
-	def search_by_provider_name(self, provider_name):
-		# List of 'exact' match.
-		# Creates a list of patient objects which contain the provider_name
-		# substring in their surname or given_name attributes.
-		# search_list = [match for match in self._providers if
-		# 			   provider_name in match.surname
-		# 			   or patient_name in match.given_name]
-		#
-		# Append 'near' matches to search list.
-		# Or make own list?
-		# near match search mechanism... speak to team about
-		pass
+	def search_full_name(self, names):
+		providers = []
+		for provider in self._providers:
+			first = provider.given_name.lower()
+			last = provider.surname.lower()
+			if ((names[0] in first) and names[0][0] is first[0]) and ((names[1] in last) and names[1][0] is last[0]):
+				providers.append(provider)
+		return providers
 
-	def search_by_service(self, service):
+	def search_service(self, service):
+		if service == "":
+			return self.providers
 		if service in self._services.keys():
 			return self._services[service]
 		else:
@@ -144,4 +145,11 @@ When we have to implement registration, how will we take in new services?
 Lets say we add a new service when providers register and say they provide a 
 	service that isn't already on the system. What if this isn't a legit service?
 	What if it's mispelled and added to the dictionary?
+
+******* NOTES FOR SEARCH *********
+May need to return provider object instead of just email in case we need to access the attributes
+Will check once front end is implemeneted
+
+Search can either be done by a single name, which searches first or last name, or both
+Still does prefix match for all
 '''

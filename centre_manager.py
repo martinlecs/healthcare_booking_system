@@ -1,4 +1,6 @@
 from centre import Centre
+import csv
+import pickle
 # from appointment import Appointment
 
 class CentreManager:
@@ -69,3 +71,21 @@ class CentreManager:
                 if (search in suburb) and search[0] is suburb[0]:
                     centres.append(centre)
             return centres
+
+    def save_data(self):
+        with open('centres.dat', 'wb') as file:
+            pickle.dump(self, file)
+
+    @classmethod
+    def load_data(cls):
+        try:
+            with open('centres.dat', 'rb') as file:
+                centre_manager = pickle.load(file)
+            Product.set_id(warehouse.max_id())
+        except IOError:
+            centre_manager = CentreManager.bootstrap()
+        return centre_manager
+    
+    @classmethod
+    def bootstrap(cls):
+        

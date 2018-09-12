@@ -188,14 +188,14 @@ def test_search_for_existing_service():
 	um = UserManager()
 	um.add_provider_by_info('example@gmail.com', 'password', 'Cena', 'John', '04253634223' ,'GP')
 	um.add_provider_by_info('example22@gmail.com', 'password', 'Cena', 'John', '04253634223' ,'GP')
-	assert(um.search_by_service('GP') == ['example@gmail.com', 'example22@gmail.com'])
+	assert(um.search_service('GP') == ['example@gmail.com', 'example22@gmail.com'])
 	um.add_provider_by_info('example2332@gmail.com', 'password', 'Cena', 'John', '04253634223' ,'Psychology')
-	assert(um.search_by_service('Psychology') == ['example2332@gmail.com'])
+	assert(um.search_service('Psychology') == ['example2332@gmail.com'])
 
 # test search for non-existing service
 def test_search_for_non_existing_service():
 	um = UserManager()
 	um.add_provider_by_info('example@gmail.com', 'password', 'Cena', 'John', '04253634223' ,'GP')
 	um.add_provider_by_info('example22@gmail.com', 'password', 'Cena', 'John', '04253634223' ,'GP')
-	assert(um.search_by_service('GP') == ['example@gmail.com', 'example22@gmail.com'])
-	assert(not um.search_by_service('Psychology'))
+	assert(um.search_service('GP') == ['example@gmail.com', 'example22@gmail.com'])
+	assert(not um.search_service('Psychology'))

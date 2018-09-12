@@ -91,7 +91,6 @@ def test_centre_serach_name_longer(cm):
     for i in result:
         assert(i.name.lower() in text.lower())
 
-
 def test_centre_search_all_suburb(cm):
     result = cm.search_suburb("")
     assert(result == cm.centres)
