@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block body %}
+
+<form action="{{ url_for('search') }}" method="get">
+
+    <h1>Search:</h1>
+    <h5>
+        <input type="text" name="query" placeholder="Enter Search Term"><br>
+        <input type="radio" name="select" value="centre_name"> Search by Centre<br>
+        <input type="radio" name="select" value="centre_suburb"> Search by Suburb<br>
+        <input type="radio" name="select" value="prov_name"> Search by Provider<br>
+        <input type="radio" name="select" value="prov_service"> Search by service
+            <select name="service">
+                {% for s in services %}
+                <option value="{{ s }}">{{ s }}</option>
+                {% endfor %}
+            </select><br>
+
+        <button> Search </button>
+    </h2>
+
+</form>
+
+{% endblock %}

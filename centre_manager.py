@@ -89,9 +89,11 @@ class CentreManager:
     def bootstrap(cls):
         cm = CentreManager()
         with open('health_centres.csv', newline='') as file:
-            reader = csv.reader(file, delimiter=',')
+            reader = csv.reader(file, dialect='excel', quotechar="'")
             for row in reader:
-                cm.add_centre_from_details(row[2], row[4])
+                name = row[2].strip()[1:-1]
+                suburb = row[4].strip()[1:-1]
+                cm.add_centre_from_details(name,suburb)
                 #Need to insert error handling
         return cm
 
