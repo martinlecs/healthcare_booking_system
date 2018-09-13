@@ -118,7 +118,7 @@ class Provider(User):
 		else:
 			self._average_rating = 0
 
-''' # What I want to do
+''' # What I want to dooo
 
 from datetime import time
 
