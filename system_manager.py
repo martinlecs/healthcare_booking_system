@@ -16,7 +16,7 @@ class SystemManager():
     def health_centre_manager(self):
         return self.health_centre_manager
 
-    def book_an_appointment(id, patient, provider, centre, date, time, reason, notes, medication):
+    def book_an_appointment(id, patient, provider, centre, date, time, reason, notes ="", medication =""):
         new_appt = appointment(id, patient, provider, centre, date, time, reason, notes, medication, false)
         Patient.add_appointment(new_appt)
         Provider.add_appointment(new_appt)
