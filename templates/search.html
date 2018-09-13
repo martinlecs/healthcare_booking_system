@@ -4,7 +4,7 @@
 <form action="{{ url_for('search') }}" method="get">
 
     <h1>Search:</h1>
-    <h5>
+    <h3>
         <input type="text" name="query" placeholder="Enter Search Term"><br>
         <input type="radio" name="select" value="centre_name"> Search by Centre<br>
         <input type="radio" name="select" value="centre_suburb"> Search by Suburb<br>
@@ -17,8 +17,26 @@
             </select><br>
 
         <button> Search </button>
-    </h2>
-
+    </h3>
 </form>
+
+<br>
+{% if error %} <h3> {{ error }} </h3> {% endif %}
+
+{% if results|length > 0%}
+<h2> Search Results: {{ results|length }} found</h2> 
+<table>
+    <tr><th>Name</th><th>Suburb</th><th>Rating</th><th>Profile</th></tr>
+    {% for centre in results %}
+        <tr> 
+            <td>{{ centre.name }} </td>
+            <td>{{ centre.suburb }} </td>
+            <td>{{ centre.rating }} </td>
+            <td><a href="{{ url_for('search') }}"> View Profile</a></td>
+        </tr>
+    {% endfor %}
+{% endif %}
+
+</table>
 
 {% endblock %}

@@ -25,28 +25,27 @@ def login():
 def search():
 	if request.method == 'POST':
 		pass
-	for i in centre_manager.centres:
-		print(i.suburb[0])
-	test = centre_manager.search_suburb("Randwick")
-	print("test: len =", len(test))
 	services = ["", "GP", "Pharmacist", "Pathologist"]
 	results = []
-	if request.args.get('select') is not None:
+	error = False
+
+	if request.args.get('select',None) is not None:
 		query=request.args.get('query')
 		select = request.args.get('select','centre_name') #for now
-		print(select, query)
 		if select == 'centre_name':
 			results = centre_manager.search_name(query)
-			print(f"Results = {len(results)}")
 		elif select == 'centre_suburb':
 			results = centre_manager.search_suburb(query)
-			print(f"Results = {len(results)}")
 		elif select == 'prov_name':
 			# results = user_manager.search_name(query)
 			pass
 		elif select == 'prov_service':
 			query = request.args.get('service')
-			print(f'query = {query}')
 			# results = user_manager.search_service(query)
-			
-	return render_template('search.html', services=services)
+		if(len(results) is 0):
+			error = "No matches found"
+	else:
+		error = "Please select a search category"
+
+		
+	return render_template('search.html', services=services, results=results, error=error)

@@ -8,6 +8,7 @@ class Centre:
         self._suburb = suburb
         self._providers = providers
         self._services = {}
+        self._rating = [5, 4, 3, 5]
         
         #self._rating = []
         for p in self._providers:
@@ -30,9 +31,9 @@ class Centre:
     def services(self):
         return self._services
 
-    # @property
-    # def rating(self):
-    #     return self._rating
+    @property
+    def rating(self):
+        return float(sum(self._rating)/float(len(self._rating)))
 
     #Currently taking in provider class
     def add_provider(self, provider):
