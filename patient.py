@@ -2,7 +2,7 @@ from user import User
 
 class Patient(User):
 	"Patient class"
-	def __init__(self, email, password, surname, given_name, medicare_no, appointments = []):
+	def __init__(self, email, password, surname, given_name, medicare_no, appointments=[]):
 		super().__init__(email, password, surname, given_name, appointments)
 		self._medicare_no = medicare_no
 
