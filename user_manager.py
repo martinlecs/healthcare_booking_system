@@ -1,6 +1,8 @@
 import string
 from patient import Patient
 from provider import Provider
+import csv
+import pickle
 
 # use '.lower()' for service names
 # Assumptions:
@@ -9,7 +11,7 @@ from provider import Provider
 
 
 class UserManager:
-	"User manager skeleton"
+	''' User Manager Class '''
 	def __init__(self):
 		self._patients = []
 		self._providers = []
@@ -92,24 +94,49 @@ class UserManager:
 		# near match search mechanism... speak to team about
 		pass
 
-	def search_by_provider_name(self, provider_name):
-		# List of 'exact' match.
-		# Creates a list of patient objects which contain the provider_name
-		# substring in their surname or given_name attributes.
-		# search_list = [match for match in self._providers if
-		# 			   provider_name in match.surname
-		# 			   or patient_name in match.given_name]
-		#
-		# Append 'near' matches to search list.
-		# Or make own list?
-		# near match search mechanism... speak to team about
-		pass
-
-	def search_by_service(self, service):
-		if service.lower() in self._services.keys():
-			return self._services[service.lower()]
+	#Searches providers by first name or last name. Returns list of providers
+	#Adds prefix match for first or last as well
+	def search_name(self, search):
+		#First need to handle search term if its 1 or 2 words
+		if search == "":
+			return self._providers
+		names = search.lower().split()
+		if len(names) > 1:
+			return self.search_full_name(names)
 		else:
-			return False	# no service exists
+			providers = []
+			for provider in self._providers:
+				first = provider.given_name.lower()
+				last = provider.surname.lower()
+				if ((names[0] in first) and names[0][0] is first[0]) or ((names[0] in last) and names[0][0] is last[0]):
+					providers.append(provider)
+			return providers
+
+	# If they put in two names, matches first AND last name
+	#prefix match to both applies so joh smit = john smith
+	def search_full_name(self, names):
+		providers = []
+		for provider in self._providers:
+			first = provider.given_name.lower()
+			last = provider.surname.lower()
+			if ((names[0] in first) and names[0][0] is first[0]) and ((names[1] in last) and names[1][0] is last[0]):
+				providers.append(provider)
+		return providers
+
+	#Dictionary allows quick access to list of providers, but only emails
+	#instead of searching in the flask app, convert emails to objects in the
+	# function instead and return list of providers
+	def search_service(self, service):
+		providers = []
+		if service == "":
+			return self.providers
+		if service in self._services.keys():
+			emails = self._services[service]
+			for e in emails:
+				providers.append(self.get_user(e))
+			return providers
+		else:
+			return False  # no service exists
 
 	
 	## Helper Functions ##
@@ -135,7 +162,41 @@ class UserManager:
 		for provider in self._providers:
 			if provider.email == email:
 				return provider
-	
+
+	"""  
+	Load/Save Data methods:
+	load_data checks if there is a pickle file for the users (currently only implemented providers)
+	if it does, loads that and returns user manager object, otherwise opens the csv and extracts data
+	bootstrap is the init function on 'startup' that performs this
+	"""
+	def save_data(self):
+		with open('users.dat', 'wb') as file:
+			pickle.dump(self, file)
+
+	@classmethod
+	def load_data(cls):
+		try:
+			with open('users.dat', 'rb') as file:
+				user_manager = pickle.load(file)
+		except IOError:
+			user_manager = UserManager.bootstrap()
+		return user_manager
+
+	@classmethod
+	def bootstrap(cls):
+		um = UserManager()
+		with open('provider.csv', newline='') as file:
+			reader = csv.reader(file, dialect='excel', quotechar="'")
+			for row in reader:
+				email = row[0].strip()
+				pwd = row[1].strip()
+				name = row[0].strip().split('@')[0]
+				surname = ""
+				no = 0
+				service = row[2].strip()
+				um.add_provider_by_info(email, pwd, surname, name, no, service)
+				#Need to insert error handling
+		return um
 
 
 '''
@@ -160,4 +221,13 @@ When we have to implement registration, how will we take in new services?
 Lets say we add a new service when providers register and say they provide a 
 	service that isn't already on the system. What if this isn't a legit service?
 	What if it's mispelled and added to the dictionary?
+'''
+
+'''
+******* NOTES FOR SEARCH ** *******
+May need to return provider object instead of just email in case we need to access the attributes
+Will check once front end is implemeneted
+
+Search can either be done by a single name, which searches first or last name, or both
+Still does prefix match for all
 '''

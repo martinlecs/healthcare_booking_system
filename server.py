@@ -1,4 +1,5 @@
 from flask import Flask
+from centre_manager import CentreManager
 from user_manager import UserManager
 
 # Instantiate 'global' variables
@@ -6,5 +7,5 @@ from user_manager import UserManager
 app = Flask(__name__)
 app.secret_key = 'super secret shhhh'
 
-user_manager = UserManager()
-# centre_manager = CentreManager()
+user_manager = UserManager.load_data()
+centre_manager = CentreManager.load_data()

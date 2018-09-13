@@ -3,7 +3,7 @@ from user import User
 class Provider(User):
 	"Provider class"
 	def __init__(self, email, password, surname, given_name,
-	provider_no, service, appointments = [], availability = {}, rating = {}):
+				provider_no, service, centres = [], appointments = [], availability = {}, rating = {}):
 		super().__init__(email, password, surname, given_name, appointments)
 		self._provider_no = provider_no
 		self._service = service
@@ -30,7 +30,7 @@ class Provider(User):
 
 	@property
 	def rating(self):
-		return self._rating
+		return self._average_rating
 
 	@provider_no.setter
 	def provider_no(self, provider_no):
@@ -63,7 +63,7 @@ class Provider(User):
 
 	# pop rating from dictionary
 	def remove_rating(self, patient_email):
-		self._rating.pop(patient_email, none)
+		self._rating.pop(patient_email, None)
 
 	# private function to recalculate average rating
 	def __calc_average_rating(self):
