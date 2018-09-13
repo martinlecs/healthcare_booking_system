@@ -29,20 +29,20 @@ def prov_fixture():
 
 @pytest.fixture
 def centre_fixture():
-    c1 = Centre("Randwick Hospital", "Randwick")
-    c2 = Centre("Prince of Wales", "Randwick")
-    c3 = Centre("Westmead Hospital", 1234)
-    c4 = Centre("Randwick Hospital", "Randwick")
+    c1 = Centre("Randwick Hospital", "Randwick", "Hospital", 1234, 93000000)
+    c2 = Centre("Prince of Wales", "Randwick", "Hospital", 1234, 93000000)
+    c3 = Centre("Westmead Hospital", 1234, "Hospital", 1234, 93000000)
+    c4 = Centre("Randwick Hospital", "Randwick", "Hospital", 1234, 93000000)
     return [c1, c2, c3, c4]
 
 @pytest.fixture
 def cm(prov_fixture):
     cm = CentreManager()
-    c1 = Centre("Randwick Hospital", "Randwick")
-    c2 = Centre("Prince of Wales", "Randwick")
-    c3 = Centre("Randwick Hospital", "Randwick", 
+    c1 = Centre("Randwick Hospital", "Randwick", "Hospital",1234,93000000)
+    c2 = Centre("Prince of Wales", "Randwick", "Hospital",1234,93000000)
+    c3 = Centre("Randwick Hospital", "Randwick", "Hospital", 1234, 93000000, 
                 [prov_fixture[0], prov_fixture[2]])
-    c4 = Centre("RPA", "Camperdown", [
+    c4 = Centre("RPA", "Camperdown", "Hospital", 1234, 93000000, [
                 prov_fixture[0], prov_fixture[1], prov_fixture[2]])
     for centre in [c1,c2,c3,c4]:
         cm.add_centre(centre)

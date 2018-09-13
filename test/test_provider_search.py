@@ -31,9 +31,9 @@ def prov_fixture():
 
 @pytest.fixture
 def centre_fixture():
-    c1 = Centre("Randwick Hospital", "Randwick")
-    c2 = Centre("Prince of Wales", "Randwick")
-    c3 = Centre("Randwick Hospital", "Randwick")
+    c1 = Centre("Randwick Hospital", "Randwick", "Hospital", 1234, 93000000)
+    c2 = Centre("Prince of Wales", "Randwick", "Hospital", 1234, 93000000)
+    c3 = Centre("Randwick Hospital", "Randwick", "Hospital", 1234, 93000000)
     return [c1, c2, c3]
 
 
@@ -79,7 +79,7 @@ def test_provider_search_name_prefix(um):
     result = um.search_name(text)
     assert(len(result) == 1)
     for i in result:
-        assert(text in i.given_name)
+        assert(text.lower() in i.given_name)
 
 def test_provider_search_name_insensitive(um):
     text = "SmITh"

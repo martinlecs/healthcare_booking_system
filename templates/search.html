@@ -25,23 +25,47 @@
 
 {% if results|length > 0%}
 <h2> Search Results: {{ results|length }} found</h2> 
+
 <table>
-    <tr>
-        <th>Name</th>
-        <th>Suburb</th>
-        <th>Phone</th>
-        <th>Rating</th>
-        <th>Profile</th>
-    </tr>
-    {% for centre in results %}
-        <tr> 
-            <td>{{ centre.name }} </td>
-            <td>{{ centre.suburb }} </td>
-            <td>{{ centre.phone }} </td>
-            <td>{{ centre.rating }} </td>
-            <td><a href="{{ url_for('search') }}"> View Profile</a></td>
-        </tr>
-    {% endfor %}
+        {% if type_c %}
+            <tr>
+                <th>Name</th>
+                <th>Suburb</th>
+                <th>Phone</th>
+                <th>Rating</th>
+                <th>Profile</th>
+            </tr>
+            {% for centre in results %}
+            <tr>
+                <td>{{ centre.name }} </td>
+                <td>{{ centre.suburb }} </td>
+                <td>{{ centre.phone }} </td>
+                <td>{{ centre.rating }} </td>
+                <td><a href="{{ url_for('search') }}"> View Profile</a></td>
+            </tr>
+            {% endfor %}
+        {% else %}
+                <tr>
+                <th>Name</th>
+                <th>Service</th>
+                <th>Email</th>
+                <th>Rating</th>
+                <th>Centre</th>
+                <th>Profile</th>
+                </tr>
+            {% for prov in results %}
+                <tr>
+                <td>{{ prov.given_name }} {{ prov.surname }}</td>
+                <td>{{ prov.service }}</td>
+                <td>{{ prov.email }}</td>
+                <td>{{ prov.average_rating }}</td>
+                <td>{{ prov.centres }}</td>
+                <td><a href="{{ url_for('search') }}"> View Profile</a></td>
+                </tr>
+        {% endfor %}
+    
+    {% endif %}
+
 {% endif %}
 
 </table>

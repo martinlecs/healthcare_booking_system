@@ -1,5 +1,7 @@
 from patient import Patient
 from provider import Provider
+import csv
+import pickle
 
 
 class UserManager:
@@ -22,24 +24,17 @@ class UserManager:
 	def services(self):
 		return self._services
 
-	# Returns List of service names
-	# Redundent if service names will be enum
-	# If service is enum, can return 'available services'
-	#	which refers to services which are associated with a
-	#	provider
+	#returns a list of services
 	def get_service_names(self):
-		return [*self._services]	# returns list of services
+		return [*self._services]
 
-	def get_patient(self, email):
-		for patient in self._patients:
-			if patient.email == email:
-				return patient
-
-	def get_provider(self, email):
-		for provider in self._providers:
-			if provider.email == email:
-				return provider
-	
+	def get_user(self, email):
+		user = self.__get_patient(email.lower())
+		if user is not None:
+			return user
+		user = self.__get_provider(email.lower())
+		if user is not None:
+			return user
 
 	# Given patient info, add it to patients list	
 	def add_patient_by_info(self, email, password, surname, given_name, medicare_no):
@@ -74,9 +69,15 @@ class UserManager:
 				return True
 		return False
 
+	def is_valid_user(self, email, password):
+		user = self.get_user(email.lower())
+		if user is not None:
+			if user.password == password:
+				return user
+
 	#Searches providers by first name or last name
 	def search_name(self, search):
-        #First need to handle search term if its 1 or 2 words
+		#First need to handle search term if its 1 or 2 words
 		if search == "":
 			return self._providers
 		names = search.lower().split()
@@ -101,14 +102,17 @@ class UserManager:
 		return providers
 
 	def search_service(self, service):
+		providers = []
 		if service == "":
 			return self.providers
 		if service in self._services.keys():
-			return self._services[service]
+			emails = self._services[service]
+			for e in emails:
+				providers.append(self.get_user(e))
+			return providers
 		else:
 			return False	# no service exists
 
-	
 	## Helper Functions ##
 	def __add_provider_to_services(self, email, service):
 		if service in self._services.keys():
@@ -122,6 +126,45 @@ class UserManager:
 			if email in self._services[service]:
 				self._services[service].remove(email)
 				break
+
+	def __get_patient(self, email):
+		for patient in self._patients:
+			if patient.email == email:
+				return patient
+
+	def __get_provider(self, email):
+		for provider in self._providers:
+			if provider.email == email:
+				return provider
+
+	def save_data(self):
+		with open('users.dat', 'wb') as file:
+			pickle.dump(self, file)
+
+	@classmethod
+	def load_data(cls):
+		try:
+			with open('users.dat', 'rb') as file:
+				user_manager = pickle.load(file)
+		except IOError:
+			user_manager = UserManager.bootstrap()
+		return user_manager
+	
+	@classmethod
+	def bootstrap(cls):
+		um = UserManager()
+		with open('provider.csv', newline='') as file:
+			reader = csv.reader(file, dialect='excel', quotechar="'")
+			for row in reader:
+				email = row[0].strip()
+				pwd = row[1].strip()
+				name = row[0].strip().split('@')[0]
+				surname = ""
+				no = 0
+				service = row[2].strip()
+				um.add_provider_by_info(email, pwd, surname, name, no, service)
+				#Need to insert error handling
+		return um
 
 '''
 So our program needs to be able to read the csv file

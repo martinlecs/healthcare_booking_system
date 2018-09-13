@@ -55,6 +55,7 @@ class Centre:
         if not any(provider.email == p.email for p in self._providers):
             self._providers.append(provider)
             self._services[provider] = provider.service
+            
             return True
         else:
             #error handling

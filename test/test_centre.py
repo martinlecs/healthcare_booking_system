@@ -14,10 +14,11 @@ Tests to conduct
 
 @pytest.fixture
 def centre_fixture(prov_fixture):
-    c1 = Centre("Randwick Hospital", "Randwick")
-    c2 = Centre("Prince of Wales", "Randwick")
-    c3 = Centre("Westmead Hospital", 1234)
-    c4 = Centre("Randwick Hospital", "Randwick", [prov_fixture[0], prov_fixture[2]])
+    c1 = Centre("Randwick Hospital", "Randwick", "Hospital", 1234, 93000000)
+    c2 = Centre("Prince of Wales", "Randwick", "Hospital", 1234, 93000000)
+    c3 = Centre("Westmead Hospital", 1234, "Hospital", 1234, 93000000)
+    c4 = Centre("Randwick Hospital", "Randwick", "Hospital",
+                1234, 93000000, [prov_fixture[0], prov_fixture[2]])
     return [c1, c2, c3, c4]
 
 
