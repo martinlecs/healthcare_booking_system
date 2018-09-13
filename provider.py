@@ -3,13 +3,14 @@ from user import User
 class Provider(User):
 	"Provider class"
 	def __init__(self, email, password, surname, given_name,
-	provider_no, service, appointments = [], centres=[], availability=[], rating=[]):
+	provider_no, service, appointments = [], availability = {}, rating = {}):
 		super().__init__(email, password, surname, given_name, appointments)
 		self._provider_no = provider_no
 		self._service = service
 		self._centres = centres
-		self._availability = availability
-		self._rating = []
+		self._availability = availability	#{centre_id:{date:[time_slot]}}	time_slot
+		self._rating = {}
+		self._average_rating = 0
 
 	@property
 	def provider_no(self):
@@ -39,82 +40,32 @@ class Provider(User):
 	def service(self, service):
 		self._service = service
 
-	@centres.setter
-	def centres(self, centres):
-		self._centres = centres
 
-	@availability.setter
-	def availability(self, availability):
-		self._availability = availability
+	def add_centres(self, centre):
+		if centre not in self._centres:
+			self._centres.append(centre)
 
-	@rating.setter
-	def rating(self, rating):
-		self._rating = rating
+	def rem_centre(self, centre_name):
+		if centre_name in self._centres:
+			self._centres.remove(centre_name)
 
-# from user import User
+	
+	# def make_time_slot_unavailable(self, date, time_slot):
+	# 	pass
 
-# class Provider(User):
-# 	"Provider class"
-# 	def __init__(self, email, password, surname, givenName, providerNo, service,
-#     centres=[], availability=[]):
-# 		super().__init__(email, password)
-# 		self._surname = surname
-# 		self._givenName = givenName
-# 		self._providerNo = providerNo
-# 		self._service = service
-# 		self._centres = centres
-# 		self._availability = availability
-# 		self._appointments = []
-# 		self._rating = []
+	# check_if_time_slot_available(self, time_slot):
+	#	pass
 
-# 	@property
-# 	def surname(self):
-# 		return self._surname
+	# add rating to dict, recalculate average rating
+	def add_rating(self, patient_email, rating):
+		self._rating[patient_email] = rating
+		self.__calc_average_rating()
 
-# 	@property
-# 	def givenName(self):
-# 		return self._givenName
+	# pop rating from dictionary
+	def remove_rating(self, patient_email):
+		self._rating.pop(patient_email, none)
 
-# 	@property
-# 	def providerNo(self):
-# 		return self._providerNo
-
-# 	@property
-# 	def service(self):
-# 		return self._service
-
-# 	@property
-# 	def centres(self):
-# 		return self._centres
-
-# 	@property
-# 	def availability(self):
-# 		return self._availability
-
-# 	@property
-# 	def appointments(self):
-# 		return self._appointments
-
-# 	@property
-# 	def rating(self):
-# 		return self._rating
-
-# 	@providerNo.setter
-# 	def providerNo(self, providerNo):
-# 		self._providerNo = providerNo
-
-# 	@centres.setter
-# 	def centres(self, centres):
-# 		self._centres = centres
-
-# 	@availability.setter
-# 	def availability(self, availability):
-# 		self._availability = availability
-
-# 	# @appointments.setter
-# 	# def appointments(self, appointments):
-# 	# 	self._appointments = appointments
-
-# 	# @rating.setter
-# 	# def rating(self, rating):
-# 	# 	self._rating = rating
+	# private function to recalculate average rating
+	def __calc_average_rating(self):
+		ratings = list(self._rating.values())
+		self._average_rating = sum(ratings)/float(len(ratings))
