@@ -4,7 +4,21 @@
     {% if content %}
         <h3>Name: {{ content['name'] }} </h3>
         <h3>Suburb: {{ content['suburb'] }}</h3>
-        <h3>Other info...</h3>
+        <h3>Service: {{ content['service'] }}</h3>
+        <h3>Providers</h3>
+        {% if content['providers'] %}
+        <table>
+            {% for p in content['providers'] %}
+            <tr>
+                <th><a href="{{ url_for('provider_profile', provider=p.provider_no) }}">{{ p.fullname }}</a></th>
+                <th>{{ p.service }}</th>
+                <th><a href="">Book</a></th>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+            <b>Sorry, this centre has no providers right now.</b>
+        {% endif %}
     {% else %}
         <h3>Sorry, it seems that this profile is unavailable.</h3>
     {% endif%}

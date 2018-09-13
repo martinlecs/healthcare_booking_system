@@ -1,5 +1,3 @@
-from centre_manager import CentreManager
-
 class SystemManager:
     def __init__(self):
         self._user_manager = []
@@ -26,10 +24,9 @@ class SystemManager:
     def get_provider_profile(self, provider):
         """
         This function returns a dict that can be used in Flask's templates
-        :param provider: name of provider
+        :param provider: a Provider object
         :return: dict containing provider attributes
         """
-        # pr = self.search_provider_name(provider)  # assumes search_centre_name returns an object
         details = vars(provider)
         details.pop("_password")
         return {k.lstrip('_'): v for k, v in details.items()}
@@ -37,14 +34,7 @@ class SystemManager:
     def get_centre_profile(self, centre):
         """
         This function returns a dict that can be used in Flask's templates
-        :param centre: name of centre (String)
+        :param centre: a Centre object
         :return: dict containing centre attributes
         """
-        # ct = self.search_centre_name(centre)
         return {k.lstrip('_'): v for k, v in vars(centre).items()}
-
-if __name__ == "__main__":
-    s = SystemManager()
-    from provider import *
-    p1 = Provider("email", "pass", "le", "martin", "appointments", 2132131, "service")
-    print(s.get_provider_profile(p1))

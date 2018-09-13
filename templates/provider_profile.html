@@ -6,7 +6,20 @@
         <h3>Provider No. {{ content['provider_no'] }}</h3>
         <h3>Service: {{ content['service'] }}</h3>
         <h3>Email: {{ content['email'] }}</h3>
-        <h3>Other info...</h3>
+        <h3>Rating: {{ content['average_rating'] }}</h3>
+        <h3>Availability: </h3>
+        {% if content['availability'] %}
+            <table>
+                {% for t in content['availability'] %}
+                    <tr>
+                        <th>{{ t }}</th>
+                        <th><a href="">Book</a></th>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <b>Sorry, this provider has no availability right now.</b>
+        {% endif %}
     {% else %}
         <h3>Sorry, it seems that this profile is unavailable.</h3>
     {% endif%}
