@@ -16,21 +16,28 @@
                 {% endfor %}
             </select><br>
 
-        <button> Search </button>
+        <button type="submit"> Search </button>
     </h3>
 </form>
 
 <br>
-{% if error %} <h3> {{ error }} </h3> {% endif %}
+{% if error %} <h2> {{ error }} </h2> {% endif %}
 
 {% if results|length > 0%}
 <h2> Search Results: {{ results|length }} found</h2> 
 <table>
-    <tr><th>Name</th><th>Suburb</th><th>Rating</th><th>Profile</th></tr>
+    <tr>
+        <th>Name</th>
+        <th>Suburb</th>
+        <th>Phone</th>
+        <th>Rating</th>
+        <th>Profile</th>
+    </tr>
     {% for centre in results %}
         <tr> 
             <td>{{ centre.name }} </td>
             <td>{{ centre.suburb }} </td>
+            <td>{{ centre.phone }} </td>
             <td>{{ centre.rating }} </td>
             <td><a href="{{ url_for('search') }}"> View Profile</a></td>
         </tr>

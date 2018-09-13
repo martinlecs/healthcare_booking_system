@@ -3,10 +3,13 @@ from user import User
 from provider import Provider
 
 class Centre:
-    def __init__(self, name, suburb, providers=[]):
+    def __init__(self, name, suburb, type, id, phone, providers=[]):
         self._name = name
         self._suburb = suburb
         self._providers = providers
+        self._type = type
+        self._id = id
+        self._phone = phone
         self._services = {}
         self._rating = [5, 4, 3, 5]
         
@@ -30,6 +33,18 @@ class Centre:
     @property
     def services(self):
         return self._services
+
+    @property
+    def type(self):
+        return self._type
+    
+    @property
+    def id(self):
+        return self._id
+    
+    @property
+    def phone(self):
+        return self._phone
 
     @property
     def rating(self):

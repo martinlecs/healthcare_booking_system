@@ -19,8 +19,8 @@ class CentreManager:
             #error handling
             return False
     
-    def add_centre_from_details(self, name, suburb,providers=[]):
-        centre = Centre(name, suburb, providers)
+    def add_centre_from_details(self, name, suburb, id, type, phone, providers=[]):
+        centre = Centre(name, suburb, id, type, phone, providers)
         return self.add_centre(centre)
 
     def rem_centre(self, centre):
@@ -91,9 +91,12 @@ class CentreManager:
         with open('health_centres.csv', newline='') as file:
             reader = csv.reader(file, dialect='excel', quotechar="'")
             for row in reader:
+                type = row[0].strip()[1:-1]
+                id = int(row[1].strip()[1:-1])
                 name = row[2].strip()[1:-1]
+                phone = row[3].strip()[1:-1]
                 suburb = row[4].strip()[1:-1]
-                cm.add_centre_from_details(name,suburb)
+                cm.add_centre_from_details(name,suburb, type, id, phone)
                 #Need to insert error handling
         return cm
 
