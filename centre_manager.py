@@ -42,7 +42,9 @@ class CentreManager:
         pass
 
 
-    #Search Functions
+    #-------- Search Functions ---------#
+    #
+    #performs prefix match on centre name, empty search returns all values
     def search_name(self, search):
         if search == "":
             return self._centres
@@ -71,7 +73,13 @@ class CentreManager:
                 if (search in suburb) and search[0] is suburb[0]:
                     centres.append(centre)
             return centres
-
+    
+    """ 
+    See description in user_manager, pretty much the same approach
+    The weird string slicing/stripping is because the csv imports everything
+    in quotation marks, so had to get rid of them
+    """
+    
     def save_data(self):
         with open('centres.dat', 'wb') as file:
             pickle.dump(self, file)

@@ -17,19 +17,26 @@ def login():
 	elif request.method == 'POST':
 		return redirect(url_for('index'))
 
-# @login_manager.user_loader
-# def load_user(email):
-# 	return user_manager.get_user_by_email(email)
+@login_manager.user_loader
+def load_user(email):
+	return user_manager.get_user_by_email(email)
 
+
+""" 
+Depending on what radio button is selected, uses the respective
+user or centre search function which returns a list of appropriate 
+objects to iterate through and display
+"""
 @app.route('/search', methods = ['GET', 'POST'])
 def search():
 	if request.method == 'POST':
 		pass
-	services = [''] + user_manager.get_service_names()
+	services = [''] + user_manager.get_service_names() #Details for the drop down box
 	results = []
-	error = False
-	type_c = True
+	error = False #Displays message for no result/no selection
+	type_c = True #Displays table for centre/provider details
 
+	#Not the nicest looking code, but just sorts through depending on which category was pressed
 	if request.args.get('select', None) is not None:
 		query=request.args.get('query')
 		select = request.args.get('select','centre_name') #for now
@@ -45,13 +52,10 @@ def search():
 		elif select == 'prov_service':
 			query = request.args.get('service', "")
 			results = user_manager.search_service(query)
-			# for t in temp:
-			# 	results.append(user_manager.get_user(t))
 			type_c = False
 		if(len(results) is 0):
 			error = "No matches found"
 	else:
 		error = "Please select a search category"
-
 		
 	return render_template('search.html', services=services, results=results, error=error, type_c=type_c)

@@ -75,7 +75,8 @@ class UserManager:
 			if user.password == password:
 				return user
 
-	#Searches providers by first name or last name
+	#Searches providers by first name or last name. Returns list of providers
+	#Adds prefix match for first or last as well
 	def search_name(self, search):
 		#First need to handle search term if its 1 or 2 words
 		if search == "":
@@ -92,6 +93,8 @@ class UserManager:
 					providers.append(provider)
 			return providers
 
+	# If they put in two names, matches first AND last name
+	#prefix match to both applies so joh smit = john smith
 	def search_full_name(self, names):
 		providers = []
 		for provider in self._providers:
@@ -101,6 +104,9 @@ class UserManager:
 				providers.append(provider)
 		return providers
 
+	#Dictionary allows quick access to list of providers, but only emails
+	#instead of searching in the flask app, convert emails to objects in the
+	# function instead and return list of providers
 	def search_service(self, service):
 		providers = []
 		if service == "":
@@ -137,6 +143,12 @@ class UserManager:
 			if provider.email == email:
 				return provider
 
+	"""  
+	Load/Save Data methods:
+	load_data checks if there is a pickle file for the users (currently only implemented providers)
+	if it does, loads that and returns user manager object, otherwise opens the csv and extracts data
+	bootstrap is the init function on 'startup' that performs this
+	"""
 	def save_data(self):
 		with open('users.dat', 'wb') as file:
 			pickle.dump(self, file)
