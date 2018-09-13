@@ -22,6 +22,6 @@ def load_user(email):
 	return user_manager.get_user_by_email(email)
 
 @app.route('/booking_form', methods=['GET', 'POST'])
-def book():
+def book(provider, centre):
+	pass
 
-	date = datetime.date(year, month, day)
