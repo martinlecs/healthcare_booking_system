@@ -3,6 +3,11 @@
 	<h2>Make A Booking</h2>
 	<div>
 		Provider: {{provider.surname}} {{provider.given_name}}
-		Centre: {{centre.rating}}
+		Centre: {{centre.name}}
 	</div>
+	<!-- <div>
+		{% for slot in available_slots%}
+			{{str(slot)}}
+		{% endif%}
+	</div> -->
 {% endblock %}

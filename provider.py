@@ -41,11 +41,11 @@ class Provider(User):
 		self._service = service
 
 
-	def add_centres(self, centre):
+	def add_centre(self, centre):
 		if centre not in self._centres:
 			self._centres.append(centre)
 
-	def rem_centre(self, centre_name):
+	def remove_centre(self, centre_name):
 		if centre_name in self._centres:
 			self._centres.remove(centre_name)
 
@@ -64,6 +64,7 @@ class Provider(User):
 	# pop rating from dictionary
 	def remove_rating(self, patient_email):
 		self._rating.pop(patient_email, none)
+		self.__calc_average_rating()
 
 	# private function to recalculate average rating
 	def __calc_average_rating(self):
