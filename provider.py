@@ -2,9 +2,9 @@ from user import User
 
 class Provider(User):
 	"Provider class"
-	def __init__(self, email, password, surname, given_name,  appointments,
-	provider_no, service, centres=[], availability=[], rating=[]):
-		super().__init__(email, password, surname, given_name, appointments)
+	def __init__(self, email, password, surname, given_name, provider_no, service,
+	appointments = [], centres=[], availability=[][], rating=[]):
+		super().__init__(email, password, surname, given_name)
 		self._provider_no = provider_no
 		self._service = service
 		self._centres = centres

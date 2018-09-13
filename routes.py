@@ -1,6 +1,7 @@
 from server import app, user_manager
 from flask import render_template, request, redirect, url_for
 from flask_login import LoginManager, current_user, login_user
+from datetime import date
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -19,3 +20,8 @@ def login():
 @login_manager.user_loader
 def load_user(email):
 	return user_manager.get_user_by_email(email)
+
+@app.route('/booking_form', methods=['GET', 'POST'])
+def book():
+
+	date = datetime.date(year, month, day)
