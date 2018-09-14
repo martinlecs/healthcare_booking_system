@@ -3,12 +3,19 @@ from user import User
 from provider import Provider
 
 class Centre:
-    def __init__(self, name, suburb, providers=[], services={}):
+    def __init__(self, name, suburb, type, id, phone, providers=[]):
         self._name = name
         self._suburb = suburb
         self._providers = providers
-        self._services = services
+        self._type = type
+        self._id = id
+        self._phone = phone
+        self._services = {}
+        self._rating = [5, 4, 3, 5]
+        
         #self._rating = []
+        for p in self._providers:
+            self._services[p]=p.service
 
     #Getter Methods
     @property
@@ -27,22 +34,40 @@ class Centre:
     def services(self):
         return self._services
 
-    # @property
-    # def rating(self):
-    #     return self._rating
+    @property
+    def type(self):
+        return self._type
+    
+    @property
+    def id(self):
+        return self._id
+    
+    @property
+    def phone(self):
+        return self._phone
+
+    @property
+    def rating(self):
+        return float(sum(self._rating)/float(len(self._rating)))
 
     #Currently taking in provider class
     def add_provider(self, provider):
-        if provider in self._providers:
-            #error handling
-            pass        
-        else:
+        if not any(provider.email == p.email for p in self._providers):
             self._providers.append(provider)
             self._services[provider] = provider.service
-
-    def rem_provider(self, provider):
-        if provider in self._providers:
-            del(self._services[provider])
+            
+            return True
         else:
             #error handling
-            pass
+            return False        
+    
+    def rem_provider(self, provider):
+        for p in self.providers:
+            if provider.email == p.email:
+                rem = p
+                self.providers.remove(rem)
+                self.services.pop(rem)
+                return rem
+        else:
+            #error handling
+            return False
