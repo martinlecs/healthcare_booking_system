@@ -1,4 +1,5 @@
 from user import User
+from appointment import Appointment
 
 class Patient(User):
 	"Patient class"
@@ -32,3 +33,10 @@ class Patient(User):
 	@appointments.setter
 	def appointments(self, appointments):
 		self._appointments = appointments
+
+	def view_current_appointments(self, appointment_id):
+		curr_appt = []
+		for appointment in self._appointments:
+			if appointment.appointment_id == appointment_id:
+				curr_appt.append(appointment)
+		return curr_appt
