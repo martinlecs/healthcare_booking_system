@@ -33,7 +33,7 @@ class Provider(User):
 
 	@property
 	def rating(self):
-		return self._average_rating
+		return self._rating
 
 	@property
 	def average_rating(self):
