@@ -73,12 +73,9 @@ def test_remove_existing_centre():
 	assert(prov.centres == [])
 	prov.add_centre('rand')
 	assert('rand' in prov.centres)
-	checker = prov.remove_centre('rand')
+	checker = prov.remove_centre('RAnd')
 	assert(checker == True)
 	assert(prov.centres == [])
-
-
-# test_remove_case_sensitive_centre_name
 
 
 def test_add_int_between_0_and_5_rating():
@@ -87,30 +84,73 @@ def test_add_int_between_0_and_5_rating():
 	assert('patient@gmail.com' in p.rating.keys())
 	assert(p.rating['patient@gmail.com'] == 3)
 
-def test_add_int_not_between_0_and_5_rating():
+def test_add_int_NOT_between_0_and_5_rating():
 	p = Provider('1','1','1','','','')
+	assert(list(p.rating.keys()) == [])
+	checker = p.add_rating('patient@gmail.com',-1)
+	assert(checker == False)
+	assert(list(p.rating.keys()) == [])
+
+def test_add_string_rating():
+	p = Provider('1','1','1','','','')
+	assert(list(p.rating.keys()) == [])
+	checker = p.add_rating('patient@gmail.com','1')
+	assert(checker == False)
+	assert(list(p.rating.keys()) == [])
+
+def test_add_rating_for_existing_patient():
+	p = Provider('1','1','1','','','')
+	p.add_rating('patient@gmail.com',3)
+	assert(p.rating['patient@gmail.com'] == 3)
+	p.add_rating('patient@gmail.com',5)
+	assert(p.rating['patient@gmail.com'] == 5)	
+
+
+def test_remove_rating_of_existing_patient():
+	p = Provider('1','1','1','','','')
+	p.add_rating('patient@gmail.com',3)
+	checker = p.remove_rating('patient@gmail.com')
+	assert(checker == True)
+	assert(list(p.rating.keys()) == [])
+
+def test_remove_rating_of_non_existing_patient():
+	p = Provider('1','1','1','','','')
+	checker = p.remove_rating('patient@gmail.com')
+	assert(checker == False)
 	assert(list(p.rating.keys()) == [])
 
 
-# test_add_string_rating
+def test_calc_average_rating_with_1_rating():
+	p = Provider('1','1','1','','','')
+	p.add_rating('patient@gmail.com',3)
+	assert(p.average_rating == 3)
 
-# test_add_rating_for_existing_patient
+def test_calc_average_rating_with_more_than_1_rating():
+	p = Provider('1','1','1','','','')
+	p.add_rating('patient@gmail.com',3)
+	p.add_rating('222patient@gmail.com',2)
+	p.add_rating('pat333ient@gmail.com',5)
+	assert(p.average_rating == (3+2+5)/(float(3)))
 
-# test_add_rating_for_non_existing_patient
+def test_calc_average_rating_with_out_ratings():
+	p = Provider('1','1','1','','','')
+	assert(p.average_rating == 0)
+	p.add_rating('patient@gmail.com',3)
+	p.remove_rating('patient@gmail.com')
+	assert(p.average_rating == 0)
+	
+
+def test_get_availability_for_non_existing_centre_and_non_existing_date():
+	p = Provider('1','1','1','','','')
+	p.add_centre('rand')
+	p.get_availability('rand', 2018, 2, 3)
 
 
-# test_remove_rating_of_existing_patient
+# test_make_non_existing_time_slot_unavailable
 
-# test_remove_rating_of_non_existing_patient
+# test_make_existing_time_slot_unavailable
 
-
-# test_calc_average_rating_with_1_rating
-
-# test_calc_average_rating_with_more_than_1_rating
-
-# test_calc_average_rating_with_out_ratings
-
-# test_recalc_average_rating_with_out_ratings
+# test_get_availability_for_existing_date
 
 
 # test_get_availability_for_non_existing_time_slot

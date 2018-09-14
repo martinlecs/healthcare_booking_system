@@ -64,7 +64,16 @@ class Provider(User):
 	# Returns available time slots 
 	def get_availability(self, centre_name, year, month, day):
 		centre_name = centre_name.lower()
+		if type(year) is not int or type(month) is not int or type(day) is not int:
+			return False
+		if year < 2018 or (month < 1 or month > 12) or (day < 1 or day > 31):
+			return False
+		# if date(year, month, day) < date.today():
+		# 	return False
+		# Some test to check the date is valid
 		if centre_name in self._centres:
+			if centre_name not in self._availability.keys():
+				self._availability[centre_name] = {}
 			req_date = date(int(year), int(month), int(day))
 			if req_date in self._availability[centre_name]:
 				return self._availability[centre_name][req_date]
@@ -79,6 +88,10 @@ class Provider(User):
 		centre_name = centre_name.lower()
 		if centre_name.lower() in self._centres:
 			new_date = date(int(year), int(month), int(day))
+
+			if centre_name not in self._availability.keys():
+				self._availability[centre_name] = {}
+
 			if new_date not in self._availability[centre_name].keys():
 				free_time_slots = self.__make_time_slots_list()
 				self._availability[centre_name][new_date] = free_time_slots
@@ -102,14 +115,27 @@ class Provider(User):
 
 	
 	# add rating to dict, recalculate average rating
+	# Only takes in int values of rating
+	# Assumes given patient_email is correct and exists in user manager
 	def add_rating(self, patient_email, rating):
-		self._rating[patient_email] = rating
-		self.__calc_average_rating()
+		if type(rating) is not int:
+			return False
+		if 0 <= rating <= 5:	
+			self._rating[patient_email.lower()] = rating
+			self.__calc_average_rating()
+			return True
+		else:
+			return False
 
-	# pop rating from dictionary
+	# Removes rating of patient
+	# Assumes patient_email is correct
 	def remove_rating(self, patient_email):
-		self._rating.pop(patient_email, None)
-		self.__calc_average_rating()
+		patient_email = patient_email.lower()
+		if patient_email in self._rating.keys():
+			self._rating.pop(patient_email, None)
+			self.__calc_average_rating()
+			return True
+		return False	# patient_email doesn't exist
 
 	# private function to recalculate average rating
 	def __calc_average_rating(self):
