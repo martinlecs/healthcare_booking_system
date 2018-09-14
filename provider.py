@@ -1,17 +1,19 @@
 from datetime import time, date
 from user import User
 
+# Note about availability at the bottom
+# 
+
 class Provider(User):
 	"Provider class"
 
-	def __init__(self, email, password, surname, given_name,provider_no,
-	service, appointments = [], centres = [], availability = {}, rating = {}):
-		super().__init__(email, password, surname, given_name, appointments)
+	def __init__(self, email, password, surname, given_name,provider_no, service):
+		super().__init__(email, password, surname, given_name)
 		self._provider_no = provider_no.lower()
 		self._service = service.lower()
-		self._centres = centres
-		self._availability = availability	#{centre_id:{date_obj:[time_slot]}}
-		self._rating = rating
+		self._centres = [] #centres
+		self._availability = {} #availability	#{centre_id:{date:[time_slot]}}
+		self._rating = {} #rating
 		self._average_rating = 0
 
 	@property
@@ -60,30 +62,35 @@ class Provider(User):
 			return True
 		return False
 
+	# Returns available time slots 
 	def get_availability(self, centre_name, year, month, day):
-		self.__add_date_to_centre_availability(centre_name.lower(), int(year), int(month), int(day))
-		req_date = date(int(year), int(month), int(day))
-		return self._availability[centre_name.lower()][req_date]
-		# if centre_name.lower() not in self._availability.keys():
-		# 	self.__add_centre_to_availability(centre_name)
-		# if centre_name.lower() in availability.keys():
-		# 	req_date = date(int(year), int(month), int(day))
-		# 	if req_date not in self._availability[centre_name.lower()].keys():
-		# 		self.__add_date_to_centre_availability(centre_name.lower(), int(year), int(month), int(day))
-		# 	if req_date in self._availability[centre_name.lower()].keys():
-		# 		return self._availability[centre_name.lower()][req_date]
+		centre_name = centre_name.lower()
+		if centre_name in self._centres:
+			req_date = date(int(year), int(month), int(day))
+			if req_date in self._availability[centre_name]:
+				return self._availability[centre_name][req_date]
+			else:
+				return self.__make_time_slots_list() # Default slots as if they exist and then add date & time slots later
+		else:
+			return False	# ERROR, centre doesn't exist or centre isn't in provider's centes attribute
 
-	def __add_centre_to_availability(self, centre_name):
-		if centre_name not in self._availability.keys():
-			self._availability[centre_name] = {}
+	# Removes time slot from availability. If time slot and date don't exist, add them, 
+	# 	then remove time slot
+	def make_time_slot_unavailable(self, centre_name, year, month, day, time_slot):
+		centre_name = centre_name.lower()
+		if centre_name.lower() in self._centres:
+			new_date = date(int(year), int(month), int(day))
+			if new_date not in self._availability[centre_name].keys():
+				free_time_slots = self.__make_time_slots_list()
+				self._availability[centre_name][new_date] = free_time_slots
+				if time_slot not in free_time_slots:
+					return False	# ERROR
+			self._availability[centre_name][new_date].remove(time_slot)
+			return True
+		else:
+			False	# ERROR
 
-	def __add_date_to_centre_availability(self, centre_name, year, month, day):
-		self.__add_centre_to_availability(centre_name)
-		new_date = date(year, month, day)
-		if new_date not in self._availability[centre_name].keys():
-			free_time_slots = self.__make_time_slots_list()
-			self._availability[centre_name][new_date] = free_time_slots
-
+	# Makes a list of 48 strings representing 30 mins time slots, of 24 hours  
 	def __make_time_slots_list(self):
 		times = []
 		times_string = []
@@ -94,14 +101,7 @@ class Provider(User):
 		    times_string.append(time_slots.strftime("%H:%M"))
 		return times_string
 
-	def make_time_slot_unavailable(self, centre_name, year, month, day, time_slot):
-		centre_name = centre_name.lower()
-		if centre_name in self._availability.keys():
-			the_date = date(int(year), int(month), int(day))
-			if the_date in self._availability[centre_name].keys():
-				if time_slot in self._availability[centre_name][the_date]:
-					self._availability[centre_name][the_date].remove(time_slot)
-
+	
 	# add rating to dict, recalculate average rating
 	def add_rating(self, patient_email, rating):
 		self._rating[patient_email] = rating
@@ -120,19 +120,27 @@ class Provider(User):
 		else:
 			self._average_rating = 0
 
-''' # What I want to dooo
 
-from datetime import time
+# Important note about availability:
+'''
+As can been seen by the comment next to the availability attribute,
+availability is a dictionary that associates a centre with working hours.
+{centre_id:{date:[time_slot]}}
 
-times = []
+Working hours is as a dictionary that associates a date with a list of time slots
+in the form of strings. E.g a possible time slot = '09:00 - 09:30'
 
-for hour in range(24):
-    for minute in [00,30]:
-        times.append(time(hour,minute))
+In the booking form, a date is selected, get_availability() is called and the available times for that date
+is returned.
 
-times_string = []
+Get_availability() has two possible returns:
+	1. A list of time slots associated with a date and centre
+	2. A default list of time slots, for the case when the
+	   date selected isn't associated with a health centre
 
-for time in times:
-    times_string.append(time.strftime("%H:%M"))
+A date becomes associated (added to the health care's dictionary) when a patient
+books an appointment on that date. 
 
+So until the time is booked, the default list is returned and shown on the website, which is a list containing all
+time slots partitioning 24 hours into 30mins.
 '''
