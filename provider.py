@@ -4,14 +4,14 @@ from user import User
 class Provider(User):
 	"Provider class"
 
-	def __init__(self, email, password, surname, given_name,
-	provider_no, service, appointments = [], availability = {}, rating = {}):
+	def __init__(self, email, password, surname, given_name,provider_no,
+	service, appointments = [], centres = [], availability = {}, rating = {}):
 		super().__init__(email, password, surname, given_name, appointments)
-		self._provider_no = provider_no
-		self._service = service
+		self._provider_no = provider_no.lower()
+		self._service = service.lower()
 		self._centres = centres
 		self._availability = availability	#{centre_id:{date_obj:[time_slot]}}
-		self._rating = {}
+		self._rating = rating
 		self._average_rating = 0
 
 	@property
@@ -41,11 +41,11 @@ class Provider(User):
 
 	@provider_no.setter
 	def provider_no(self, provider_no):
-		self._provider_no = provider_no
+		self._provider_no = provider_no.lower()
 
 	@service.setter
 	def service(self, service):
-		self._service = service
+		self._service = service.lower()
 
 
 	def add_centre(self, centre_name):
@@ -57,6 +57,8 @@ class Provider(User):
 		centre_name = centre_name.lower()
 		if centre_name in self._centres:
 			self._centres.remove(centre_name)
+			return True
+		return False
 
 	def get_availability(self, centre_name, year, month, day):
 		self.__add_date_to_centre_availability(centre_name.lower(), int(year), int(month), int(day))
