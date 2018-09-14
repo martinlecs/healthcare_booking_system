@@ -17,8 +17,16 @@ from provider import Provider
 # 	make time slot unavailable (2)
 
 
-# Test setters and getters
+def test__non_case_senesitive_setters_and_getters():
+	p = Provider('test@gmail.com','1234','McTester', 'Test','124024114', 'Official Tester')
+	assert(p.email == 'test@gmail.com')
+	assert(p.password == '1234')
+	assert(p.surname == 'McTester')
+	assert(p.given_name == 'Test')
+	assert(p.provider_no == '124024114')
+	assert(p.service == 'Official Tester')
 
+# def test_case_senesitive_setters_and_getters():
 
 # test_add_non_existing_centre
 
