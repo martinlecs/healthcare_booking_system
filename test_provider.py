@@ -68,7 +68,15 @@ def test_remove_non_existing_centre():
 	checker = prov.remove_centre('Randwick Hospital')
 	assert(checker is False)
 
-# test_remove_existing_centre
+def test_remove_existing_centre():
+	prov = Provider('testsssss@gmail.com','1234','McTester', 'Test','124024114', 'Official Tester')
+	assert(prov.centres == [])
+	prov.add_centre('rand')
+	assert('rand' in prov.centres)
+	checker = prov.remove_centre('rand')
+	assert(checker == True)
+	assert(prov.centres == [])
+
 
 # test_remove_case_sensitive_centre_name
 
