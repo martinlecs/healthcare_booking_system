@@ -4,9 +4,9 @@ from provider import Provider
 
 
 # Pytest testing file
-# Total of 29 tests
+# Total of 25 tests
 # Testing:
-#	gettters (6)
+#	gettters (2)
 #	setters (2)
 #	add centre (3)
 #	remove centre (3)
@@ -46,29 +46,26 @@ def test_setters():
 	assert(p.service == 'official tester')
 
 
-# def test_add_non_existing_centre():
-# 	p1 = Provider('test@gmail.com','1234','McTester', 'Test','124024114', 'Official Tester')
-# 	assert(p1.centres == [])
-# 	p1.add_centre('Randwick Hospital')
-# 	assert('Randwick Hospital'.lower() in p1.centres)
+def test_add_non_existing_centre():
+	p1 = Provider('test@gmail.com','1234','McTester', 'Test','124024114', 'Official Tester')
+	assert(p1.centres == [])
+	p1.add_centre('Randwick Hospital')
+	assert('Randwick Hospital'.lower() in p1.centres)
 
 
 def test_add_existing_centre():
-	p = Provider('trst','123', 'sad', '12312', '2323', 'Blah')
-	assert(p.centres == [])
-	# p2 = Provider('testtt@gmail.com','1234','McTester', 'Test','124024114', 'Official Tester')
-	# assert(p2.centres == [])
-	p.add_centre('Randwick Hospital')
-	p.add_centre('randwick hospital')
-	# p2.add_centre('Randwick Hospital')
-	assert(len(p.centres) == 1 and 'randwick hospital' in p.centres)
+	pp1 = Provider('trst','123', 'sad', '12312', '2323', 'Blah')
+	assert(pp1.centres == [])
+	pp1.add_centre('Randwick Hospital')
+	pp1.add_centre('randwick hospital')
+	assert(len(pp1.centres) == 1)
 
 
 def test_remove_non_existing_centre():
-	p = Provider('testsssss@gmail.com','1234','McTester', 'Test','124024114', 'Official Tester')
-	assert(p.email == 'testsssss@gmail.com')
-	assert(p.centres == [])
-	checker = p.remove_centre('Randwick Hospital')
+	prov = Provider('testsssss@gmail.com','1234','McTester', 'Test','124024114', 'Official Tester')
+	assert(prov.email == 'testsssss@gmail.com')
+	assert(prov.centres == [])
+	checker = prov.remove_centre('Randwick Hospital')
 	assert(checker is False)
 
 # test_remove_existing_centre
@@ -76,9 +73,16 @@ def test_remove_non_existing_centre():
 # test_remove_case_sensitive_centre_name
 
 
-# test_add_int_between_0_and_5_rating
+def test_add_int_between_0_and_5_rating():
+	p = Provider('1','1','1','','','')
+	p.add_rating('patient@gmail.com',3)
+	assert('patient@gmail.com' in p.rating.keys())
+	assert(p.rating['patient@gmail.com'] == 3)
 
-# test_add_int_not_between_0_and_5_rating
+def test_add_int_not_between_0_and_5_rating():
+	p = Provider('1','1','1','','','')
+	assert(list(p.rating.keys()) == [])
+
 
 # test_add_string_rating
 
