@@ -65,28 +65,29 @@ def test_add_existing_provider():
 def test_new_service():
 	um = UserManager()
 	um.add_provider_by_info('example@gmail.com', 'password', 'Cena', 'John', '04253634223' ,'GP')
-	assert(um.get_service_names() == ['GP'])
-	assert(um.services['GP'] == ['example@gmail.com'])
+	assert(um.get_service_names() == ['GP'.lower()])
+	assert(um.services['GP'.lower()] == ['example@gmail.com'])
 	um.add_provider_by_info('exaample2@gmail.com', 'password', 'Cena', 'John', '04253634223' ,'Prac')
-	assert(um.get_service_names() == ['GP', 'Prac'])
-	assert(um.services['Prac'] == ['exaample2@gmail.com'])
+	assert(um.get_service_names() == ['GP'.lower(), 'Prac'.lower()])
+	assert(um.services['Prac'.lower()] == ['exaample2@gmail.com'.lower()])
 
 # test new provider added to existing dict
 def test_new_provider_to_existing_service():
 	um = UserManager()
+	assert(um.providers == [])
 	um.add_provider_by_info('example@gmail.com', 'password', 'Cena', 'John', '04253634223' ,'GP')
 	um.add_provider_by_info('example2@gmail.com', 'password', 'Cena', 'John', '04253634223' ,'GP')
-	assert(um.get_service_names() == ['GP'])
-	assert(um.services['GP'] == ['example@gmail.com', 'example2@gmail.com'])
+	assert(um.get_service_names() == ['GP'.lower()])
+	assert(um.services['GP'.lower()] == ['example@gmail.com', 'example2@gmail.com'])
 
 
 # Test get service names
 def test_get_service_names():
 	um = UserManager()
 	um.add_provider_by_info('example@gmail.com', 'password', 'Cena', 'John', '04253634223' ,'GP')
-	assert(um.get_service_names() == ['GP'])
+	assert(um.get_service_names() == ['GP'.lower()])
 	um.add_provider_by_info('exaample2@gmail.com', 'password', 'Cena', 'John', '04253634223' ,'Prac')
-	assert(um.get_service_names() == ['GP', 'Prac'])
+	assert(um.get_service_names() == ['GP'.lower(), 'Prac'.lower()])
 
 # test get existing user
 def test_get_existing_user():
