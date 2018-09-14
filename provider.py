@@ -65,3 +65,11 @@ class Provider(User):
 	# @rating.setter
 	# def rating(self, rating):
 	# 	self._rating = rating
+	
+
+	def view_current_appointments(self, appointment_id):
+		curr_appt = []
+		for appointment in self._appointments:
+			if appointment.appointment_id == appointment_id:
+				curr_appt.append(appointment)
+		return curr_appt
