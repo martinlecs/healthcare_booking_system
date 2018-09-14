@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block body %}
+    {% if current_user.is_authenticated %}
+        <h3>Search Results: </h3>
+            <table>
+            {% for r in results %}
+                <tr>
+                    <th></th>
+                </tr>
+            {% endfor %}
+            </table>
+    {% else %}
+        <a href="{{url_for('login')}}">go login to see more</a>
+    {% endif%}
+{% endblock %}

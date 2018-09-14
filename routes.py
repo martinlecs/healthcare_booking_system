@@ -9,7 +9,7 @@ login_manager.init_app(app)
 system = SystemManager()
 
 
-@app.route('/', methods=['GET'])
+@app.route('/', methods=['GET', 'POST'])
 def index():
 	return render_template('index.html')
 
@@ -43,6 +43,15 @@ def centre_profile(centre):
 	content = system.get_centre_profile(centre)
 	return render_template('centre_profile.html', content=content)
 
+@app.route('/search', methods=['POST'])
+def search():
+	if request.form['search'] and request.form['type']:
+		if "provider" in request.form['type']:
+			pass
+		else:
+			pass
+		return render_template('search_results', results=results)
+	return redirect(url_for('index'))
 
 @login_manager.user_loader
 def load_user(email):
