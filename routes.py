@@ -1,11 +1,12 @@
 from server import app, user_manager
 from flask import render_template, request, redirect, url_for
-from flask_login import LoginManager, current_user, login_user
+from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from system import SystemManager
 from server import *
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+login_manager.login_view = 'login'
 
 @app.context_processor
 def inject_services_into_all_templates():
@@ -13,6 +14,7 @@ def inject_services_into_all_templates():
 
 
 @app.route('/', methods=['GET', 'POST'])
+@login_required
 def index():
 	return render_template('index.html')
 
@@ -30,7 +32,13 @@ def login():
 			return render_template('login.html', invalid_login=True)
 	return render_template('login.html', invalid_login=False)
 
+@app.route('/logout')
+@login_required
+def logout():
+	logout_user()
+	return redirect(url_for('index'))
 
+@login_required
 @app.route('/provider/<provider>', methods=['GET'])
 def provider_profile(provider):
 	"""
@@ -42,7 +50,7 @@ def provider_profile(provider):
 	content = p.get_information()
 	return render_template('provider_profile.html', content=content)
 
-
+@login_required
 @app.route('/centre/<centre>', methods=['GET'])
 def centre_profile(centre):
 	"""
@@ -60,6 +68,7 @@ Depending on what radio button is selected, uses the respective
 user or centre search function which returns a list of appropriate 
 objects to iterate through and display
 """
+@login_required
 @app.route('/search', methods=['POST'])
 def search():
 	if request.form['type']:
@@ -92,4 +101,4 @@ def search():
 
 @login_manager.user_loader
 def load_user(email):
-	return user_manager.get_user_by_email(email)
+	return user_manager.get_user(email)
