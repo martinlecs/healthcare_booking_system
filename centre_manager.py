@@ -41,6 +41,17 @@ class CentreManager:
         #error handling
         pass
 
+    def get_centre_from_id(self, id):
+        """
+        Used in routes.centre_profile to get a centre object given its ID
+        :param id: the centre id as a string
+        :return: a centre object
+        """
+        for c in self._centres:
+            if c.id == id:
+                return c
+        return None
+
 
     #-------- Search Functions ---------#
     #
