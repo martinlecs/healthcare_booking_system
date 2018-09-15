@@ -6,14 +6,13 @@ from user import User
 
 class Provider(User):
 	"Provider class"
-	def __init__(self, email, password, surname, given_name,
-				provider_no, service, centres = [], appointments = [], availability = {}, rating = {}):
-		super().__init__(email, password, surname, given_name, appointments)
+	def __init__(self, email, password, surname, given_name,provider_no, service):
+		super().__init__(email, password, surname, given_name)
 		self._provider_no = provider_no
-		self._service = service
-		self._centres = centres
-		self._availability = availability	#{centre_id:{date:[time_slot]}}	time_slot
-		# self._rating = {}
+		self._service = service.lower()
+		self._centres = [] #centres
+		self._availability = {} #availability	#{centre_id:{date:[time_slot]}}
+		self._rating = {} #rating
 		self._average_rating = 0
 
 	@property
