@@ -38,4 +38,5 @@ class SystemManager:
         :param centre: a Centre object
         :return: dict containing centre attributes
         """
-        return {k.lstrip('_'): v for k, v in vars(centre).items()}
+        details = centre.get_information()
+        return {k.lstrip('_'): v for k, v in details.items()}

@@ -1,22 +1,19 @@
 from server import app, user_manager, centre_manager
 from flask import render_template, request, redirect, url_for
-from flask_login import LoginManager, current_user, login_user
+from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from system import SystemManager
 from server import user_manager, system, centre_manager
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+login_manager.login_view = 'login'
 
 @app.context_processor
 def inject_services_into_all_templates():
 	return dict(services=[''] + user_manager.get_service_names()) #Details for the drop down box
 
-
-@login_manager.user_loader
-def load_user(email):
-	return user_manager.get_user_by_email(email)
-
 @app.route('/', methods=['GET', 'POST'])
+@login_required
 def index():
 	return render_template('index.html')
 
@@ -33,9 +30,14 @@ def login():
 			return render_template('login.html', invalid_login=True)
 	return render_template('login.html', invalid_login=False)
 
+@app.route('/logout')
+@login_required
+def logout():
+	logout_user()
+	return redirect(url_for('index'))
 
-@app.route('/provider/<provider>', methods=['GET', 'POST'])
-# @login_required
+@login_required
+@app.route('/provider/<provider>', methods=['GET','POST'])
 def provider_profile(provider):
 	"""
 	Renders a provider profile
@@ -45,13 +47,12 @@ def provider_profile(provider):
 	p = user_manager.get_provider(provider)
 	if request.method == 'POST':
 		rating = int(request.form['rate'])
-		#Hard Coded for Testing, waiting for current_user to work
-		p.add_rating("jack@gmail.com", rating) 
+		p.add_rating(current_user.get_id(), rating) 
 	content = p.get_information()
 	return render_template('provider_profile.html', content=content)
 
-
-@app.route('/centre/<centre>', methods=['GET'])
+@login_required
+@app.route('/centre/<centre>', methods=['GET','POST'])
 def centre_profile(centre):
 	"""
 	Creates a centre profile page
@@ -59,11 +60,11 @@ def centre_profile(centre):
 	:return: renders the centre_profile.html template
 	"""
 	c = centre_manager.get_centre_from_id(centre)
+	print(c)
 	if request.method == 'POST':
 		rating = int(request.form['rate'])
-		#Hard Coded for Testing, waiting for current_user to work
-		c.add_rating("jack@gmail.com", rating) 
-	content = system.get_centre_profile(c)
+		c.add_rating(current_user.get_id(), rating) 
+	content = c.get_information()
 	return render_template('centre_profile.html', content=content)
 
 
@@ -72,6 +73,7 @@ Depending on what radio button is selected, uses the respective
 user or centre search function which returns a list of appropriate 
 objects to iterate through and display
 """
+@login_required
 @app.route('/search', methods=['POST'])
 def search():
 	if request.form['type']:
@@ -102,3 +104,6 @@ def search():
 		return redirect(url_for('index'))
 
 
+@login_manager.user_loader
+def load_user(email):
+	return user_manager.get_user(email)

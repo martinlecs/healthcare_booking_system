@@ -44,8 +44,8 @@ class Centre:
         return self._phone
 
     @property
-    def rating(self):
-        return float(sum(self._rating)/float(len(self._rating)))
+    def average_rating(self):
+        return self._average_rating
 
     #Currently taking in provider class
     def add_provider(self, provider):
@@ -84,3 +84,11 @@ class Centre:
             self._average_rating = sum(ratings)/float(len(ratings))
         else:
             self._average_rating = 0
+    
+    def get_information(self):
+        return {'name': self.name,
+                'suburb': self.suburb,
+                'phone': self.phone,
+                # 'providers': self.providers,
+                'rating': self._average_rating,
+                }
