@@ -4,16 +4,16 @@ from provider import Provider
 
 
 # Pytest testing file
-# Total of 25 tests
+# Total of 20 tests
 # Testing:
-#	gettters (2)
-#	setters (2)
-#	add centre (3)
-#	remove centre (3)
-#	add rating (5)
+#	gettters (1)
+#	setters (1)
+#	add centre (2)
+#	remove centre (2)
+#	add rating (4)
 #	remove rating (2)
-#	calc average rating (4)
-#	get availability (2)
+#	calc average rating (3)
+#	get availability (3)
 # 	make time slot unavailable (2)
 
 def test_getters():
@@ -51,7 +51,6 @@ def test_add_non_existing_centre():
 	assert(p1.centres == [])
 	p1.add_centre('Randwick Hospital')
 	assert('Randwick Hospital'.lower() in p1.centres)
-
 
 def test_add_existing_centre():
 	pp1 = Provider('trst','123', 'sad', '12312', '2323', 'Blah')
@@ -151,7 +150,6 @@ def test_get_availability_for_existing_centre_and_non_existing_date():
 	p.add_centre('rand')
 	val = p.get_availability('rand', 2018, 9, 20)
 	assert(len(val) == 48)
-
 
 def test_get_availability_for_invalid_date():
 	p = Provider('1','1','1','','','')
