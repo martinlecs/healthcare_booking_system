@@ -19,10 +19,16 @@ def index():
 
 @app.route('/login', methods=['GET','POST'])
 def login():
-	if request.method == 'GET':
-		return render_template('login.html')
-	elif request.method == 'POST':
-		return redirect(url_for('index'))
+	if request.method == 'POST':
+		email = request.form["email"].strip().lower()
+		password = request.form["password"].lower()
+		user = user_manager.is_valid_user(email, password)
+		if user is not None:
+			login_user(user)
+			return redirect(url_for('index'))
+		else:
+			return render_template('login.html', invalid_login=True)
+	return render_template('login.html', invalid_login=False)
 
 
 @app.route('/provider/<provider>', methods=['GET'])
