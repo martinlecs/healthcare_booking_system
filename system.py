@@ -21,14 +21,17 @@ class SystemManager:
     def search_centre_suburb(self):
         return self._centre_manager.search_suburb
 
+
+
     def get_provider_profile(self, provider):
         """
         This function returns a dict that can be used in Flask's templates
         :param provider: a Provider object
         :return: dict containing provider attributes
         """
-        details = vars(provider)
-        details.pop("_password")
+        # details = vars(provider)
+        # details.pop("_password")
+        details = provider.get_information()
         return {k.lstrip('_'): v for k, v in details.items()}
 
     def get_centre_profile(self, centre):
