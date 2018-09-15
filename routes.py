@@ -6,7 +6,6 @@ from server import *
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-system = SystemManager(user_manager, centre_manager)
 
 @app.context_processor
 def inject_services_into_all_templates():
@@ -20,30 +19,27 @@ def index():
 
 @app.route('/login', methods=['GET','POST'])
 def login():
-	if request.method == 'GET':
-		return render_template('login.html')
-	elif request.method == 'POST':
-		return redirect(url_for('index'))
+	if request.method == 'POST':
+		email = request.form["email"].strip().lower()
+		password = request.form["password"].lower()
+		user = user_manager.is_valid_user(email, password)
+		if user is not None:
+			login_user(user)
+			return redirect(url_for('index'))
+		else:
+			return render_template('login.html', invalid_login=True)
+	return render_template('login.html', invalid_login=False)
 
 
 @app.route('/provider/<provider>', methods=['GET', 'POST'])
 def provider_profile(provider):
 	"""
 	Renders a provider profile
-	:param user: a Provider object
+	:param user: a Provider email
 	:return: renders the provider_profile.html template
 	"""
-<<<<<<< HEAD
-	content = system.get_provider_profile(provider)
-	if request.method == "POST":
-		if request.form['rate'] is not "":
-			rating = int(request.form['rate'])
-			# provider.add_rating
-			pass
-=======
 	p = user_manager.get_provider(provider)
 	content = p.get_information()
->>>>>>> martin/profile
 	return render_template('provider_profile.html', content=content)
 
 
@@ -51,11 +47,11 @@ def provider_profile(provider):
 def centre_profile(centre):
 	"""
 	Creates a centre profile page
-	:param centre: a Centre object
+	:param centre: a Centre id
 	:return: renders the centre_profile.html template
 	"""
-	print(vars(centre))
-	content = system.get_centre_profile(centre)
+	c = centre_manager.get_centre_from_id(centre)
+	content = system.get_centre_profile(c)
 	return render_template('centre_profile.html', content=content)
 
 
@@ -81,7 +77,7 @@ def search():
 			results = user_manager.search_name(query)
 			type_c = False
 		else:
-			results = user_manager.search_service(query)
+			results = user_manager.search_service(select)
 			type_c = False
 
 		if not results:

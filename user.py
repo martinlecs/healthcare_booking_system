@@ -3,12 +3,12 @@ import string
 
 class User(UserMixin):
 	"User class"
-	def __init__(self, email, password, surname, given_name, appointments=[]):
+	def __init__(self, email, password, surname, given_name): #appointments=[]
 		self._email = email.lower()
-		self._password = password.lower()
+		self._password = password
 		self._surname = surname.lower()
 		self._given_name = given_name.lower()
-		self._appointments = appointments
+		self._appointments = [] #appointments
 
 	@property
 	def email(self):
@@ -37,7 +37,7 @@ class User(UserMixin):
 
 	@password.setter
 	def password(self, pwd):
-		self._password = pwd.lower()
+		self._password = pwd
 
 	@surname.setter
 	def surname(self, surname):
