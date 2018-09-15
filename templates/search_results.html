@@ -19,7 +19,7 @@
                         <td>{{ centre.suburb }} </td>
                         <td>{{ centre.phone }} </td>
                         <td>{{ centre.rating }} </td>
-                        <td><a href="{{ url_for('search') }}"> View Profile</a></td>
+                        <td><a href="{{ url_for('centre_profile', centre=centre.id) }}"> View Profile</a></td>
                     </tr>
                     {% endfor %}
                 {% else %}

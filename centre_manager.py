@@ -42,6 +42,13 @@ class CentreManager:
         pass
 
 
+    def get_centre_from_id(self, id):
+        for c in self._centres:
+            if c.id == id:
+                return c
+        return None
+
+
     #-------- Search Functions ---------#
     #
     #performs prefix match on centre name, empty search returns all values

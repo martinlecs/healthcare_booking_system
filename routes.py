@@ -6,7 +6,6 @@ from server import *
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-system = SystemManager()
 
 @app.context_processor
 def inject_services_into_all_templates():
@@ -30,7 +29,7 @@ def login():
 def provider_profile(provider):
 	"""
 	Renders a provider profile
-	:param user: a Provider object
+	:param user: a Provider email
 	:return: renders the provider_profile.html template
 	"""
 	p = user_manager.get_provider(provider)
@@ -42,10 +41,11 @@ def provider_profile(provider):
 def centre_profile(centre):
 	"""
 	Creates a centre profile page
-	:param centre: a Centre object
+	:param centre: a Centre id
 	:return: renders the centre_profile.html template
 	"""
-	content = system.get_centre_profile(centre)
+	c = centre_manager.get_centre_from_id(centre)
+	content = system.get_centre_profile(c)
 	return render_template('centre_profile.html', content=content)
 
 
@@ -56,6 +56,8 @@ objects to iterate through and display
 """
 @app.route('/search', methods=['POST'])
 def search():
+	centre_manager.add_centre_from_details("hospital", "randwick", 1, "specialist", 123456)
+	print(request.form)
 	if request.form['type']:
 		query = request.form['search']
 		select = request.form.get('type', 'centre_name') #for now
@@ -71,7 +73,7 @@ def search():
 			results = user_manager.search_name(query)
 			type_c = False
 		else:
-			results = user_manager.search_service(query)
+			results = user_manager.search_service(select)
 			type_c = False
 
 		if not results:
