@@ -140,31 +140,47 @@ def test_calc_average_rating_with_out_ratings():
 	assert(p.average_rating == 0)
 	
 
-def test_get_availability_for_non_existing_centre_and_non_existing_date():
+def test_get_availability_for_non_existing_centre_and_non_existing_but_valid_date():
+	p = Provider('1','1','1','','','')
+	# p.add_centre('rand')
+	checker = p.get_availability('rand', 2018, 9, 20)
+	assert(checker == False)
+
+def test_get_availability_for_existing_centre_and_non_existing_date():
 	p = Provider('1','1','1','','','')
 	p.add_centre('rand')
-	p.get_availability('rand', 2018, 2, 3)
+	val = p.get_availability('rand', 2018, 9, 20)
+	assert(len(val) == 48)
 
 
-# test_make_non_existing_time_slot_unavailable
+def test_get_availability_for_invalid_date():
+	p = Provider('1','1','1','','','')
+	p.add_centre('rand')
+	checker = p.get_availability('rand', 2018, 19, 220)
+	assert(checker == None)
+	checker = p.get_availability('rand', 2018, 8, 20)
+	assert(checker == None)
 
-# test_make_existing_time_slot_unavailable
+def test_make_non_existing_and_available_slots_unavailable():
+	p = Provider('1','1','1','','','')
+	p.add_centre('rand')
+	p.get_availability('rand', 2018, 9, 20)
+	checker = p.make_time_slot_unavailable('rand', 2018, 9, 20, '08:30')
+	assert(checker == True)
+	val = p.get_availability('rand', 2018, 9, 20)
+	assert('08:30' not in val)
+	checker = p.make_time_slot_unavailable('rand', 2018, 9, 20, '09:30')
+	val = p.get_availability('rand', 2018, 9, 20)
+	assert('08:30' not in val and '09:30' not in val)
 
-# test_get_availability_for_existing_date
+def test_get_availability_for_existing_date():
+	p = Provider('1','1','1','','','')
+	p.add_centre('rand')
+	p.get_availability('rand', 2018, 9, 20)
+	p.make_time_slot_unavailable('rand', 2018, 9, 20, '08:30')
+	val = p.get_availability('rand', 2018, 9, 20)
+	assert('08:30' not in val and type(val) is list)
 
-
-# test_get_availability_for_non_existing_time_slot
-
-	# test_get_availability_adds_new_centre
-
-	# test_get_availability_adds_new_date
-
-# test_get_availability_for_existing_time_slot
-
-
-# test_make_available_time_slot_unavailable
-
-# test_make_non_existing_time_slot_unavailable
 
 
 

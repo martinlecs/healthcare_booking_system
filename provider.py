@@ -48,7 +48,7 @@ class Provider(User):
 	def service(self, service):
 		self._service = service.lower()
 
-
+	# Adds centre by name to prov's centres list
 	def add_centre(self, centre_name):
 		centre_name = centre_name.lower()
 		if centre_name not in self._centres:
@@ -62,15 +62,14 @@ class Provider(User):
 		return False
 
 	# Returns available time slots 
+	# Returns FALSE when year, month or day are not int types, or when the centre name
+	# 	doesn't exist in provider's centres (which shouldn't happen and if it did, then its a big problem)
+	# Returns NONE when an invalid date values or a day in the past is passsed in 
 	def get_availability(self, centre_name, year, month, day):
 		centre_name = centre_name.lower()
-		if type(year) is not int or type(month) is not int or type(day) is not int:
-			return False
-		if year < 2018 or (month < 1 or month > 12) or (day < 1 or day > 31):
-			return False
-		# if date(year, month, day) < date.today():
-		# 	return False
-		# Some test to check the date is valid
+		valid = self.__check_date_validity(year, month, day)
+		if valid != True:
+			return valid
 		if centre_name in self._centres:
 			if centre_name not in self._availability.keys():
 				self._availability[centre_name] = {}
@@ -84,19 +83,21 @@ class Provider(User):
 
 	# Removes time slot from availability. If time slot and date don't exist, add them, 
 	# 	then remove time slot
+	# Returns FALSE when year, month or day are not int types, or when the centre name
+	# 	doesn't exist in provider's centres (which shouldn't happen and if it did, then its a big problem)
+	# Returns NONE when an invalid date values or a day in the past is passsed in
 	def make_time_slot_unavailable(self, centre_name, year, month, day, time_slot):
 		centre_name = centre_name.lower()
-		if centre_name.lower() in self._centres:
-			new_date = date(int(year), int(month), int(day))
-
-			if centre_name not in self._availability.keys():
-				self._availability[centre_name] = {}
-
+		valid = self.__check_date_validity(year, month, day)
+		if valid != True:
+			return valid
+		if centre_name in self._availability.keys():
+			new_date = date(year, month, day)
 			if new_date not in self._availability[centre_name].keys():
 				free_time_slots = self.__make_time_slots_list()
-				self._availability[centre_name][new_date] = free_time_slots
 				if time_slot not in free_time_slots:
 					return False	# ERROR
+				self._availability[centre_name][new_date] = free_time_slots
 			self._availability[centre_name][new_date].remove(time_slot)
 			return True
 		else:
@@ -113,7 +114,15 @@ class Provider(User):
 		    times_string.append(time_slots.strftime("%H:%M"))
 		return times_string
 
-	
+	def __check_date_validity(self, year, month, day):
+		if type(year) is not int or type(month) is not int or type(day) is not int:
+			return False	# Invalid type
+		if year < 2018 or (month < 1 or month > 12) or (day < 1 or day > 31):
+			return None		# invalid date values
+		if date(year, month, day) < date.today():
+			return None		# day in the past
+		return True
+
 	# add rating to dict, recalculate average rating
 	# Only takes in int values of rating
 	# Assumes given patient_email is correct and exists in user manager
