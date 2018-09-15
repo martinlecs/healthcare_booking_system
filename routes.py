@@ -2,7 +2,7 @@ from server import app, user_manager, centre_manager
 from flask import render_template, request, redirect, url_for
 from flask_login import LoginManager, current_user, login_user
 from system import SystemManager
-from server import *
+from server import user_manager, system, centre_manager
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -12,10 +12,13 @@ def inject_services_into_all_templates():
 	return dict(services=[''] + user_manager.get_service_names()) #Details for the drop down box
 
 
+@login_manager.user_loader
+def load_user(email):
+	return user_manager.get_user_by_email(email)
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
 	return render_template('index.html')
-
 
 @app.route('/login', methods=['GET','POST'])
 def login():
@@ -32,6 +35,7 @@ def login():
 
 
 @app.route('/provider/<provider>', methods=['GET', 'POST'])
+# @login_required
 def provider_profile(provider):
 	"""
 	Renders a provider profile
@@ -39,6 +43,10 @@ def provider_profile(provider):
 	:return: renders the provider_profile.html template
 	"""
 	p = user_manager.get_provider(provider)
+	if request.method == 'POST':
+		rating = int(request.form['rate'])
+		#Hard Coded for Testing, waiting for current_user to work
+		p.add_rating("jack@gmail.com", rating) 
 	content = p.get_information()
 	return render_template('provider_profile.html', content=content)
 
@@ -51,6 +59,10 @@ def centre_profile(centre):
 	:return: renders the centre_profile.html template
 	"""
 	c = centre_manager.get_centre_from_id(centre)
+	if request.method == 'POST':
+		rating = int(request.form['rate'])
+		#Hard Coded for Testing, waiting for current_user to work
+		c.add_rating("jack@gmail.com", rating) 
 	content = system.get_centre_profile(c)
 	return render_template('centre_profile.html', content=content)
 
@@ -90,6 +102,3 @@ def search():
 		return redirect(url_for('index'))
 
 
-@login_manager.user_loader
-def load_user(email):
-	return user_manager.get_user_by_email(email)
