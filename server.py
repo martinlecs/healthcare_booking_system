@@ -8,6 +8,6 @@ from system import SystemManager
 app = Flask(__name__)
 app.secret_key = 'super secret shhhh'
 
-system = SystemManager()
 user_manager = UserManager.load_data()
 centre_manager = CentreManager.load_data()
+system = SystemManager(centre_manager, user_manager)

@@ -1,8 +1,8 @@
 class SystemManager:
-    def __init__(self):
-        self._user_manager = []
-        self._centre_manager = []
-        self._appointment_manager = []
+    def __init__(self, user_manager, centre_manager):
+        self._user_manager = user_manager
+        self._centre_manager = centre_manager
+        # self._appointment_manager = []
 
     def search_service(self):
         pass
@@ -21,8 +21,6 @@ class SystemManager:
     def search_centre_suburb(self):
         return self._centre_manager.search_suburb
 
-
-
     def get_provider_profile(self, provider):
         """
         This function returns a dict that can be used in Flask's templates
@@ -40,4 +38,5 @@ class SystemManager:
         :param centre: a Centre object
         :return: dict containing centre attributes
         """
-        return {k.lstrip('_'): v for k, v in vars(centre).items()}
+        details = centre.get_information()
+        return {k.lstrip('_'): v for k, v in details.items()}

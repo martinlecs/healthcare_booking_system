@@ -162,7 +162,6 @@ class Provider(User):
 		else:
 			self._average_rating = 0
 
-
 # Important note about availability:
 '''
 As can been seen by the comment next to the availability attribute,

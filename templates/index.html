@@ -1,4 +1,9 @@
 {% extends 'base.html' %}
 {% block body %}
 	<h2>Home screen!</h2>
+	{% if current_user.is_authenticated %}
+		<h3>Main page stuff</h3>
+	{% else %}
+		<a href="{{url_for('login')}}">go login to see more</a>
+	{% endif%}
 {% endblock %}

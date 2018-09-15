@@ -35,13 +35,13 @@
                 <th>Rating</th>
                 <th>Profile</th>
             </tr>
-            {% for centre in results %}
+            {% for c in results %}
             <tr>
-                <td>{{ centre.name }} </td>
-                <td>{{ centre.suburb }} </td>
-                <td>{{ centre.phone }} </td>
-                <td>{{ centre.rating }} </td>
-                <td><a href="{{ url_for('search') }}"> View Profile</a></td>
+                <td>{{ c.name }} </td>
+                <td>{{ c.suburb }} </td>
+                <td>{{ c.phone }} </td>
+                <td>{{ c.average_rating }} </td>
+                <td><a href="{{ url_for('centre_profile', centre=c.id) }}"> View Profile</a></td>
             </tr>
             {% endfor %}
         {% else %}
@@ -60,7 +60,7 @@
                 <td>{{ prov.email }}</td>
                 <td>{{ prov.average_rating }}</td>
                 <td>{{ prov.centres }}</td>
-                <td><a href="{{ url_for('search') }}"> View Profile</a></td>
+                <td><a href="{{ url_for('provider_profile', provider=prov.email)}}"> View Profile</a></td>
                 </tr>
         {% endfor %}
     

@@ -1,8 +1,8 @@
-from server import app, user_manager
+from server import app, user_manager, centre_manager
 from flask import render_template, request, redirect, url_for
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from system import SystemManager
-from server import *
+from server import user_manager, system, centre_manager
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -12,12 +12,10 @@ login_manager.login_view = 'login'
 def inject_services_into_all_templates():
 	return dict(services=[''] + user_manager.get_service_names()) #Details for the drop down box
 
-
 @app.route('/', methods=['GET', 'POST'])
 @login_required
 def index():
 	return render_template('index.html')
-
 
 @app.route('/login', methods=['GET','POST'])
 def login():
@@ -39,7 +37,7 @@ def logout():
 	return redirect(url_for('index'))
 
 @login_required
-@app.route('/provider/<provider>', methods=['GET'])
+@app.route('/provider/<provider>', methods=['GET','POST'])
 def provider_profile(provider):
 	"""
 	Renders a provider profile
@@ -47,11 +45,14 @@ def provider_profile(provider):
 	:return: renders the provider_profile.html template
 	"""
 	p = user_manager.get_provider(provider)
+	if request.method == 'POST':
+		rating = int(request.form['rate'])
+		p.add_rating(current_user.get_id(), rating) 
 	content = p.get_information()
 	return render_template('provider_profile.html', content=content)
 
 @login_required
-@app.route('/centre/<centre>', methods=['GET'])
+@app.route('/centre/<centre>', methods=['GET','POST'])
 def centre_profile(centre):
 	"""
 	Creates a centre profile page
@@ -59,7 +60,11 @@ def centre_profile(centre):
 	:return: renders the centre_profile.html template
 	"""
 	c = centre_manager.get_centre_from_id(centre)
-	content = system.get_centre_profile(c)
+	print(c)
+	if request.method == 'POST':
+		rating = int(request.form['rate'])
+		c.add_rating(current_user.get_id(), rating) 
+	content = c.get_information()
 	return render_template('centre_profile.html', content=content)
 
 
