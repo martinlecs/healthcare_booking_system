@@ -1,28 +1,29 @@
-from server import app, user_manager
 from flask import render_template, request, redirect, url_for
-from flask_login import LoginManager, current_user, login_user
-from system import SystemManager
 from server import *
-
-login_manager = LoginManager()
-login_manager.init_app(app)
 
 @app.context_processor
 def inject_services_into_all_templates():
 	return dict(services=[''] + user_manager.get_service_names()) #Details for the drop down box
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
 def index():
 	return render_template('index.html')
 
 
-@app.route('/login', methods=['GET','POST'])
+@app.route('/', methods=['GET','POST'])
 def login():
 	if request.method == 'GET':
 		return render_template('login.html')
 	elif request.method == 'POST':
 		return redirect(url_for('index'))
+
+
+@app.route('/profile', methods=['GET'])
+def user_profile():
+	user = load_user(current_user.get_id())
+	content = user.get_user_info()
+	return render_template('user_profile.html', content=content)
 
 
 @app.route('/provider/<provider>', methods=['GET'])
@@ -83,7 +84,3 @@ def search():
 	else:
 		return redirect(url_for('index'))
 
-
-@login_manager.user_loader
-def load_user(email):
-	return user_manager.get_user_by_email(email)

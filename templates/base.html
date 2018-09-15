@@ -9,8 +9,8 @@
         <header>
             <div class="topnav">
                 <a href="{{ url_for('index') }}">Home</a>
-                <a href="#about">About</a>
-                <a href="#contact">Contact</a>
+                <a href="{{ url_for('user_profile') }}">Profile</a>
+                <a href="#contact" disabled>Contact</a>
                 <form style="display: inline;" action="{{ url_for('search') }}" method="post" name="search">
                     <input name="search" type="text" placeholder="Search..">
                     <select name="type">

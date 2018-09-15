@@ -42,7 +42,7 @@ class UserManager:
 		if user is not None:
 			return user
 
-	# Given patient info, add it to patients list	
+	# Given patient info, add it to patients list
 	def add_patient_by_info(self, email, password, surname, given_name, medicare_no):
 		if not any(patient.email == email.lower() for patient in self._patients):
 			self._patients.append(Patient(email, password, surname, given_name, medicare_no))
