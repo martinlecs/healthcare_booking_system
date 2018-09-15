@@ -72,4 +72,7 @@ class Provider(User):
 	# private function to recalculate average rating
 	def __calc_average_rating(self):
 		ratings = list(self._rating.values())
-		self._average_rating = sum(ratings)/float(len(ratings))
+		if len(ratings) > 0:
+			self._average_rating = sum(ratings)/float(len(ratings))
+		else:
+			self._average_rating = 0

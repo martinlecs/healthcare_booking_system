@@ -1,8 +1,8 @@
 class SystemManager:
-    def __init__(self):
-        self._user_manager = []
-        self._centre_manager = []
-        self._appointment_manager = []
+    def __init__(self, user_manager, centre_manager):
+        self._user_manager = user_manager
+        self._centre_manager = centre_manager
+        # self._appointment_manager = []
 
     def search_service(self):
         pass
@@ -21,12 +21,13 @@ class SystemManager:
     def search_centre_suburb(self):
         return self._centre_manager.search_suburb
 
-    def get_provider_profile(self, provider):
+    def get_provider_profile(self, provider_email):
         """
         This function returns a dict that can be used in Flask's templates
         :param provider: a Provider object
         :return: dict containing provider attributes
         """
+        provider = self._user_manager.get_user(provider_email)
         details = vars(provider)
         details.pop("_password")
         return {k.lstrip('_'): v for k, v in details.items()}
