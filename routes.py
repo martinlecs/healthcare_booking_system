@@ -56,8 +56,6 @@ objects to iterate through and display
 """
 @app.route('/search', methods=['POST'])
 def search():
-	centre_manager.add_centre_from_details("hospital", "randwick", 1, "specialist", 123456)
-	print(request.form)
 	if request.form['type']:
 		query = request.form['search']
 		select = request.form.get('type', 'centre_name') #for now
