@@ -46,6 +46,7 @@ class CentreManager:
     #
     #performs prefix match on centre name, empty search returns all values
     def search_name(self, search):
+        search = search.strip()
         if search == "":
             return self._centres
         else:
@@ -63,6 +64,7 @@ class CentreManager:
 
     #Performs prefix match on centre suburbs, returns list of centres that match
     def search_suburb(self, search):
+        search = search.strip()
         if search == "":
             return self._centres
         else:

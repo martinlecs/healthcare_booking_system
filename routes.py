@@ -2,11 +2,15 @@ from server import app, user_manager, centre_manager
 from flask import render_template, request, redirect, url_for
 from flask_login import LoginManager, current_user, login_user
 from system import SystemManager
-
+from server import *
 
 login_manager = LoginManager()
 login_manager.init_app(app)
 system = SystemManager(user_manager, centre_manager)
+
+@app.context_processor
+def inject_services_into_all_templates():
+	return dict(services=[''] + user_manager.get_service_names()) #Details for the drop down box
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -29,12 +33,17 @@ def provider_profile(provider):
 	:param user: a Provider object
 	:return: renders the provider_profile.html template
 	"""
+<<<<<<< HEAD
 	content = system.get_provider_profile(provider)
 	if request.method == "POST":
 		if request.form['rate'] is not "":
 			rating = int(request.form['rate'])
 			# provider.add_rating
 			pass
+=======
+	p = user_manager.get_provider(provider)
+	content = p.get_information()
+>>>>>>> martin/profile
 	return render_template('provider_profile.html', content=content)
 
 
@@ -49,54 +58,42 @@ def centre_profile(centre):
 	content = system.get_centre_profile(centre)
 	return render_template('centre_profile.html', content=content)
 
-# @app.route('/search', methods=['POST'])
-# def search():
-# 	if request.form['search'] and request.form['type']:
-# 		if "provider" in request.form['type']:
-# 			pass
-# 		else:
-# 			pass
-# 		return render_template('search_results', results=results)
-# 	return redirect(url_for('index'))
-
-@login_manager.user_loader
-def load_user(email):
-	return user_manager.get_user_by_email(email)
 
 """ 
 Depending on what radio button is selected, uses the respective
 user or centre search function which returns a list of appropriate 
 objects to iterate through and display
 """
-@app.route('/search', methods = ['GET', 'POST'])
+@app.route('/search', methods=['POST'])
 def search():
-	if request.method == 'POST':
-		pass
-	services = [''] + user_manager.get_service_names() #Details for the drop down box
-	results = []
-	error = False #Displays message for no result/no selection
-	type_c = True #Displays table for centre/provider details
+	if request.form['type']:
+		query = request.form['search']
+		select = request.form.get('type', 'centre_name') #for now
+		results = []
 
-	#Not the nicest looking code, but just sorts through depending on which category was pressed
-	if request.args.get('select', None) is not None:
-		query=request.args.get('query')
-		select = request.args.get('select','centre_name') #for now
-		if select == 'centre_name':
+		if select == 'c_name':
 			results = centre_manager.search_name(query)
 			type_c = True
-		elif select == 'centre_suburb':
+		elif select == 'c_suburb':
 			results = centre_manager.search_suburb(query)
 			type_c = True
-		elif select == 'prov_name':
+		elif select == 'p_name':
 			results = user_manager.search_name(query)
 			type_c = False
-		elif select == 'prov_service':
-			query = request.args.get('service', "")
+		else:
 			results = user_manager.search_service(query)
 			type_c = False
-		if(len(results) is 0):
+
+		if not results:
 			error = "No matches found"
+		else:
+			error = "Please select a search category"
+
+		return render_template('search_results.html', results=results, type_c=type_c, error=error)
 	else:
-		error = "Please select a search category"
-		
-	return render_template('search.html', services=services, results=results, error=error, type_c=type_c)
+		return redirect(url_for('index'))
+
+
+@login_manager.user_loader
+def load_user(email):
+	return user_manager.get_user_by_email(email)

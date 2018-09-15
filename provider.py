@@ -9,7 +9,7 @@ class Provider(User):
 		self._service = service
 		self._centres = centres
 		self._availability = availability	#{centre_id:{date:[time_slot]}}	time_slot
-		self._rating = {}
+		# self._rating = {}
 		self._average_rating = 0
 
 	@property
@@ -43,6 +43,18 @@ class Provider(User):
 	@service.setter
 	def service(self, service):
 		self._service = service
+
+	def get_information(self):
+		return { 'email': self.email,
+				 'surname': self.surname,
+				 'given_name': self.given_name,
+				 'provider_no': self._provider_no,
+				 'service': self._service,
+				 'centres': self._centres,
+				 'appointments': self.appointments,
+				 'availability': self._availability,
+				 'rating': self._average_rating,
+				}
 
 
 	def add_centres(self, centre):

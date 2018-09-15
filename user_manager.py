@@ -163,6 +163,14 @@ class UserManager:
 			if provider.email == email:
 				return provider
 
+<<<<<<< HEAD
+=======
+	def get_provider(self, email):
+		for provider in self._providers:
+			if provider.email == email:
+				return provider
+		return None
+>>>>>>> martin/profile
 	"""  
 	Load/Save Data methods:
 	load_data checks if there is a pickle file for the users (currently only implemented providers)

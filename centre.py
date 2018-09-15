@@ -44,8 +44,8 @@ class Centre:
         return self._phone
 
     @property
-    def average_rating(self):
-        return self._average_rating
+    def rating(self):
+        return float(sum(self._rating)/float(len(self._rating)))
 
     #Currently taking in provider class
     def add_provider(self, provider):
