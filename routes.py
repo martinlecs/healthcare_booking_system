@@ -62,7 +62,7 @@ def book(provider, centre):
 		if avail != None:
 			return render_template('booking.html', date=date, reason=reason, provider=p, centre=c, available_slots=avail, date_chosen=True)
 		else:
-			return 'fuck'
+			return 'Something Wrong?'
 	else:
 		return render_template('booking.html', provider=p, centre=c, date_chosen=False, error=True)
 
@@ -88,6 +88,8 @@ def book_confirmation(provider, centre, date, time_slot, reason):
 	checker = p.make_time_slot_unavailable(c.name, year, month, day, time_slot)
 	if checker != True:
 		return 'shit biscuit'
+	user_manager.save_data()
+	appt_manager.save_data()
 	return redirect(url_for('index'))
 	
 
@@ -163,6 +165,10 @@ def search():
 		return render_template('search_results.html', results=results, type_c=type_c, error=error)
 	else:
 		return redirect(url_for('index'))
+
+@app.route('/not_a_secret', methods=['GET'])
+def not_a_secret():
+	return render_template('not_a_secret.html')
 
 
 
