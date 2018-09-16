@@ -15,8 +15,8 @@ class Patient(User):
 		self._medicare_no = medicare_no
 
 	def get_information(self):
-		return {'email': self.email,
-				'surname': self.surname,
-				'given_name': self.given_name,
-				'medicare_no': self.medicare_no,
-			}
+		return { 'email': self.email,
+				 'surname': self.surname,
+				 'given_name': self.given_name,
+				 'medicare_no': self._medicare_no,
+				}

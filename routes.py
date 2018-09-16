@@ -53,7 +53,7 @@ def user_profile():
 	:return: user_profile.html if all works out
 	"""
 	user = load_user(current_user.get_id())
-	content = user.get_user_info()
+	content = user.get_information()
 	return render_template('user_profile.html', content=content)
 
 
