@@ -91,5 +91,9 @@ class Centre:
                 'phone': self.phone,
                 'providers': self.providers,
                 'rating': self.average_rating,
+<<<<<<< HEAD
                 'id': self._id
+=======
+                'id':self.id
+>>>>>>> viewappointments
                 }

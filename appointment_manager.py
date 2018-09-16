@@ -1,4 +1,5 @@
 from appointment import Appointment
+import pickle
 
 class AppointmentManager:
     def __init__(self):

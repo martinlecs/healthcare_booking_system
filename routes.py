@@ -3,6 +3,7 @@ from flask_login import LoginManager, current_user, login_user, logout_user, log
 from system import SystemManager
 from server import app, user_manager, centre_manager, appt_manager
 from date_validity import is_date_valid
+from provider import Provider
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -49,8 +50,8 @@ def book(provider, centre):
 	# 	return redirect(url_for('index'))
 
 	reason = request.args.get("reason")
-	if reason is None:
-		reason = ""
+	if reason is None or reason is "":
+		reason = " "
 	date = request.args.get("date")
 	if date is not "" and date is not None:
 		date_split = date.split('-')
@@ -128,14 +129,15 @@ def centre_profile(centre):
 	return render_template('centre_profile.html', content=content)
 
 
-""" 
-Depending on what radio button is selected, uses the respective
-user or centre search function which returns a list of appropriate 
-objects to iterate through and display
-"""
 @login_required
 @app.route('/search', methods=['POST'])
 def search():
+	""" 
+	Returns search results of providers/centres depending on
+	search category
+	:param query: search term and category
+	:return: renders search_results.html with table of results
+	"""
 	if request.form['type']:
 		query = request.form['search']
 		select = request.form.get('type', 'centre_name') #for now
@@ -164,6 +166,18 @@ def search():
 	else:
 		return redirect(url_for('index'))
 
+@login_required
+@app.route('/appointments', methods=['GET'])
+def view_appointments():
+	user = user_manager.get_user(current_user.get_id())
+	print(type(user))
+	if type(user) is Provider:
+		prov_view = True
+	else:
+		prov_view = False
+	cur_appt = user.get_upcoming_appointments()
+	content = [x.get_information() for x in cur_appt]
+	return render_template('appointment_history.html', content=content, prov_view=prov_view)
 
 
 @login_manager.user_loader
