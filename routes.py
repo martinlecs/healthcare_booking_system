@@ -140,6 +140,18 @@ def centre_profile(centre):
 
 
 @login_required
+@app.route('/patient/<patient>', methods=['GET'])
+def patient_profile(patient):
+	"""
+	Creates a centre profile page
+	:param centre: a Centre id
+	:return: renders the centre_profile.html template
+	"""
+	p = user_manager.get_user(patient)
+	content = p.get_information()
+	return render_template('patient_profile.html', content=content)
+
+@login_required
 @app.route('/search', methods=['POST'])
 def search():
 	""" 
@@ -180,7 +192,6 @@ def search():
 @app.route('/appointments', methods=['GET'])
 def view_appointments():
 	user = user_manager.get_user(current_user.get_id())
-	print(type(user))
 	if type(user) is Provider:
 		prov_view = True
 	else:
