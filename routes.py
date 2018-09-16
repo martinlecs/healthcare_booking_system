@@ -49,7 +49,7 @@ def book(provider, centre):
 	# 	return redirect(url_for('index'))
 
 	date = request.args.get("date")
-	if date is not "":
+	if date is not "" and date is not None:
 		date_split = date.split('-')
 		year = int(date_split[0])
 		month = int(date_split[1])
