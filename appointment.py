@@ -71,8 +71,8 @@ class Appointment:
 
 # setters
     def __set_id(self):
-        self._id = Appointment.appt_id
         Appointment.appt_id += 1
+        return Appointment.appt_id
 
     @provider_email.setter
     def provider_email(self, provider_email):

@@ -1,4 +1,5 @@
 from flask import Flask
+from appointment import Appointment
 from centre_manager import CentreManager
 from user_manager import UserManager
 from appointment_manager import AppointmentManager
@@ -12,4 +13,4 @@ app.secret_key = 'super secret shhhh'
 user_manager = UserManager.load_data()
 centre_manager = CentreManager.load_data()
 appt_manager = AppointmentManager.load_data()
-system = SystemManager(user_manager, centre_manager)    
+system = SystemManager(user_manager, centre_manager)
