@@ -1,6 +1,4 @@
 from flask import render_template, request, redirect, url_for
-from server import *
-
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from system import SystemManager
 from server import app, user_manager, centre_manager, appt_manager
@@ -22,6 +20,10 @@ def index():
 
 @app.route('/login', methods=['GET','POST'])
 def login():
+	"""
+	Logs In User
+	:return: Redirects on access approved
+	"""
 	if request.method == 'POST':
 		email = request.form["email"].strip().lower()
 		password = request.form["password"].lower()
@@ -36,6 +38,10 @@ def login():
 @app.route('/logout')
 @login_required
 def logout():
+	"""
+	Logs out current user
+	:return: redirect to index, which redirects to login
+	"""
 	logout_user()
 	return redirect(url_for('index'))
 
@@ -43,6 +49,10 @@ def logout():
 @app.route('/profile', methods=['GET'])
 @login_required
 def user_profile():
+	"""
+	Renders Current User's Profile
+	:return: user_profile.html if all works out
+	"""
 	user = load_user(current_user.get_id())
 	content = user.get_user_info()
 	return render_template('user_profile.html', content=content)
@@ -51,13 +61,14 @@ def user_profile():
 @login_required
 @app.route('/book/<provider>_<centre>', methods=['GET','POST'])
 def book(provider, centre):
+	"""
+	Renders Booking Page
+	:param provider: a provider email
+	:param centre: a centre id
+	:return: booking.html if all works out, otherwise 'Something Wrong?'
+	"""
 	p = user_manager.get_user(provider)
 	c = centre_manager.get_centre_from_id(centre)
-	# if request.method == 'POST':
-	# 	date = request.form["date"]
-	# 	# validity = is_date_valid(year, month, day)
-	# 	# if validity is True:
-	# 	return redirect(url_for('index'))
 
 	reason = request.args.get("reason")
 	if reason is None or reason is "":
@@ -68,7 +79,6 @@ def book(provider, centre):
 		year = int(date_split[0])
 		month = int(date_split[1])
 		day = int(date_split[2])
-		# get availability
 		avail = p.get_availability(c.name, year, month, day)
 		if avail != None:
 			return render_template('booking.html', date=date, reason=reason, provider=p, centre=c, available_slots=avail, date_chosen=True)
@@ -82,12 +92,21 @@ def book(provider, centre):
 @login_required
 @app.route('/book_confirmation/<provider>_<centre>_<date>_<reason>_<time_slot>', methods=['GET','POST'])
 def book_confirmation(provider, centre, date, time_slot, reason):
+	"""
+	Submmits Booking request
+	:param provider: a provider email
+	:param centre: a centre id
+	:param date: a date in form of string
+	:param time_slot: string
+	:param reason: string
+	:return: redirects to index function if all works out, otherwise 'Something Wrong?'
+	"""
 	p = user_manager.get_user(provider)
 	c = centre_manager.get_centre_from_id(centre)
 	# make appointment object
 	appt = appt_manager.make_appt_and_add_appointment_to_manager(current_user.email, provider, centre, date, time_slot, reason)
 	if appt == False:
-		return 'crap'
+		return 'Something Wrong?'
 	# Add appts object to patient and provider
 	current_user.add_appointment(appt)
 	p.add_appointment(appt)
@@ -98,7 +117,7 @@ def book_confirmation(provider, centre, date, time_slot, reason):
 	day = int(date_split[2])
 	checker = p.make_time_slot_unavailable(c.name, year, month, day, time_slot)
 	if checker != True:
-		return 'shit biscuit'
+		return 'Something Wrong?'
 	user_manager.save_data()
 	appt_manager.save_data()
 	return redirect(url_for('index'))
