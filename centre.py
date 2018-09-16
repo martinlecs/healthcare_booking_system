@@ -91,4 +91,5 @@ class Centre:
                 'phone': self.phone,
                 'providers': self.providers,
                 'rating': self.average_rating,
+                'id':self.id
                 }
