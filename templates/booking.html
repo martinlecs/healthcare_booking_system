@@ -2,13 +2,16 @@
 {% block body %}
 	<h2>Make A Booking</h2>
 	<div>
-		<p>Provider: {{ provider.surname }} {{ provider.given_name }}</p>
+		<p>Provider: {{ provider.fullname }}</p>
 		<p>Centre: {{ centre.name }}</p>
 	</div>
-	<h3>Choose a date</h3>
+	
 	<div>
 		<form method='GET'>
-			<input type="date" name="date" value="{{date}}">
+			<h3>State your reason for visiting</h3>
+			<input type="text" name="reason" value="{{ reason }}">
+			<h3>Choose a date</h3>
+			<input type="date" name="date" value="{{ date }}">
 			<button type="submit">Submit</button>
 		</form>
 		<div>
@@ -28,7 +31,7 @@
 			{% for slot in available_slots %}
 				<tr>
 					<td>{{ slot }}</td>
-					<td><a href="{{ url_for('book_confirmed', provider=provider.email, centre=centre.id, date=date, time_slot=slot) }}">Book</a></td>
+					<td><a href="{{ url_for('book_confirmation',provider=provider.email,centre=centre.id,date=date,time_slot=slot,reason=reason) }}">Book</a></td>
 				</tr>
 			{% endfor %}
 		</table>

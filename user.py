@@ -49,7 +49,7 @@ class User(UserMixin):
 
 	
 	def add_appointment(self, appt_obj):
-		if not any(appointment.appointment_id == appt_obj.appointment_id for appointment in self._appointments):
+		if not any(appointment.id == appt_obj.id for appointment in self._appointments):
 			self._appointments.append(appt_obj)
 
 	def remove_appointment_by_id(self, appt_id):

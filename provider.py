@@ -106,8 +106,8 @@ class Provider(User):
 	def make_time_slot_unavailable(self, centre_name, year, month, day, time_slot):
 		centre_name = centre_name.lower()
 		valid = is_date_valid(year, month, day)
-		if valid != True:
-			return valid
+		# if valid != True:
+		# 	return valid
 		if centre_name in self._availability.keys():
 			new_date = date(year, month, day)
 			if new_date not in self._availability[centre_name].keys():

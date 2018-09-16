@@ -1,7 +1,7 @@
 from flask import render_template, request, redirect, url_for
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from system import SystemManager
-from server import app, user_manager, centre_manager
+from server import app, user_manager, centre_manager, appt_manager
 from date_validity import is_date_valid
 
 login_manager = LoginManager()
@@ -38,9 +38,9 @@ def logout():
 
 
 @login_required
-@app.route('/book/<centre>_<provider>', methods=['GET','POST'])
+@app.route('/book/<provider>_<centre>', methods=['GET','POST'])
 def book(provider, centre):
-	p = user_manager.get_provider(provider)
+	p = user_manager.get_user(provider)
 	c = centre_manager.get_centre_from_id(centre)
 	# if request.method == 'POST':
 	# 	date = request.form["date"]
@@ -48,6 +48,9 @@ def book(provider, centre):
 	# 	# if validity is True:
 	# 	return redirect(url_for('index'))
 
+	reason = request.args.get("reason")
+	if reason is None:
+		reason = ""
 	date = request.args.get("date")
 	if date is not "" and date is not None:
 		date_split = date.split('-')
@@ -57,7 +60,7 @@ def book(provider, centre):
 		# get availability
 		avail = p.get_availability(c.name, year, month, day)
 		if avail != None:
-			return render_template('booking.html', date=date, provider=p, centre=c, available_slots=avail, date_chosen=True)
+			return render_template('booking.html', date=date, reason=reason, provider=p, centre=c, available_slots=avail, date_chosen=True)
 		else:
 			return 'fuck'
 	else:
@@ -66,10 +69,26 @@ def book(provider, centre):
 
 
 @login_required
-@app.route('/book_confirmation', methods=['GET','POST'])
-def book_confirmed(provider, centre, time_slot):
-	# Do booking appointment stuff
-	pass
+@app.route('/book_confirmation/<provider>_<centre>_<date>_<time_slot>_<reason>', methods=['GET','POST'])
+def book_confirmation(provider, centre, date, time_slot, reason):
+	p = user_manager.get_user(provider)
+	c = centre_manager.get_centre_from_id(centre)
+	# make appointment object
+	appt = appt_manager.make_appt_and_add_appointment_to_manager(current_user.email, provider, centre, date, time_slot, reason)
+	if appt == False:
+		return 'crap'
+	# Add appts object to patient and provider
+	current_user.add_appointment(appt)
+	p.add_appointment(appt)
+	# Make time slot unavailable
+	date_split = date.split('-')
+	year = int(date_split[0])
+	month = int(date_split[1])
+	day = int(date_split[2])
+	checker = p.make_time_slot_unavailable(c.name, year, month, day, time_slot)
+	if checker != True:
+		return 'shit biscuit'
+	return redirect(url_for('index'))
 	
 
 @login_required
@@ -80,7 +99,7 @@ def provider_profile(provider):
 	:param user: a Provider email
 	:return: renders the provider_profile.html template
 	"""
-	p = user_manager.get_provider(provider)
+	p = user_manager.get_user(provider)
 	if request.method == 'POST':
 		rating = int(request.form['rate'])
 		p.add_rating(current_user.get_id(), rating)
