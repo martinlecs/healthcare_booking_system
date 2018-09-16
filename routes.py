@@ -69,7 +69,7 @@ def book(provider, centre):
 
 
 @login_required
-@app.route('/book_confirmation/<provider>_<centre>_<date>_<time_slot>_<reason>', methods=['GET','POST'])
+@app.route('/book_confirmation/<provider>_<centre>_<date>_<reason>_<time_slot>', methods=['GET','POST'])
 def book_confirmation(provider, centre, date, time_slot, reason):
 	p = user_manager.get_user(provider)
 	c = centre_manager.get_centre_from_id(centre)
