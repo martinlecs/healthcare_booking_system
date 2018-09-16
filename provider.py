@@ -84,9 +84,9 @@ class Provider(User):
 	# Returns NONE when an invalid date values or a day in the past is passsed in 
 	def get_availability(self, centre_name, year, month, day):
 		centre_name = centre_name.lower()
-		valid = is_date_valid(year, month, day)
-		if valid != True:
-			return valid
+		# valid = is_date_valid(year, month, day)
+		# if valid != True:
+		# 	return valid
 		if centre_name in self._centres:
 			if centre_name not in self._availability.keys():
 				self._availability[centre_name] = {}

@@ -11,6 +11,7 @@ class CentreManager:
     def centres(self):
         return self._centres
     
+
     def add_centre(self, centre):
         if not any(centre.name == c.name for c in self._centres):
             if isinstance(centre.name, str) and isinstance(centre.suburb, str):
@@ -41,6 +42,12 @@ class CentreManager:
                 return rem
         #error handling
         pass
+
+    def get_centre_from_name(self, centre_name):
+        for centre in self._centres:
+            if centre.name.lower() == centre_name.lower():
+                return centre
+        return None
 
     def get_centre_from_id(self, id):
         """

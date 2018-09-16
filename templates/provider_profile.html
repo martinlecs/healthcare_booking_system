@@ -12,8 +12,8 @@
             <table>
                 {% for t in content['centres'] %}
                     <tr>
-                        <th>{{ t }}</th>
-                        <th><a href="">Book</a></th>
+                        <td><a href="{{ url_for('centre_profile', centre=centres[t]) }}"> {{ t }} </td>
+                        <td><a href="{{ url_for('book',provider=content['email'],centre=centres[t]) }}">Book</a></td>
                     </tr>
                 {% endfor %}
             </table>
