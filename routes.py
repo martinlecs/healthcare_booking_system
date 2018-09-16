@@ -1,4 +1,6 @@
 from flask import render_template, request, redirect, url_for
+from server import *
+
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from system import SystemManager
 from server import app, user_manager, centre_manager, appt_manager
@@ -36,6 +38,14 @@ def login():
 def logout():
 	logout_user()
 	return redirect(url_for('index'))
+
+
+@app.route('/profile', methods=['GET'])
+@login_required
+def user_profile():
+	user = load_user(current_user.get_id())
+	content = user.get_user_info()
+	return render_template('user_profile.html', content=content)
 
 
 @login_required
