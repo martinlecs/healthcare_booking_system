@@ -68,7 +68,7 @@ class User(UserMixin):
 	def get_id(self):
 		return self._email
 
-	def get_user_info(self):
+	def get_information(self):
 		return {
 				'email': self._email,
 				'surname': self._surname,
