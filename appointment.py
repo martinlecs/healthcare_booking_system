@@ -14,7 +14,7 @@ class Appointment:
         self._past = False
 
     def get_information(self):
-        return { 'id': self._id
+        return { 'id': self._id,
                  'provider_email': self._provider_email,
                  'patient_email': self._patient_email,
                  'centre_id': self._centre_id,
@@ -29,7 +29,7 @@ class Appointment:
 # getters
     @property
     def id(self):
-        return self.id
+        return self._id
 
     @property
     def provider_email(self):
@@ -71,8 +71,8 @@ class Appointment:
 
 # setters
     def __set_id(self):
-        self._id = Appointment.appt_id
-        appt_id += 1
+        Appointment.appt_id += 1
+        return Appointment.appt_id
 
     @provider_email.setter
     def provider_email(self, provider_email):
