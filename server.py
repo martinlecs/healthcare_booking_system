@@ -2,6 +2,7 @@ from flask import Flask
 from appointment import Appointment
 from centre_manager import CentreManager
 from user_manager import UserManager
+from appointment_manager import AppointmentManager
 from system import SystemManager
 
 # Instantiate 'global' variables
@@ -11,6 +12,7 @@ app.secret_key = 'super secret shhhh'
 
 user_manager = UserManager.load_data()
 centre_manager = CentreManager.load_data()
+appt_manager = AppointmentManager.load_data()
 system = SystemManager(user_manager, centre_manager)
 
 A1 = Appointment("jack@gmail.com","toby@gmail.com","1111", "2018-09-20","12:30")

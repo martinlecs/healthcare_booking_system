@@ -1,7 +1,7 @@
 class Appointment:
     " Appointment class"
     appt_id = 0
-    def __init__(self, patient_email, provider_email, centre_id, date, time_slot):
+    def __init__(self, patient_email, provider_email, centre_id, date, time_slot, reason):
         self._id = self.__set_id()
         self._provider_email = provider_email
         self._patient_email = patient_email
@@ -10,7 +10,7 @@ class Appointment:
         self._time_slot = time_slot
         self._notes = ""
         self._meds = []
-        self._reason = ""
+        self._reason = reason
         self._past = False
 
     def get_information(self):
@@ -33,7 +33,7 @@ class Appointment:
 
     @property
     def provider_email(self):
-        return self.provider_email
+        return self._provider_email
 
     @property
     def patient_email(self):
@@ -41,15 +41,15 @@ class Appointment:
     
     @property
     def centre_id(self):
-        return self.centre_id
+        return self._centre_id
 
     @property
     def date(self):
-        return self.date
+        return self._date
 
     @property
     def time_slot(self):
-        return self.time_slot
+        return self._time_slot
 
     @property
     def notes(self):
@@ -71,8 +71,13 @@ class Appointment:
 
 # setters
     def __set_id(self):
+<<<<<<< HEAD
         Appointment.appt_id += 1
         return Appointment.appt_id
+=======
+        self._id = Appointment.appt_id
+        Appointment.appt_id += 1
+>>>>>>> origin/book
 
     @provider_email.setter
     def provider_email(self, provider_email):

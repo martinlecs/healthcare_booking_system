@@ -1,5 +1,4 @@
 from appointment import Appointment
-from
 
 class AppointmentManager:
     def __init__(self):
@@ -19,9 +18,9 @@ class AppointmentManager:
 
 
     # add appointments given appointment information 
-    def make_appt_and_add_appointment_to_manager(self, patient_email, provider_email, centre_id, date, time_slot):
+    def make_appt_and_add_appointment_to_manager(self, patient_email, provider_email, centre_id, date, time_slot, reason):
         if not any(appointment.date == date and appointment.time_slot == time_slot for appointment in self._appointments):      
-            appointment = Appointment(patient_email, provider_email, centre_id, date, time_slot)
+            appointment = Appointment(patient_email, provider_email, centre_id, date, time_slot, reason)
             # self._get_information(self, appointments)
             self._appointments.append(appointment)
             return appointment # successful.
@@ -36,3 +35,22 @@ class AppointmentManager:
                 return True 
             else:
                 return False # error handling
+
+    """  
+    Load/Save Data methods:
+    load_data checks if there is a pickle file for the users (currently only implemented providers)
+    if it does, loads that and returns user manager object, otherwise opens the csv and extracts data
+    bootstrap is the init function on 'startup' that performs this
+    """
+    def save_data(self):
+        with open('appointments.dat', 'wb') as file:
+            pickle.dump(self, file)
+
+    @classmethod
+    def load_data(cls):
+        try:
+            with open('appointments.dat', 'rb') as file:
+                appt_manager = pickle.load(file)
+        except IOError:
+            appt_manager = AppointmentManager()
+        return appt_manager
