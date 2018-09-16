@@ -90,5 +90,5 @@ class Centre:
                 'suburb': self.suburb,
                 'phone': self.phone,
                 'providers': self.providers,
-                'rating': self._average_rating,
+                'rating': self.average_rating,
                 }

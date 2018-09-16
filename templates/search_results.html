@@ -17,7 +17,7 @@
                         <td>{{ centre.name }} </td>
                         <td>{{ centre.suburb }} </td>
                         <td>{{ centre.phone }} </td>
-                        <td>{{ centre.rating }} </td>
+                        <td>{{ centre.average_rating }} </td>
                         <td><a href="{{ url_for('centre_profile', centre=centre.id) }}">View Profile</a></td>
                     </tr>
                     {% endfor %}

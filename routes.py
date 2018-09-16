@@ -47,7 +47,8 @@ def provider_profile(provider):
 	p = user_manager.get_provider(provider)
 	if request.method == 'POST':
 		rating = int(request.form['rate'])
-		p.add_rating(current_user.get_id(), rating) 
+		p.add_rating(current_user.get_id(), rating)
+		user_manager.save_data() 
 	content = p.get_information()
 	return render_template('provider_profile.html', content=content)
 
@@ -63,7 +64,8 @@ def centre_profile(centre):
 	# print(c)
 	if request.method == 'POST':
 		rating = int(request.form['rate'])
-		c.add_rating(current_user.get_id(), rating) 
+		c.add_rating(current_user.get_id(), rating)
+		centre_manager.save_data() 
 	content = c.get_information()
 	return render_template('centre_profile.html', content=content)
 
