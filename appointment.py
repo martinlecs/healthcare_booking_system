@@ -29,11 +29,11 @@ class Appointment:
 # getters
     @property
     def id(self):
-        return self.id
+        return self._id
 
     @property
     def provider_email(self):
-        return self.provider_email
+        return self._provider_email
 
     @property
     def patient_email(self):
@@ -41,15 +41,15 @@ class Appointment:
     
     @property
     def centre_id(self):
-        return self.centre_id
+        return self._centre_id
 
     @property
     def date(self):
-        return self.date
+        return self._date
 
     @property
     def time_slot(self):
-        return self.time_slot
+        return self._time_slot
 
     @property
     def notes(self):
