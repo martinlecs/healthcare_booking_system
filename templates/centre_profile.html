@@ -13,7 +13,7 @@
             <tr>
                 <th><a href="{{ url_for('provider_profile', provider=p.email) }}">{{ p.fullname }}</a></th>
                 <th>{{ p.service }}</th>
-                <th><a href="{{ url_for('book',centre=content['id'],provider=p) }}">Book</a></th>
+                <th><a href="{{ url_for('book',centre=content['id'],provider=p.email) }}">Book</a></th>
             </tr>
             {% endfor %}
         </table>
