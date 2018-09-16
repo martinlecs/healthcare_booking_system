@@ -1,7 +1,6 @@
 from flask import render_template, request, redirect, url_for
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from server import app, user_manager, centre_manager, appt_manager
-from date_validity import is_date_valid
 from provider import Provider
 
 login_manager = LoginManager()
