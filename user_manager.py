@@ -210,6 +210,16 @@ class UserManager:
 				surname = ""
 				medicare_no = 0
 				um.add_patient_by_info(email, pwd, surname, name, medicare_no)
+		with open('provider_health_centre.csv', newline='') as file:
+			reader = csv.reader(file, dialect='excel', quotechar="'")
+			for row in reader:
+				prov_email = row[0].strip()
+				centre_name = row[1].strip()
+				for provider in um.providers:
+					if provider.email.lower() == prov_email.lower():
+						provider.add_centre(centre_name)
+						break
+				#Need to insert error handling
 		return um
 
 

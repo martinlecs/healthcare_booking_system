@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% block body %}
-{#    {% if current_user.is_authenticated %}#}
         {% if error %} <h2> {{ error }} </h2> {% endif %}
         {% if results %}
         <h2> Search Results: {{ results|length }} found</h2>
@@ -19,7 +18,7 @@
                         <td>{{ centre.suburb }} </td>
                         <td>{{ centre.phone }} </td>
                         <td>{{ centre.rating }} </td>
-                        <td><a href="{{ url_for('centre_profile', centre=centre.id) }}"> View Profile</a></td>
+                        <td><a href="{{ url_for('centre_profile', centre=centre.id) }}">View Profile</a></td>
                     </tr>
                     {% endfor %}
                 {% else %}
@@ -38,7 +37,7 @@
                         <td>{{ prov.email }}</td>
                         <td>{{ prov.average_rating }}</td>
                         <td>{{ prov.centres }}</td>
-                        <td><a href="{{ url_for('provider_profile', provider=prov.email) }}"> View Profile</a></td>
+                        <td><a href="{{ url_for('provider_profile', provider=prov.email) }}">View Profile</a></td>
                         </tr>
                 {% endfor %}
 
@@ -47,8 +46,4 @@
         {% endif %}
 
         </table>
-
-{#    {% else %}#}
-{#        <a href="{{url_for('login')}}">go login to see more</a>#}
-{#    {% endif%}#}
 {% endblock %}

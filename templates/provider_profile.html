@@ -7,10 +7,10 @@
         <h3>Service: {{ content['service'] }}</h3>
         <h3>Email: {{ content['email'] }}</h3>
         <h3>Rating: {{ content['rating'] }}</h3>
-        <h3>Availability: </h3>
-        {% if content['availability'] %}
+        <h3>Affiliated Centres: </h3>
+        {% if content['centres'] %}
             <table>
-                {% for t in content['availability'] %}
+                {% for t in content['centres'] %}
                     <tr>
                         <th>{{ t }}</th>
                         <th><a href="">Book</a></th>

@@ -97,11 +97,17 @@ def search():
 		if not results:
 			error = "No matches found"
 		else:
-			error = "Please select a search category"
+			# error = "Please select a search category"
+			error = None
 
 		return render_template('search_results.html', results=results, type_c=type_c, error=error)
 	else:
 		return redirect(url_for('index'))
+
+@login_required
+@app.route('/book_appointment', methods=['GET','POST'])
+def book(provider, centre):
+	return 'gi'
 
 
 @login_manager.user_loader

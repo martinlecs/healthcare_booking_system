@@ -70,12 +70,12 @@ class Centre:
 
 	# add rating to dict, recalculate average rating
     def add_rating(self, patient_email, rating):
-        self._rating[patient_email] = rating
+        self._rating[patient_email.lower()] = rating
         self.__calc_average_rating()
 
 	# pop rating from dictionary
     def remove_rating(self, patient_email):
-        self._rating.pop(patient_email, None)
+        self._rating.pop(patient_email.lower(), None)
 
 	# private function to recalculate average rating
     def __calc_average_rating(self):
@@ -89,6 +89,6 @@ class Centre:
         return {'name': self.name,
                 'suburb': self.suburb,
                 'phone': self.phone,
-                # 'providers': self.providers,
+                'providers': self.providers,
                 'rating': self._average_rating,
                 }

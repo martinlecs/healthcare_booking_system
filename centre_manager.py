@@ -120,6 +120,17 @@ class CentreManager:
                 suburb = row[4].strip()[1:-1]
                 cm.add_centre_from_details(name,suburb, type, id, phone)
                 #Need to insert error handling
+        with open('provider_health_centre.csv', newline='') as file:
+            reader = csv.reader(file, dialect='excel', quotechar="'")
+            for row in reader:
+                prov_email = row[0].strip()[1:-1]
+                centre_name = row[1].strip()[1:-1]
+                for centre in cm.centres:
+                    if centre.name.lower() == centre_name.lower():
+                        centre.add_provider(prov_email)
+                        break
+                #Need to insert error handling
+        
         return cm
 
 
