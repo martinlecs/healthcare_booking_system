@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>My Flask App</title>
+</head>
+<body>
+	<h1>HAMS</h1>
+			<br/>
+			<br/>
+			<br/>
+	<h1>Login</h1>
+	<form method='POST'>
+		<div style="margin: 10px 0px">
+			<label>Email</label> <br/>
+			<input name="email" placeholder="example@gmail.com" value="{{email}}">
+		</div>
+		<div style="margin: 10px 0px">
+			<label>Password</label><br/>
+			<input name="password" placeholder="password" value="{{password}}" type="Password">
+		</div>
+		{% if invalid_login == True %}
+			Incorrect email and/or password. Try again
+		{% endif%}
+		<div style="margin: 10px 0px">
+			<button type="submit">Submit</button>
+		</div>
+	</form>
+</body>
+</html>

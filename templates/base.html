@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>My Flask APP</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+	</head>
+	<body>
+        <header>
+            <div class="topnav">
+                <a href="{{ url_for('index') }}">Home</a>
+                <a href="#about">About</a>
+                <a href="#contact">Contact</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+                <form style="display: inline;" action="{{ url_for('search') }}" method="post" name="search">
+                    <input name="search" type="text" placeholder="Search..">
+                    <select name="type">
+                        <option value="c_name">Centre Name</option>
+                        <option value="c_suburb">Centre Suburb</option>
+                        <option value="p_name">Provider Name</option>
+                        <optgroup label="Provider Services">
+                            {% for s in services %}
+                                {% if s %}
+                                    <option value="{{ s }}">{{ s.upper() }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </optgroup>
+                    </select>
+                </form>
+            </div>
+        </header>
+        <div>
+			<h1>HAMS</h1>
+		</div>
+
+        {% block body %} {% endblock %}
+	</body>
+</html>

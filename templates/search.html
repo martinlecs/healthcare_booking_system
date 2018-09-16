@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block body %}
+
+<form action="{{ url_for('search') }}" method="get">
+
+    <h1>Search:</h1>
+    <h3>
+        <input type="text" name="query" placeholder="Enter Search Term"><br>
+        <input type="radio" name="select" value="centre_name"> Search by Centre<br>
+        <input type="radio" name="select" value="centre_suburb"> Search by Suburb<br>
+        <input type="radio" name="select" value="prov_name"> Search by Provider<br>
+        <input type="radio" name="select" value="prov_service"> Search by service
+            <select name="service">
+                {% for s in services %}
+                <option value="{{ s }}">{{ s }}</option>
+                {% endfor %}
+            </select><br>
+
+        <button type="submit"> Search </button>
+    </h3>
+</form>
+
+<br>
+{% if error %} <h2> {{ error }} </h2> {% endif %}
+
+{% if results|length > 0%}
+<h2> Search Results: {{ results|length }} found</h2> 
+
+<table>
+        {% if type_c %}
+            <tr>
+                <th>Name</th>
+                <th>Suburb</th>
+                <th>Phone</th>
+                <th>Rating</th>
+                <th>Profile</th>
+            </tr>
+            {% for c in results %}
+            <tr>
+                <td>{{ c.name }} </td>
+                <td>{{ c.suburb }} </td>
+                <td>{{ c.phone }} </td>
+                <td>{{ c.average_rating }} </td>
+                <td><a href="{{ url_for('centre_profile', centre=c.id) }}"> View Profile</a></td>
+            </tr>
+            {% endfor %}
+        {% else %}
+                <tr>
+                <th>Name</th>
+                <th>Service</th>
+                <th>Email</th>
+                <th>Rating</th>
+                <th>Centre</th>
+                <th>Profile</th>
+                </tr>
+            {% for prov in results %}
+                <tr>
+                <td>{{ prov.given_name }} {{ prov.surname }}</td>
+                <td>{{ prov.service }}</td>
+                <td>{{ prov.email }}</td>
+                <td>{{ prov.average_rating }}</td>
+                <td>{{ prov.centres }}</td>
+                <td><a href="{{ url_for('provider_profile', provider=prov.email)}}"> View Profile</a></td>
+                </tr>
+        {% endfor %}
+    
+    {% endif %}
+
+{% endif %}
+
+</table>
+
+{% endblock %}
