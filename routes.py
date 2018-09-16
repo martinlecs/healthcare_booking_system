@@ -49,8 +49,8 @@ def book(provider, centre):
 	# 	return redirect(url_for('index'))
 
 	reason = request.args.get("reason")
-	if reason is None:
-		reason = ""
+	if reason is None or reason is "":
+		reason = " "
 	date = request.args.get("date")
 	if date is not "" and date is not None:
 		date_split = date.split('-')
