@@ -1,8 +1,8 @@
-from server import app, user_manager, centre_manager
 from flask import render_template, request, redirect, url_for
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from system import SystemManager
-from server import user_manager, system, centre_manager
+from server import app, user_manager, centre_manager
+from date_validity import is_date_valid
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -36,6 +36,42 @@ def logout():
 	logout_user()
 	return redirect(url_for('index'))
 
+
+@login_required
+@app.route('/book/<centre>_<provider>', methods=['GET','POST'])
+def book(provider, centre):
+	p = user_manager.get_provider(provider)
+	c = centre_manager.get_centre_from_id(centre)
+	# if request.method == 'POST':
+	# 	date = request.form["date"]
+	# 	# validity = is_date_valid(year, month, day)
+	# 	# if validity is True:
+	# 	return redirect(url_for('index'))
+
+	date = request.args.get("date")
+	if date is not "":
+		date_split = date.split('-')
+		year = int(date_split[0])
+		month = int(date_split[1])
+		day = int(date_split[2])
+		# get availability
+		avail = p.get_availability(c.name, year, month, day)
+		if avail != None:
+			return render_template('booking.html', date=date, provider=p, centre=c, available_slots=avail, date_chosen=True)
+		else:
+			return 'fuck'
+	else:
+		return render_template('booking.html', provider=p, centre=c, date_chosen=False, error=True)
+
+
+
+@login_required
+@app.route('/book_confirmation', methods=['GET','POST'])
+def book_confirmed(provider, centre, time_slot):
+	# Do booking appointment stuff
+	pass
+	
+
 @login_required
 @app.route('/provider/<provider>', methods=['GET','POST'])
 def provider_profile(provider):
@@ -49,7 +85,11 @@ def provider_profile(provider):
 		rating = int(request.form['rate'])
 		p.add_rating(current_user.get_id(), rating) 
 	content = p.get_information()
-	return render_template('provider_profile.html', content=content)
+	centre_name_to_id = {}
+	for centre in content['centres']:
+		centre_obj = centre_manager.get_centre_from_name(centre)
+		centre_name_to_id[centre] = centre_obj.id
+	return render_template('provider_profile.html', content=content, centres=centre_name_to_id)
 
 @login_required
 @app.route('/centre/<centre>', methods=['GET','POST'])
@@ -104,10 +144,6 @@ def search():
 	else:
 		return redirect(url_for('index'))
 
-@login_required
-@app.route('/book_appointment', methods=['GET','POST'])
-def book(provider, centre):
-	return 'gi'
 
 
 @login_manager.user_loader
