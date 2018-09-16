@@ -1,7 +1,5 @@
 from datetime import time, date
 from user import User
-from date_validity import is_date_valid
-
 # Note about availability at the bottom
 # 
 
@@ -84,9 +82,6 @@ class Provider(User):
 	# Returns NONE when an invalid date values or a day in the past is passsed in 
 	def get_availability(self, centre_name, year, month, day):
 		centre_name = centre_name.lower()
-		# valid = is_date_valid(year, month, day)
-		# if valid != True:
-		# 	return valid
 		if centre_name in self._centres:
 			if centre_name not in self._availability.keys():
 				self._availability[centre_name] = {}
@@ -105,9 +100,6 @@ class Provider(User):
 	# Returns NONE when an invalid date values or a day in the past is passsed in
 	def make_time_slot_unavailable(self, centre_name, year, month, day, time_slot):
 		centre_name = centre_name.lower()
-		valid = is_date_valid(year, month, day)
-		# if valid != True:
-		# 	return valid
 		if centre_name in self._availability.keys():
 			new_date = date(year, month, day)
 			if new_date not in self._availability[centre_name].keys():

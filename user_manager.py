@@ -81,18 +81,6 @@ class UserManager:
 			if user.password == password:
 				return user
 	
-	def search_by_patient_name(self, patient_name):
-		# List of 'exact' match.
-		# Creates a list of patient objects which contain the patient_name
-		# substring in their surname or given_name attributes.
-		# search_list = [match for match in self._patients if
-		# 			   patient_name in match.surname
-		# 			   or patient_name in match.given_name]
-		#
-		# Append 'near' matches to search list.
-		# Or make own list?
-		# near match search mechanism... speak to team about
-		pass
 
 	#Searches providers by first name or last name. Returns list of providers
 	#Adds prefix match for first or last as well
