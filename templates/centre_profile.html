@@ -6,16 +6,6 @@
         <h3>Suburb: {{ content['suburb'] }}</h3>
         <!-- <h3>Service: {{ content['service'] }}</h3> -->
         <h3>Rating: {{ content['rating'] }}</h3>
-        <h3>Affiliated Providers</h3>
-        {% if content['providers'] %}
-        <table>
-            {% for p in content['providers'] %}
-            <tr>
-                <th><a href="{{ url_for('provider_profile', provider=p.email) }}">{{ p.fullname }}</a></th>
-                <th>{{ p.service }}</th>
-                <th><a href="{{ url_for('book',centre=content['id'],provider=p.email) }}">Book</a></th>
-            </tr>
-            {% endfor %}
         </table>
         <form method="post">
             <div style="margin: 10px 0px">
@@ -27,6 +17,16 @@
                 <input type="submit" value = "Rate" method="post">
             </div>
         </form>
+        <h3>Affiliated Providers</h3>
+        {% if content['providers'] %}
+        <table>
+            {% for p in content['providers'] %}
+            <tr>
+                <th><a href="{{ url_for('provider_profile', provider=p.email) }}">{{ p.fullname }}</a></th>
+                <th>{{ p.service }}</th>
+                <th><a href="{{ url_for('book',centre=content['id'],provider=p.email) }}">Book</a></th>
+            </tr>
+            {% endfor %}
         {% else %}
             <b>Sorry, this centre has no providers right now.</b>
         {% endif %}

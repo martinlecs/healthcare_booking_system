@@ -31,7 +31,7 @@
 			{% for slot in available_slots %}
 				<tr>
 					<td>{{ slot }}</td>
-					<td><a href="{{ url_for('book_confirmation',provider=provider.email,centre=centre.id,date=date,time_slot=slot,reason=reason) }}">Book</a></td>
+					<td><a href="{{ url_for('book_confirmation',provider=provider.email,centre=centre.id,date=date,time_slot=slot,reason=reason) }}" onclick="alert('Booking Confirmed!')">Book</a></td>
 				</tr>
 			{% endfor %}
 		</table>
