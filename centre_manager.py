@@ -11,6 +11,7 @@ class CentreManager:
     def centres(self):
         return self._centres
     
+
     def add_centre(self, centre):
         if not any(centre.name == c.name for c in self._centres):
             if isinstance(centre.name, str) and isinstance(centre.suburb, str):
@@ -19,8 +20,8 @@ class CentreManager:
             #error handling
             return False
     
-    def add_centre_from_details(self, name, suburb, id, type, phone, providers=[]):
-        centre = Centre(name, suburb, id, type, phone, providers)
+    def add_centre_from_details(self, name, suburb, id, type, phone):
+        centre = Centre(name, suburb, id, type, phone)
         return self.add_centre(centre)
 
     def rem_centre(self, centre):
@@ -28,6 +29,7 @@ class CentreManager:
             self._centres.remove(centre)
         elif any(c._name == centre.name for c in self._centres):
             rem = self.rem_centre_by_name(centre.name)
+            return rem
         else:
             #error handling
             return False
@@ -40,6 +42,12 @@ class CentreManager:
                 return rem
         #error handling
         pass
+
+    def get_centre_from_name(self, centre_name):
+        for centre in self._centres:
+            if centre.name.lower() == centre_name.lower():
+                return centre
+        return None
 
     def get_centre_from_id(self, id):
         """
@@ -57,6 +65,7 @@ class CentreManager:
     #
     #performs prefix match on centre name, empty search returns all values
     def search_name(self, search):
+        search = search.strip()
         if search == "":
             return self._centres
         else:
@@ -74,6 +83,7 @@ class CentreManager:
 
     #Performs prefix match on centre suburbs, returns list of centres that match
     def search_suburb(self, search):
+        search = search.strip()
         if search == "":
             return self._centres
         else:
@@ -111,12 +121,23 @@ class CentreManager:
             reader = csv.reader(file, dialect='excel', quotechar="'")
             for row in reader:
                 type = row[0].strip()[1:-1]
-                id = int(row[1].strip()[1:-1])
+                id = row[1].strip()[1:-1]
                 name = row[2].strip()[1:-1]
                 phone = row[3].strip()[1:-1]
                 suburb = row[4].strip()[1:-1]
                 cm.add_centre_from_details(name,suburb, type, id, phone)
                 #Need to insert error handling
+        with open('provider_health_centre.csv', newline='') as file:
+            reader = csv.reader(file, dialect='excel', quotechar="'")
+            for row in reader:
+                prov_email = row[0].strip()[1:-1]
+                centre_name = row[1].strip()[1:-1]
+                for centre in cm.centres:
+                    if centre.name.lower() == centre_name.lower():
+                        centre.add_provider(prov_email)
+                        break
+                #Need to insert error handling
+        
         return cm
 
 

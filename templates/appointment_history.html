@@ -1,0 +1,34 @@
+{% extends 'base.html' %} 
+{% block body %}
+	<h2>
+		Appointment History
+	</h2>
+	
+	{% if content %}
+		<table>
+			<tr>
+				<th>Date</th>
+				<th>Time</th>
+				{% if prov_view %} <th> Patient </th> <th> Reason </th>
+				{% else %} <th>Provider</th>
+				{% endif %}
+				<th>Health Centre</th>
+			</tr>
+			{% for appt in content %}
+				<tr>
+					<td>{{ appt['date'] }}</td>
+					<td>{{ appt['time_slot']}} </td>
+					{% if prov_view %}
+						<td><a href="{{ url_for('view_appointments') }}"> {{ appt['patient_email'] }}</a></td>
+						<td>{{ appt['reason']}} </td>
+					{% else %}
+						<td><a href="{{ url_for('provider_profile', provider=appt['provider_email']) }}"> {{appt['provider_email']}}</a></td>
+					{% endif %}
+					<td><a href="{{ url_for('centre_profile', centre=appt['centre_id']) }}"></a> {{appt['centre_id']}}</td>
+				</tr>
+			{% endfor%}
+		</table>
+	{% else %}
+		<h4> You have no upcoming appointments </h4>
+	{% endif %}
+{% endblock %}

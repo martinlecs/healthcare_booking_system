@@ -201,6 +201,25 @@ class UserManager:
 				service = row[2].strip()
 				um.add_provider_by_info(email, pwd, surname, name, no, service)
 				#Need to insert error handling
+		with open('patient.csv', newline='') as file:
+			reader = csv.reader(file, dialect='excel', quotechar="'")
+			for row in reader:
+				email = row[0].strip()
+				pwd = row[1].strip()
+				name = row[0].strip().split('@')[0]
+				surname = ""
+				medicare_no = 0
+				um.add_patient_by_info(email, pwd, surname, name, medicare_no)
+		with open('provider_health_centre.csv', newline='') as file:
+			reader = csv.reader(file, dialect='excel', quotechar="'")
+			for row in reader:
+				prov_email = row[0].strip()
+				centre_name = row[1].strip()
+				for provider in um.providers:
+					if provider.email.lower() == prov_email.lower():
+						provider.add_centre(centre_name)
+						break
+				#Need to insert error handling
 		return um
 
 

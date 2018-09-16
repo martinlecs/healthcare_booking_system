@@ -4,22 +4,34 @@
     {% if content %}
         <h3>Name: {{ content['name'] }} </h3>
         <h3>Suburb: {{ content['suburb'] }}</h3>
-        <h3>Service: {{ content['service'] }}</h3>
-        <h3>Providers</h3>
+        <!-- <h3>Service: {{ content['service'] }}</h3> -->
+        <h3>Rating: {{ content['rating'] }}</h3>
+        <h3>Affiliated Providers</h3>
         {% if content['providers'] %}
         <table>
             {% for p in content['providers'] %}
             <tr>
-                <th><a href="{{ url_for('provider_profile', provider=p.provider_no) }}">{{ p.fullname }}</a></th>
+                <th><a href="{{ url_for('provider_profile', provider=p.email) }}">{{ p.fullname }}</a></th>
                 <th>{{ p.service }}</th>
-                <th><a href="">Book</a></th>
+                <th><a href="{{ url_for('book',centre=content['id'],provider=p.email) }}">Book</a></th>
             </tr>
             {% endfor %}
         </table>
+        <form method="post">
+            <div style="margin: 10px 0px">
+                <select name="rate">
+                    {% for i in range(1,6) %}
+                        <option value="{{ i }}">{{ i }}</option>
+                    {% endfor %}
+                </select><br>
+                <input type="submit" value = "Rate" method="post">
+            </div>
+        </form>
         {% else %}
             <b>Sorry, this centre has no providers right now.</b>
         {% endif %}
     {% else %}
         <h3>Sorry, it seems that this profile is unavailable.</h3>
     {% endif%}
+    
 {% endblock %}

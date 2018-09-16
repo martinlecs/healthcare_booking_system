@@ -1,5 +1,6 @@
 from datetime import time, date
 from user import User
+from date_validity import is_date_valid
 
 # Note about availability at the bottom
 # 
@@ -50,8 +51,7 @@ class Provider(User):
 
 	@service.setter
 	def service(self, service):
-
-		self._service = service
+		self._service = service.lower()
 
 	def get_information(self):
 		return { 'email': self.email,
@@ -84,13 +84,13 @@ class Provider(User):
 	# Returns NONE when an invalid date values or a day in the past is passsed in 
 	def get_availability(self, centre_name, year, month, day):
 		centre_name = centre_name.lower()
-		valid = self.__check_date_validity(year, month, day)
-		if valid != True:
-			return valid
+		# valid = is_date_valid(year, month, day)
+		# if valid != True:
+		# 	return valid
 		if centre_name in self._centres:
 			if centre_name not in self._availability.keys():
 				self._availability[centre_name] = {}
-			req_date = date(int(year), int(month), int(day))
+			req_date = date(year, month, day)
 			if req_date in self._availability[centre_name]:
 				return self._availability[centre_name][req_date]
 			else:
@@ -105,9 +105,9 @@ class Provider(User):
 	# Returns NONE when an invalid date values or a day in the past is passsed in
 	def make_time_slot_unavailable(self, centre_name, year, month, day, time_slot):
 		centre_name = centre_name.lower()
-		valid = self.__check_date_validity(year, month, day)
-		if valid != True:
-			return valid
+		valid = is_date_valid(year, month, day)
+		# if valid != True:
+		# 	return valid
 		if centre_name in self._availability.keys():
 			new_date = date(year, month, day)
 			if new_date not in self._availability[centre_name].keys():
@@ -130,15 +130,6 @@ class Provider(User):
 		for time_slots in times:
 		    times_string.append(time_slots.strftime("%H:%M"))
 		return times_string
-
-	def __check_date_validity(self, year, month, day):
-		if type(year) is not int or type(month) is not int or type(day) is not int:
-			return False	# Invalid type
-		if year < 2018 or (month < 1 or month > 12) or (day < 1 or day > 31):
-			return None		# invalid date values
-		if date(year, month, day) < date.today():
-			return None		# day in the past
-		return True
 
 	# add rating to dict, recalculate average rating
 	# Only takes in int values of rating
@@ -170,7 +161,6 @@ class Provider(User):
 			self._average_rating = sum(ratings)/float(len(ratings))
 		else:
 			self._average_rating = 0
-
 
 # Important note about availability:
 '''
