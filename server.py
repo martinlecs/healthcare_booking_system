@@ -10,4 +10,4 @@ app.secret_key = 'super secret shhhh'
 
 user_manager = UserManager.load_data()
 centre_manager = CentreManager.load_data()
-system = SystemManager(centre_manager, user_manager)    
+system = SystemManager(user_manager, centre_manager)    

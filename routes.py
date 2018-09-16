@@ -61,7 +61,6 @@ def centre_profile(centre):
 	:return: renders the centre_profile.html template
 	"""
 	c = centre_manager.get_centre_from_id(centre)
-	# print(c)
 	if request.method == 'POST':
 		rating = int(request.form['rate'])
 		c.add_rating(current_user.get_id(), rating)

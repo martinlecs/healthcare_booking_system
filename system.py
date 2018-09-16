@@ -3,6 +3,8 @@ class SystemManager:
         self._user_manager = user_manager
         self._centre_manager = centre_manager
         # self._appointment_manager = []
+        #Link centres to provider objects
+        self.link_centre_provider()
 
     def search_service(self):
         pass
@@ -40,3 +42,10 @@ class SystemManager:
         """
         details = centre.get_information()
         return {k.lstrip('_'): v for k, v in details.items()}
+
+    def link_centre_provider(self):
+        for centre in self._centre_manager.centres:
+            for prov in self._user_manager.providers:
+                if centre.name.lower() in prov.centres:
+                    centre.add_provider(prov)
+        
