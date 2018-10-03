@@ -1,5 +1,5 @@
 from datetime import time, date
-from user import User
+from model.user import User
 # Note about availability at the bottom
 # 
 

@@ -1,4 +1,4 @@
-from user import User
+from model.user import User
 
 class Patient(User):
 	"Patient class"

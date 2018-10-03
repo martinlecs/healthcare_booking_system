@@ -1,6 +1,6 @@
 import string
-from patient import Patient
-from provider import Provider
+from model.patient import Patient
+from model.provider import Provider
 import csv
 import pickle
 
@@ -163,13 +163,13 @@ class UserManager:
 	bootstrap is the init function on 'startup' that performs this
 	"""
 	def save_data(self):
-		with open('users.dat', 'wb') as file:
+		with open('model/data/users.dat', 'wb') as file:
 			pickle.dump(self, file)
 
 	@classmethod
 	def load_data(cls):
 		try:
-			with open('users.dat', 'rb') as file:
+			with open('model/data/users.dat', 'rb') as file:
 				user_manager = pickle.load(file)
 		except IOError:
 			user_manager = UserManager.bootstrap()
@@ -178,7 +178,7 @@ class UserManager:
 	@classmethod
 	def bootstrap(cls):
 		um = UserManager()
-		with open('provider.csv', newline='') as file:
+		with open('model/data/provider.csv', newline='') as file:
 			reader = csv.reader(file, dialect='excel', quotechar="'")
 			for row in reader:
 				email = row[0].strip()
@@ -189,7 +189,7 @@ class UserManager:
 				service = row[2].strip()
 				um.add_provider_by_info(email, pwd, surname, name, no, service)
 				#Need to insert error handling
-		with open('patient.csv', newline='') as file:
+		with open('model/data/patient.csv', newline='') as file:
 			reader = csv.reader(file, dialect='excel', quotechar="'")
 			for row in reader:
 				email = row[0].strip()
@@ -198,7 +198,7 @@ class UserManager:
 				surname = ""
 				medicare_no = 0
 				um.add_patient_by_info(email, pwd, surname, name, medicare_no)
-		with open('provider_health_centre.csv', newline='') as file:
+		with open('model/data/provider_health_centre.csv', newline='') as file:
 			reader = csv.reader(file, dialect='excel', quotechar="'")
 			for row in reader:
 				prov_email = row[0].strip()

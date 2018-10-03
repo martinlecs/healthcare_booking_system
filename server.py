@@ -1,8 +1,8 @@
 from flask import Flask
-from centre_manager import CentreManager
-from user_manager import UserManager
-from appointment_manager import AppointmentManager
-from system import link_centre_provider
+from model.centre_manager import CentreManager
+from model.user_manager import UserManager
+from model.appointment_manager import AppointmentManager
+from model.system import link_centre_provider
 
 
 # Instantiate 'global' variables

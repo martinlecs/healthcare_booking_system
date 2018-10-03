@@ -1,4 +1,4 @@
-from appointment import Appointment
+from model.appointment import Appointment
 import pickle
 
 class AppointmentManager:
@@ -44,13 +44,13 @@ class AppointmentManager:
     bootstrap is the init function on 'startup' that performs this
     """
     def save_data(self):
-        with open('appointments.dat', 'wb') as file:
+        with open('model/data/appointments.dat', 'wb') as file:
             pickle.dump(self, file)
 
     @classmethod
     def load_data(cls):
         try:
-            with open('appointments.dat', 'rb') as file:
+            with open('model/data/appointments.dat', 'rb') as file:
                 appt_manager = pickle.load(file)
         except IOError:
             appt_manager = AppointmentManager()

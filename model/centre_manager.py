@@ -1,4 +1,4 @@
-from centre import Centre
+from model.centre import Centre
 import csv
 import pickle
 # from appointment import Appointment
@@ -102,13 +102,13 @@ class CentreManager:
     """
     
     def save_data(self):
-        with open('centres.dat', 'wb') as file:
+        with open('model/data/centres.dat', 'wb') as file:
             pickle.dump(self, file)
 
     @classmethod
     def load_data(cls):
         try:
-            with open('centres.dat', 'rb') as file:
+            with open('model/data/centres.dat', 'rb') as file:
                 centre_manager = pickle.load(file)
         except IOError:
             centre_manager = CentreManager.bootstrap()
@@ -117,7 +117,7 @@ class CentreManager:
     @classmethod
     def bootstrap(cls):
         cm = CentreManager()
-        with open('health_centres.csv', newline='') as file:
+        with open('model/data/health_centres.csv', newline='') as file:
             reader = csv.reader(file, dialect='excel', quotechar="'")
             for row in reader:
                 type = row[0].strip()[1:-1]
@@ -127,7 +127,7 @@ class CentreManager:
                 suburb = row[4].strip()[1:-1]
                 cm.add_centre_from_details(name,suburb, type, id, phone)
                 #Need to insert error handling
-        with open('provider_health_centre.csv', newline='') as file:
+        with open('model/data/provider_health_centre.csv', newline='') as file:
             reader = csv.reader(file, dialect='excel', quotechar="'")
             for row in reader:
                 prov_email = row[0].strip()[1:-1]

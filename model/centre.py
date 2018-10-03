@@ -1,6 +1,6 @@
-from patient import Patient
-from user import User
-from provider import Provider
+from model.patient import Patient
+from model.user import User
+from model.provider import Provider
 
 class Centre:
     def __init__(self, name, suburb, type, id, phone):
