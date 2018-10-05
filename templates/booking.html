@@ -11,7 +11,7 @@
 			<h3>State your reason for visiting</h3>
 			<input type="text" name="reason" value="{{ reason }}">
 			<h3>Choose a date</h3>
-			<input type="date" name="date" value="{{ date }}">
+			<input type="date" name="date" min="{{ today }}" value="{{ date }}">
 			<button type="submit">Submit</button>
 		</form>
 		<div>

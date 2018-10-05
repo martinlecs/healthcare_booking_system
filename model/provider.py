@@ -1,4 +1,4 @@
-from datetime import time, date
+from datetime import time, date, datetime
 from model.user import User
 # Note about availability at the bottom
 # 
@@ -86,10 +86,19 @@ class Provider(User):
 			if centre_name not in self._availability.keys():
 				self._availability[centre_name] = {}
 			req_date = date(year, month, day)
+			now_time = self.__time_slot_to_time(datetime.now().time().isoformat(timespec='minutes'))
+			# If requested date is already in availability
 			if req_date in self._availability[centre_name]:
-				return self._availability[centre_name][req_date]
+				# if requested date is today, adjust availability according to current time
+				if req_date == date.today():
+					return [time_slot
+							for time_slot in self._availability[centre_name][req_date]
+							if self.__time_slot_to_time(time_slot) > now_time
+						   ]
+				else:
+					 return self._availability[centre_name][req_date]
 			else:
-				return self.__make_time_slots_list() # Default slots as if they exist and then add date & time slots later
+				return self.__make_time_slots_list(req_date, now_time) # Default slots as if they exist and then add date & time slots later
 		else:
 			return False	# ERROR, centre doesn't exist or centre isn't in provider's centes attribute
 
@@ -113,7 +122,7 @@ class Provider(User):
 			False	# ERROR
 
 	# Makes a list of 48 strings representing 30 mins time slots, of 24 hours  
-	def __make_time_slots_list(self):
+	def __make_time_slots_list(self, req_date, now_time):
 		times = []
 		times_string = []
 		for hour in range(24):
@@ -121,7 +130,19 @@ class Provider(User):
 				times.append(time(hour,minute))		
 		for time_slots in times:
 		    times_string.append(time_slots.strftime("%H:%M"))
-		return times_string
+		if req_date == date.today():
+			 return [time_slot
+					 for time_slot in times_string
+					 if self.__time_slot_to_time(time_slot) > now_time
+				    ]
+		else:
+			return times_string
+
+	def __time_slot_to_time(self, time_slot):
+		time_slot = time_slot.split(':')
+		hour_ = int(time_slot[0])
+		minute_ = int(time_slot[1])
+		return time(hour = hour_, minute = minute_)
 
 	# add rating to dict, recalculate average rating
 	# Only takes in int values of rating

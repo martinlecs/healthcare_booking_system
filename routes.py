@@ -2,6 +2,7 @@ from flask import render_template, request, redirect, url_for
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from server import app, user_manager, centre_manager, appt_manager
 from model.provider import Provider
+from datetime import date
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -67,23 +68,24 @@ def book(provider, centre):
 	"""
 	p = user_manager.get_user(provider)
 	c = centre_manager.get_centre_from_id(centre)
+	today = date.today().isoformat()
 
 	reason = request.args.get("reason")
 	if reason is None or reason is "":
 		reason = " "
-	date = request.args.get("date")
-	if date is not "" and date is not None:
-		date_split = date.split('-')
+	form_date = request.args.get("date")
+	if form_date is not "" and form_date is not None:
+		date_split = form_date.split('-')
 		year = int(date_split[0])
 		month = int(date_split[1])
 		day = int(date_split[2])
 		avail = p.get_availability(c.name, year, month, day)
 		if avail != None:
-			return render_template('booking.html', date=date, reason=reason, provider=p, centre=c, available_slots=avail, date_chosen=True)
+			return render_template('booking.html', today=today, date=form_date, reason=reason, provider=p, centre=c, available_slots=avail, date_chosen=True)
 		else:
 			return 'Something Wrong?'
 	else:
-		return render_template('booking.html', provider=p, centre=c, date_chosen=False, error=True)
+		return render_template('booking.html', today=today, provider=p, centre=c, date_chosen=False, error=True)
 
 
 
