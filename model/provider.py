@@ -5,7 +5,7 @@ from model.user import User
 
 class Provider(User):
 	"Provider class"
-	def __init__(self, email, password, surname, given_name,provider_no, service):
+	def __init__(self, email, password, surname, given_name, provider_no, service):
 		super().__init__(email, password, surname, given_name)
 		self._provider_no = provider_no
 		self._service = service.lower()
@@ -112,7 +112,8 @@ class Provider(User):
 		if centre_name in self._availability.keys():
 			new_date = date(year, month, day)
 			if new_date not in self._availability[centre_name].keys():
-				free_time_slots = self.__make_time_slots_list()
+				now_time = self.__time_slot_to_time(datetime.now().time().isoformat(timespec='minutes'))
+				free_time_slots = self.__make_time_slots_list(new_date,now_time)
 				if time_slot not in free_time_slots:
 					return False	# ERROR
 				self._availability[centre_name][new_date] = free_time_slots

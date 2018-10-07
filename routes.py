@@ -68,6 +68,11 @@ def book(provider, centre):
 	"""
 	p = user_manager.get_user(provider)
 	c = centre_manager.get_centre_from_id(centre)
+	
+	# If current user is the chosen provider, render error template
+	if p.email.lower() == current_user.email.lower():
+		return render_template('error.html', error_msg="Provider can't book an appointment with themselves")
+
 	today = date.today().isoformat()
 
 	reason = request.args.get("reason")
@@ -83,7 +88,7 @@ def book(provider, centre):
 		if avail != None:
 			return render_template('booking.html', today=today, date=form_date, reason=reason, provider=p, centre=c, available_slots=avail, date_chosen=True)
 		else:
-			return 'Something Wrong?'
+			return render_template('error.html', error_msg="Boooking Error")
 	else:
 		return render_template('booking.html', today=today, provider=p, centre=c, date_chosen=False, error=True)
 
@@ -106,7 +111,7 @@ def book_confirmation(provider, centre, date, time_slot, reason):
 	# make appointment object
 	appt = appt_manager.make_appt_and_add_appointment_to_manager(current_user.email, provider, centre, date, time_slot, reason)
 	if appt == False:
-		return 'Something Wrong?'
+		return render_template('error.html', error_msg="Booking taken OR provider and patient same person")	# redirect to home page and display an error message
 	# Add appts object to patient and provider
 	current_user.add_appointment(appt)
 	p.add_appointment(appt)
@@ -120,7 +125,7 @@ def book_confirmation(provider, centre, date, time_slot, reason):
 		return 'Something Wrong?'
 	user_manager.save_data()
 	appt_manager.save_data()
-	return redirect(url_for('index'))
+	return render_template('booking_confirmed.html', prov_name=p.fullname, centre_name=c.name, date=date, time=time_slot)
 	
 
 @login_required

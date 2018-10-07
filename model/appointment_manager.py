@@ -18,9 +18,14 @@ class AppointmentManager:
             return False
 
 
-    # add appointments given appointment information 
+    # add appointments given appointment information
+    # If appointment with certain provider, date and time slot doesn't exist
+    #   AND the provider and patient is not the same, 
+    #       make appointment.
+    # Else,
+    #       send False
     def make_appt_and_add_appointment_to_manager(self, patient_email, provider_email, centre_id, date, time_slot, reason):
-        if not any(appointment.date == date and appointment.time_slot == time_slot for appointment in self._appointments):      
+        if not any(appt.provider_email == provider_email and appt.date == date and appt.time_slot == time_slot for appt in self._appointments) and patient_email.lower() != provider_email.lower():      
             appointment = Appointment(patient_email, provider_email, centre_id, date, time_slot, reason)
             # self._get_information(self, appointments)
             self._appointments.append(appointment)
