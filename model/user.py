@@ -10,39 +10,39 @@ class User(UserMixin):
 		self._given_name = given_name.lower()
 		self._appointments = []
 
-	@property
-	def email(self):
-		return self._email
+	# @property
+	# def email(self):
+	# 	return self._email
 	
-	@property
-	def password(self):
-		return self._password
+	# @property
+	# def password(self):
+	# 	return self._password
 
-	@property
-	def surname(self):
-		return self._surname
+	# @property
+	# def surname(self):
+	# 	return self._surname
 	
-	@property
-	def given_name(self):
-		return self._given_name
+	# @property
+	# def given_name(self):
+	# 	return self._given_name
 
-	@property
-	def appointments(self):
-		return self._appointments
+	# @property
+	# def appointments(self):
+	# 	return self._appointments
 
-	@email.setter
+	# @email.setter
 	def email(self, email):
 		self._email = email.lower()
 
-	@password.setter
+	# @password.setter
 	def password(self, pwd):
 		self._password = pwd
 
-	@surname.setter
+	# @surname.setter
 	def surname(self, surname):
 		self._surname = surname.lower()
 
-	@given_name.setter
+	# @given_name.setter
 	def given_name(self, given_name):
 		self._given_name = given_name.lower()
 
@@ -70,6 +70,7 @@ class User(UserMixin):
 	def get_information(self):
 		return {
 				'email': self._email,
+				'password' : self._password,
 				'surname': self._surname,
 				'given_name': self._given_name,
 				'appointments': self._appointments,

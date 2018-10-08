@@ -1,5 +1,5 @@
 import pytest
-from provider import Provider
+from model.provider import Provider
 # Test provider
 
 
@@ -18,32 +18,45 @@ from provider import Provider
 
 def test_getters():
 	p = Provider('test@gmail.com','1234','McTester', 'Test','124024114', 'Official Tester')
-	assert(p.email == 'test@gmail.com'.lower())
-	assert(p.password == '1234'.lower())
-	assert(p.surname == 'McTester'.lower())
-	assert(p.given_name == 'Test'.lower())
-	assert(p.provider_no == '124024114'.lower())
-	assert(p.service == 'Official Tester'.lower())
-	assert(p.appointments == [])
-	assert(p.centres == [])
-	assert(p.availability == {})
-	assert(p.rating == {})
-	assert(p.average_rating == 0)
+	info = p.get_information
+	assert(info["email"] == 'test@gmail.com'.lower())
+	assert(info["password"]	== '1234'.lower())
+	assert(info["surname"] 	== 'McTester'.lower())
+	assert(info["given_name"] == 'Test'.lower())
+	assert(info["provider_no"] == '124024114'.lower())
+	assert(info["service"] == 'Official Tester'.lower())
+	assert(info["appointments"] == [])
+	assert(info["centres"] == [])
+	assert(info["availability"] == {})
+	assert(info["rating"] == {})
+	assert(info["average_rating"] == 0)
 
 def test_setters():
 	p = Provider('test@gmail.com','1234','McTester', 'Test','124024114', 'Official Tester')
+	
 	p.email = 'TESting@gmail.Com'
-	assert(p.email == 'testing@gmail.com' )
+	info = p.get_information
+	assert(info['email'] == 'testing@gmail.com' )
+	
 	p.password = 'WoooWThatsGreat'
-	assert(p.password != 'wooowthatsgreat' and p.password == 'WoooWThatsGreat')
+	info = p.get_information
+	assert(info['password'] != 'wooowthatsgreat' and info['password'] == 'WoooWThatsGreat')
+	
 	p.surname = 'MCTESTing'
-	assert(p.surname == 'mctesting')
+	info = p.get_information
+	assert(info['surname'] == 'mctesting')
+	
 	p.given_name = 'TEEEESt'
-	assert(p.given_name == 'teeeest')
+	info = p.get_information
+	assert(info['given_name'] == 'teeeest')
+	
 	p.provider_no = '123123'
-	assert(p.provider_no == '123123')
+	info = p.get_information
+	assert(info['provider_no'] == '123123')
+	
 	p.service = 'OFFicial TESTer'
-	assert(p.service == 'official tester')
+	info = p.get_information
+	assert(info['service'] == 'official tester')
 
 
 def test_add_non_existing_centre():
