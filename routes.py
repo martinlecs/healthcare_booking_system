@@ -231,14 +231,25 @@ def view_appointments():
 		prov_view = True
 	else:
 		prov_view = False
+	
 	cur_appt = user.get_upcoming_appointments()
-	content = [x.get_information() for x in cur_appt]
-	for appt in content:
+	past_appt = user.get_past_appointments()
+	content = {}
+	content['current'] = [x.get_information() for x in cur_appt]
+	content['past'] = [x.get_information() for x in past_appt]
+	for appt in content['current']:
 		prov = user_manager.get_user(appt['provider_email'])
 		appt['prov_name'] = " ".join([prov.given_name, prov.surname])
 		patient = user_manager.get_user(appt['patient_email'])
 		appt['patient_name'] = " ".join([patient.given_name, patient.surname])
-		appt['centre_name'] = centre_manager.get_centre_from_id(appt['centre_id']).name 
+		appt['centre_name'] = centre_manager.get_centre_from_id(appt['centre_id']).name
+	for appt in content['past']:
+		prov = user_manager.get_user(appt['provider_email'])
+		appt['prov_name'] = " ".join([prov.given_name, prov.surname])
+		patient = user_manager.get_user(appt['patient_email'])
+		appt['patient_name'] = " ".join([patient.given_name, patient.surname])
+		appt['centre_name'] = centre_manager.get_centre_from_id(appt['centre_id']).name
+	 
 	return render_template('appointment_history.html', content=content, prov_view=prov_view)
 
 
