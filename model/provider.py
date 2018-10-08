@@ -14,40 +14,40 @@ class Provider(User):
 		self._rating = {} #rating
 		self._average_rating = 0
 
-	# @property
-	# def provider_no(self):
-	# 	return self._provider_no
+	@property
+	def provider_no(self):
+		return self._provider_no
 
-	# @property
-	# def fullname(self):
-	# 	return " ".join([self._given_name, self._surname])
+	@property
+	def fullname(self):
+		return " ".join([self._given_name, self._surname])
 
-	# @property
-	# def service(self):
-	# 	return self._service
+	@property
+	def service(self):
+		return self._service
 
-	# @property
-	# def centres(self):
-	# 	return self._centres
+	@property
+	def centres(self):
+		return self._centres
 
-	# @property
-	# def availability(self):
-	# 	return self._availability
+	@property
+	def availability(self):
+		return self._availability
 
-	# @property
-	# def rating(self):
-	# 	return self._rating
+	@property
+	def rating(self):
+		return self._rating
 
-	# @property
-	# def average_rating(self):
-	# 	return self._average_rating
+	@property
+	def average_rating(self):
+		return self._average_rating
 	
 
-	# @provider_no.setter
+	@provider_no.setter
 	def provider_no(self, provider_no):
 		self._provider_no = provider_no.lower()
 
-	# @service.setter
+	@service.setter
 	def service(self, service):
 		self._service = service.lower()
 

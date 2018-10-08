@@ -2,7 +2,8 @@ from flask import render_template, request, redirect, url_for
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from server import app, user_manager, centre_manager, appt_manager
 from model.provider import Provider
-from datetime import date
+from model.date_validity import date_valid, time_valid
+from datetime import date, datetime, time
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -66,6 +67,7 @@ def book(provider, centre):
 	:param centre: a centre id
 	:return: booking.html if all works out, otherwise 'Something Wrong?'
 	"""
+	# date_split = 
 	p = user_manager.get_user(provider)
 	c = centre_manager.get_centre_from_id(centre)
 	
@@ -79,7 +81,7 @@ def book(provider, centre):
 	if reason is None or reason is "":
 		reason = " "
 	form_date = request.args.get("date")
-	if form_date is not "" and form_date is not None:
+	if form_date is not "" and form_date is not None and date_valid(form_date) != False:
 		date_split = form_date.split('-')
 		year = int(date_split[0])
 		month = int(date_split[1])
@@ -106,6 +108,9 @@ def book_confirmation(provider, centre, date, time_slot, reason):
 	:param reason: string
 	:return: redirects to index function if all works out, otherwise 'Something Wrong?'
 	"""
+	if date_valid(date) == False or time_valid(time_slot) == False:
+		return render_template('error.html', error_msg="Invalid date or time")	# redirect to home page and display an error message
+
 	p = user_manager.get_user(provider)
 	c = centre_manager.get_centre_from_id(centre)
 	# make appointment object
@@ -240,3 +245,32 @@ def view_appointments():
 @login_manager.user_loader
 def load_user(email):
 	return user_manager.get_user(email)
+
+# def date_valid(given_date):
+# 	date_split = given_date.split('-')
+# 	year = int(date_split[0])
+# 	month = int(date_split[1])
+# 	day = int(date_split[2])
+# 	new_date = date(year, month, day)
+# 	if new_date < date.today():
+# 		return False
+# 	else:
+# 		return True
+
+# def __time_slot_to_time(time_slot):
+# 		time_slot = time_slot.split(':')
+# 		hour_ = int(time_slot[0])
+# 		minute_ = int(time_slot[1])
+# 		return time(hour = hour_, minute = minute_)
+
+
+# def time_valid(time_slot):
+# 	now_time = __time_slot_to_time(datetime.now().time().isoformat(timespec='minutes'))
+	
+# 	time_slot = time_slot.split(':')
+# 	hour_ = int(time_slot[0])
+# 	minute_ = int(time_slot[1])
+# 	time_slot_in_time = time(hour = hour_, minute = minute_)
+
+# 	if now_time > time_slot_in_time:
+# 		return False
