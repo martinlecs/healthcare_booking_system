@@ -1,7 +1,7 @@
 import pytest
-from centre_manager import CentreManager
-from centre import Centre
-from provider import Provider
+from model.centre_manager import CentreManager
+from model.centre import Centre
+from model.provider import Provider
 
 ''' 
 Items to test

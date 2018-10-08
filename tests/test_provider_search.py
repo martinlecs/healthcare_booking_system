@@ -1,7 +1,7 @@
 import pytest
-from user_manager import UserManager
-from centre import Centre
-from provider import Provider
+from model.user_manager import UserManager
+from model.centre import Centre
+from model.provider import Provider
 
 ''' 
 Items to test

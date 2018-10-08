@@ -1,5 +1,5 @@
 import pytest
-from user_manager import UserManager
+from model.user_manager import UserManager
 
 # Pytest testing file
 # A total of 28 tests

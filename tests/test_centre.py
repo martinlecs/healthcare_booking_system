@@ -1,6 +1,6 @@
 import pytest
-from centre import Centre
-from provider import Provider
+from model.centre import Centre
+from model.provider import Provider
 
 ''' 
 Tests to conduct
@@ -18,7 +18,7 @@ def centre_fixture(prov_fixture):
     c2 = Centre("Prince of Wales", "Randwick", "Hospital", 1234, 93000000)
     c3 = Centre("Westmead Hospital", 1234, "Hospital", 1234, 93000000)
     c4 = Centre("Randwick Hospital", "Randwick", "Hospital",
-                1234, 93000000, [prov_fixture[0], prov_fixture[2]])
+                1234, 93000000)
     return [c1, c2, c3, c4]
 
 

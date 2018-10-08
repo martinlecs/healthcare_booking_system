@@ -1,7 +1,7 @@
 import pytest
-from centre_manager import CentreManager
-from centre import Centre
-from provider import Provider
+from model.centre_manager import CentreManager
+from model.centre import Centre
+from model.provider import Provider
 
 """ 
 Unit Tests to run:
@@ -94,7 +94,7 @@ def test_add_from_details(prov_fixture):
     cm = CentreManager()
     cm.add_centre_from_details("Randwick Hospital", "Randwick", "Hospital", 1234, 93000000)
     cm.add_centre_from_details(
-        "Prince of Wales", "Randwick", "Hospital", 1234, 93000000, [prov_fixture[0]])
+        "Prince of Wales", "Randwick", "Hospital", 1234, 93000000)
     assert(len(cm.centres) == 2)
     assert(cm.centres[1].providers[0] is not None)
 
