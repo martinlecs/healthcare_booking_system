@@ -2,7 +2,9 @@ from flask import render_template, request, redirect, url_for
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 from server import app, user_manager, centre_manager, appt_manager
 from model.provider import Provider
+from model.system import correct_identity
 from model.date_validity import date_valid, time_valid
+from model.error import *
 from datetime import date, datetime, time
 
 login_manager = LoginManager()
@@ -225,7 +227,10 @@ def not_a_secret():
 
 @login_required
 @app.route('/appointments', methods=['GET'])
-def view_appointments():
+def appointment_history():
+	if not correct_identity(current_user, current_user):
+		raise IdentityError("Wrong user for URL")
+	
 	user = user_manager.get_user(current_user.get_id())
 	if type(user) is Provider:
 		prov_view = True
@@ -234,9 +239,11 @@ def view_appointments():
 	
 	cur_appt = user.get_upcoming_appointments()
 	past_appt = user.get_past_appointments()
+	
 	content = {}
 	content['current'] = [x.get_information() for x in cur_appt]
 	content['past'] = [x.get_information() for x in past_appt]
+	
 	for appt in content['current']:
 		prov = user_manager.get_user(appt['provider_email'])
 		appt['prov_name'] = " ".join([prov.given_name, prov.surname])
@@ -253,8 +260,39 @@ def view_appointments():
 	return render_template('appointment_history.html', content=content, prov_view=prov_view)
 
 
+@login_required
+@app.route('/appointments/<apptid>', methods=['GET','POST'])
+def view_appointment(apptid):
+	appt = appt_manager.search_by_id(int(apptid))
+	edit = False
+	# if appt is False:
+	# 	raise IdentityError("404")
+    # Validate identity for appointment first
+	user = user_manager.get_user(current_user.get_id())
+	if type(user) is Provider:
+		identity = user_manager.get_user(appt.provider_email)
+		if appt.past is False:
+			edit = True
+	else:
+		identity = user_manager.get_user(appt.patient_email)
+
+	if not correct_identity(identity, user):
+		raise IdentityError("Wrong user for Appointment")
+	content = appt.get_information()
+
+
+	return render_template('appointment.html',content=content, edit=edit)
+
+
 @login_manager.user_loader
 def load_user(email):
 	return user_manager.get_user(email)
 
+@app.errorhandler(IdentityError)
+def handle_identity_error(error):
+    return render_template('error_identity.html')
+	
+@app.errorhandler(404)
+def handle_404_error(error):
+    return render_template('error_404.html'), 404
 	

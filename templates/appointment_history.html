@@ -39,6 +39,7 @@
 					<td><a href="{{ url_for('provider_profile', provider=appt['provider_email']) }}"> {{appt['prov_name']}}</a></td>
 					{% endif %}
 					<td><a href="{{ url_for('centre_profile', centre=appt['centre_id']) }}"> {{appt['centre_name']}}</a></td>
+					<td><a href= "{{ url_for('view_appointment', apptid=appt['id']) }}"> View Appointment </a></td>
 				</tr>
 				{% endfor%}
 			</table>
@@ -72,6 +73,7 @@
 					<td><a href="{{ url_for('provider_profile', provider=appt['provider_email']) }}"> {{appt['prov_name']}}</a></td>
 					{% endif %}
 					<td><a href="{{ url_for('centre_profile', centre=appt['centre_id']) }}"> {{appt['centre_name']}}</a></td>
+					<td><a href="{{ url_for('view_appointment', apptid=appt['id']) }}"> View Appointment </a></td>
 				</tr>
 				{% endfor%}
 			</table>
