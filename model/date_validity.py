@@ -11,7 +11,7 @@ def date_valid(given_date):
 	else:
 		return True
 
-def __time_slot_to_time(time_slot):
+def time_slot_to_time(time_slot):
 		time_slot = time_slot.split(':')
 		hour_ = int(time_slot[0])
 		minute_ = int(time_slot[1])
@@ -19,7 +19,7 @@ def __time_slot_to_time(time_slot):
 
 
 def time_valid(time_slot):
-	now_time = __time_slot_to_time(datetime.now().time().isoformat(timespec='minutes'))
+	now_time = time_slot_to_time(datetime.now().time().isoformat(timespec='minutes'))
 	
 	time_slot = time_slot.split(':')
 	hour_ = int(time_slot[0])

@@ -1,5 +1,6 @@
 from datetime import time, date, datetime
 from model.user import User
+from model.date_validity import date_valid, time_valid, time_slot_to_time
 # Note about availability at the bottom
 # 
 
@@ -89,14 +90,14 @@ class Provider(User):
 			if centre_name not in self._availability.keys():
 				self._availability[centre_name] = {}
 			req_date = date(year, month, day)
-			now_time = self.__time_slot_to_time(datetime.now().time().isoformat(timespec='minutes'))
+			now_time = time_slot_to_time(datetime.now().time().isoformat(timespec='minutes'))
 			# If requested date is already in availability
 			if req_date in self._availability[centre_name]:
 				# if requested date is today, adjust availability according to current time
 				if req_date == date.today():
 					return [time_slot
 							for time_slot in self._availability[centre_name][req_date]
-							if self.__time_slot_to_time(time_slot) > now_time
+							if time_slot_to_time(time_slot) > now_time
 						   ]
 				else:
 					 return self._availability[centre_name][req_date]
@@ -115,7 +116,7 @@ class Provider(User):
 		if centre_name in self._availability.keys():
 			new_date = date(year, month, day)
 			if new_date not in self._availability[centre_name].keys():
-				now_time = self.__time_slot_to_time(datetime.now().time().isoformat(timespec='minutes'))
+				now_time = time_slot_to_time(datetime.now().time().isoformat(timespec='minutes'))
 				free_time_slots = self.__make_time_slots_list(new_date,now_time)
 				if time_slot not in free_time_slots:
 					return False	# ERROR
@@ -137,16 +138,11 @@ class Provider(User):
 		if req_date == date.today():
 			 return [time_slot
 					 for time_slot in times_string
-					 if self.__time_slot_to_time(time_slot) > now_time
+					 if time_slot_to_time(time_slot) > now_time
 				    ]
 		else:
 			return times_string
 
-	def __time_slot_to_time(self, time_slot):
-		time_slot = time_slot.split(':')
-		hour_ = int(time_slot[0])
-		minute_ = int(time_slot[1])
-		return time(hour = hour_, minute = minute_)
 
 	# add rating to dict, recalculate average rating
 	# Only takes in int values of rating
