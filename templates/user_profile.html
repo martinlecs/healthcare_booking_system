@@ -4,19 +4,30 @@
     {% if content %}
         <h3>Name: {{ " ".join([content['given_name'], content['surname']]) }} </h3>
         <h3>Email: {{ content['email'] }}</h3>
-{#        <h3>Upcoming appointsments: </h3>#}
-{#        {% if content['availability'] %}#}
-{#            <table>#}
-{#                {% for t in content['appointsments'] %}#}
-{#                    <tr>#}
-{#                        <th>{{ t }}</th>#}
-{#                        <th>Additional appt details</th>#}
-{#                    </tr>#}
-{#                {% endfor %}#}
-{#            </table>#}
-{#        {% else %}#}
-{#            <b>No upcoming appointments</b>#}
-{#        {% endif %}#}
+        {% if not provider %} 
+            <h3> Medicare No: {{ content['medicare_no'] }}</h3>
+        {% else %} 
+            <h3> Rating: {{ content['average_rating'] }}</h3>
+            <h3>Affiliated Centres: </h3>
+            <table>
+                {% for t in content['centres'] %}
+                <tr><td><a href="{{ url_for('centre_profile', centre=t) }}"> {{ t }} </td></tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+        <div style="margin: 10px 0px">
+            <form action="{{ url_for('user_profile') }}" method="get"> 
+                <button type="submit" name = "edit" value="true"> Edit Profile</button>
+            </form>
+        </div>
+        {% if edit %}
+            <form action="{{ url_for('user_profile') }}" method="post">
+                <br><input type="text" name="given_name" placeholder="New First Name">
+                <br><input type="text" name="surname" placeholder="New Last Name">
+                {% if not provider %} <br><input type="text" name="medicare_no" placeholder="New Medicare No"> {% endif %}
+                <br><button type="submit">Update Details</button>
+            </form>
+        {% endif %}
     {% else %}
         <h3>Sorry, it seems that this profile is unavailable.</h3>
     {% endif%}

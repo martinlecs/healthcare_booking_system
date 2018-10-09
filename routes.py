@@ -48,7 +48,7 @@ def logout():
 	return redirect(url_for('index'))
 
 
-@app.route('/profile', methods=['GET'])
+@app.route('/profile', methods=['GET', 'POST'])
 @login_required
 def user_profile():
 	"""
@@ -56,8 +56,23 @@ def user_profile():
 	:return: user_profile.html if all works out
 	"""
 	user = load_user(current_user.get_id())
+	provider = False
 	content = user.get_information()
-	return render_template('user_profile.html', content=content)
+	if type(user) is Provider:
+    		provider = True
+	if request.args.get('edit'):
+		return render_template('user_profile.html', content=content, edit=True, provider=provider)
+
+	if request.method == 'POST':
+		if request.form['given_name']:
+			user.given_name = request.form['given_name']
+		if request.form['surname']:
+			user.surname = request.form['surname']
+		if request.form['medicare_no']:
+			user.medicare_no = request.form['medicare_no']
+		content = user.get_information()
+	
+	return render_template('user_profile.html', content=content, provider=provider)
 
 
 @login_required
@@ -243,7 +258,7 @@ def appointment_history():
 	content = {}
 	content['current'] = [x.get_information() for x in cur_appt]
 	content['past'] = [x.get_information() for x in past_appt]
-	
+	# This isn't particularly pretty now, will refactor eventually
 	for appt in content['current']:
 		prov = user_manager.get_user(appt['provider_email'])
 		appt['prov_name'] = " ".join([prov.given_name, prov.surname])
@@ -267,7 +282,7 @@ def view_appointment(apptid):
 	edit = False
 	# if appt is False:
 	# 	raise IdentityError("404")
-    # Validate identity for appointment first
+	# Validate identity for appointment first
 	user = user_manager.get_user(current_user.get_id())
 	if type(user) is Provider:
 		identity = user_manager.get_user(appt.provider_email)
@@ -290,9 +305,9 @@ def load_user(email):
 
 @app.errorhandler(IdentityError)
 def handle_identity_error(error):
-    return render_template('error_identity.html')
+	return render_template('error_identity.html')
 	
 @app.errorhandler(404)
 def handle_404_error(error):
-    return render_template('error_404.html'), 404
+	return render_template('error_404.html'), 404
 	
