@@ -15,8 +15,10 @@
             <li>Provider: <a href="{{ url_for('provider_profile', provider=appt['provider_email']) }}"> {{appt['prov_name']}}</a></li>
             {% endif %}
             <li>Health Centre: <a href="{{ url_for('centre_profile', centre=appt['centre_id']) }}"> {{appt['centre_name']}}</a></li>
-            <li>Notes: {{appt['notes']}} </li>
-            <li>Medication: {{appt['meds']}} </li>
+            <li>Notes: </li>
+            <input name="notes" placeholder="notes" value="{{notes}}"
+            <li>Medication:  </li>
+            <input name="meds" placeholder="medication" value="{{meds}}"
           </ul>
         </div>
     {% else %}
