@@ -265,7 +265,7 @@ def appointment_history():
 		prov_view = True
 	else:
 		prov_view = False
-	
+	user.set_past_appointments()
 	cur_appt = user.get_upcoming_appointments()
 	past_appt = user.get_past_appointments()
 	
@@ -285,12 +285,11 @@ def appointment_history():
 		patient = user_manager.get_user(appt['patient_email'])
 		appt['patient_name'] = " ".join([patient.given_name, patient.surname])
 		appt['centre_name'] = centre_manager.get_centre_from_id(appt['centre_id']).name
-	 
 	return render_template('appointment_history.html', content=content, prov_view=prov_view)
 
 
 @login_required
-@app.route('/appointments/<apptid>', methods=['GET','POST'])
+@app.route('/appointment/<apptid>', methods=['GET','POST'])
 def view_appointment(apptid):
 	appt = appt_manager.search_by_id(int(apptid))
 	edit = False
