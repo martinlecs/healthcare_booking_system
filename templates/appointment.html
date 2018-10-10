@@ -1,11 +1,27 @@
 {% extends 'base.html' %}
 {% block body %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/tabs.css') }}">
+
     {% if content %}
-        <h2> Appointment stuff goes here </h2>
+        <h2> Your appointment </h2>
+        <div class="content">
+          <ul>
+            <li>Date: {{appt['date']}}</li>
+            <li>Time: {{ appt['time_slot']}}</li>
+            {% if prov_view %}
+            <li> Patient: <a href="{{ url_for('patient_profile', patient=appt['patient_email']) }}"> {{ appt['patient_name'] }}</a> </li>
+            <li> Reason: {{ appt['reason']}} </li>
+            {% else %}
+            <li>Provider: <a href="{{ url_for('provider_profile', provider=appt['provider_email']) }}"> {{appt['prov_name']}}</a></li>
+            {% endif %}
+            <li>Health Centre: <a href="{{ url_for('centre_profile', centre=appt['centre_id']) }}"> {{appt['centre_name']}}</a></li>
+            <li>Notes: {{appt['notes']}} </li>
+            <li>Medication: {{appt['meds']}} </li>
+          </ul>
+        </div>
     {% else %}
         <h3>Sorry, it seems that this appointment doesn't exist.</h3>
     {% endif%}
-
 
 
 {% endblock %}
