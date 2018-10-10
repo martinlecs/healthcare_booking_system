@@ -1,4 +1,6 @@
 from model.appointment import Appointment
+from model.error import BookingError
+from model.date_validity import date_and_time_valid
 import pickle
 
 class AppointmentManager:
@@ -25,13 +27,19 @@ class AppointmentManager:
     # Else,
     #       send False
     def make_appt_and_add_appointment_to_manager(self, patient_email, provider_email, centre_id, date, time_slot, reason):
-        if not any(appt.provider_email == provider_email and appt.date == date and appt.time_slot == time_slot for appt in self._appointments) and patient_email.lower() != provider_email.lower():      
+        if date_and_time_valid(time_slot, date) == False:
+            raise BookingError("Invalid date or time")
+        
+        if patient_email.lower() == provider_email.lower():
+            raise BookingError("Provider can't book an appointment with themselves")
+        
+        if not any(appt.provider_email == provider_email and appt.date == date and appt.time_slot == time_slot for appt in self._appointments):      
             appointment = Appointment(patient_email, provider_email, centre_id, date, time_slot, reason)
             # self._get_information(self, appointments)
             self._appointments.append(appointment)
             return appointment # successful.
         else:
-            return False # Fail. Already in appointment list.
+            raise BookingError("Booking taken") # Fail. Already in appointment list.
 
 
     def remove_appointment(self, appointment_id):

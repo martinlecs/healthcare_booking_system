@@ -1,6 +1,7 @@
 from datetime import time, date, datetime
 from model.user import User
 from model.date_validity import time_slot_to_time
+from model.error import BookingError
 # Note about availability at the bottom
 # 
 
@@ -120,9 +121,9 @@ class Provider(User):
 		for centre_name in self._availability.keys():
 			if given_date not in self._availability[centre_name].keys():
 				free_time_slots = self.__make_time_slots_list(given_date,now_time)
-				if time_slot not in free_time_slots:
-					return False # ERROR
 				self._availability[centre_name][given_date] = free_time_slots
+			if time_slot not in self._availability[centre_name][given_date]:
+					raise BookingError("Invalid time slot")
 			self._availability[centre_name][given_date].remove(time_slot)
 
 		return True

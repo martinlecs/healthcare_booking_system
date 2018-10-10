@@ -5,5 +5,5 @@ class IdentityError(Exception):
 
 class BookingError(Exception):
 	def __init__(self, msg):
-		super.__init__(self)
+		super().__init__(self)
 		self.msg = msg

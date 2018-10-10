@@ -90,7 +90,7 @@ def book(provider, centre):
 	
 	# If current user is the chosen provider, render error template
 	if p.email.lower() == current_user.email.lower():
-		return render_template('error.html', error_msg="Provider can't book an appointment with themselves")
+		raise BookingError("Provider can't book an appointment with themselves")
 
 	today = date.today().isoformat()
 
@@ -107,7 +107,7 @@ def book(provider, centre):
 		if avail != None:
 			return render_template('booking.html', today=today, date=form_date, reason=reason, provider=p, centre=c, available_slots=avail, date_chosen=True)
 		else:
-			return render_template('error.html', error_msg="Boooking Error")
+			raise BookingError("Time slot not available")
 	else:
 		return render_template('booking.html', today=today, provider=p, centre=c, date_chosen=False, error=True)
 
@@ -125,15 +125,22 @@ def book_confirmation(provider, centre, date, time_slot, reason):
 	:param reason: string
 	:return: redirects to index function if all works out, otherwise 'Something Wrong?'
 	"""
-	if date_and_time_valid(time_slot, date) == False:
-		return render_template('error.html', error_msg="Invalid date or time")	# redirect to home page and display an error message
+	# if date_and_time_valid(time_slot, date) == False:
+	# 	raise BookingError("Invalid date or time")
 
 	p = user_manager.get_user(provider)
 	c = centre_manager.get_centre_from_id(centre)
 	# make appointment object
-	appt = appt_manager.make_appt_and_add_appointment_to_manager(current_user.email, provider, centre, date, time_slot, reason)
-	if appt == False:
-		return render_template('error.html', error_msg="Booking taken OR provider and patient same person")	# redirect to home page and display an error message
+	# 
+	try:
+		appt = appt_manager.make_appt_and_add_appointment_to_manager(current_user.email, provider, centre, date, time_slot, reason)
+	except BookingError as e:
+		raise e
+	# appt = appt_manager.make_appt_and_add_appointment_to_manager(current_user.email, provider, centre, date, time_slot, reason)
+	# if appt == False:
+	# 	raise BookingError("Booking taken OR provider and patient same person")
+	
+	# 	# return render_template('error.html', error_msg="Booking taken OR provider and patient same person")	# redirect to home page and display an error message
 	# Add appts object to patient and provider
 	current_user.add_appointment(appt)
 	p.add_appointment(appt)
@@ -307,6 +314,10 @@ def load_user(email):
 @app.errorhandler(IdentityError)
 def handle_identity_error(error):
 	return render_template('error_identity.html')
+
+@app.errorhandler(BookingError)
+def handle_booking_error(error):
+	return render_template('error.html', error_msg=error.msg)
 	
 @app.errorhandler(404)
 def handle_404_error(error):
