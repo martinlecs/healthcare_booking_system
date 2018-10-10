@@ -3,7 +3,7 @@ from flask_login import LoginManager, current_user, login_user, logout_user, log
 from server import app, user_manager, centre_manager, appt_manager
 from model.provider import Provider
 from model.system import correct_identity
-from model.date_validity import date_valid, time_valid
+from model.date_validity import date_valid, date_and_time_valid, date_string_to_date
 from model.error import *
 from datetime import date, datetime, time
 
@@ -125,7 +125,7 @@ def book_confirmation(provider, centre, date, time_slot, reason):
 	:param reason: string
 	:return: redirects to index function if all works out, otherwise 'Something Wrong?'
 	"""
-	if date_valid(date) == False or time_valid(time_slot) == False:
+	if date_and_time_valid(time_slot, date) == False:
 		return render_template('error.html', error_msg="Invalid date or time")	# redirect to home page and display an error message
 
 	p = user_manager.get_user(provider)
@@ -144,6 +144,7 @@ def book_confirmation(provider, centre, date, time_slot, reason):
 	day = int(date_split[2])
 	checker = p.make_time_slot_unavailable(c.name, year, month, day, time_slot)
 	if checker != True:
+	# if checker == False:
 		return 'Something Wrong?'
 	user_manager.save_data()
 	appt_manager.save_data()
