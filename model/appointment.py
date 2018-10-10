@@ -109,7 +109,7 @@ class Appointment:
         if med not in self._meds:
             self._meds.append(med)
 
-    def in_the_past(self):
+    def past(self):
         self._past = True
 
    
