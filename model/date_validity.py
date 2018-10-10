@@ -1,6 +1,9 @@
 from datetime import date, datetime, time
 
 def date_valid(given_date):
+	"""
+	If given_date < today => Invalid!
+	"""
 	date_split = given_date.split('-')
 	year = int(date_split[0])
 	month = int(date_split[1])
@@ -18,7 +21,8 @@ def time_slot_to_time(time_slot):
 		return time(hour = hour_, minute = minute_)
 
 
-def time_valid(time_slot):
+def time_valid(time_slot, given_date):
+
 	now_time = time_slot_to_time(datetime.now().time().isoformat(timespec='minutes'))
 	
 	time_slot = time_slot.split(':')
