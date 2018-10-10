@@ -21,10 +21,6 @@ class Provider(User):
 		return self._provider_no
 
 	@property
-	def fullname(self):
-		return " ".join([self._given_name, self._surname])
-
-	@property
 	def service(self):
 		return self._service
 
@@ -58,7 +54,7 @@ class Provider(User):
 				 'password' : self._password,
 				 'surname': self._surname,
 				 'given_name': self._given_name,
-				 'fullname' : " ".join([self._given_name, self._surname]),
+				 'fullname' : self.fullname,
 				 'provider_no': self._provider_no,
 				 'service': self._service,
 				 'centres': self._centres,

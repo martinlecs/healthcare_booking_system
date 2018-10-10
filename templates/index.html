@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
 {% block body %}
 	<h2>Home screen!</h2>
-	<h3>Welcome {{ current_user.fullname }}</h3>
+	<h3>Welcome, {{ current_user.fullname.title() }}</h3>
 {% endblock %}

@@ -27,6 +27,10 @@ class User(UserMixin):
 		return self._given_name
 
 	@property
+	def fullname(self):
+		return " ".join([self._given_name, self._surname])
+
+	@property
 	def appointments(self):
 		return self._appointments
 
