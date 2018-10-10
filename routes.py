@@ -71,6 +71,7 @@ def user_profile():
 		if request.form['medicare_no']:
 			user.medicare_no = request.form['medicare_no']
 		content = user.get_information()
+		user_manager.save_data()
 	
 	return render_template('user_profile.html', content=content, provider=provider)
 
