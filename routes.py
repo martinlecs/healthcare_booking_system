@@ -72,8 +72,13 @@ def user_profile():
 			user.medicare_no = request.form['medicare_no']
 		content = user.get_information()
 		user_manager.save_data()
+
+	centre_name_to_id = {}
+	for centre in content['centres']:
+		centre_obj = centre_manager.get_centre_from_name(centre)
+		centre_name_to_id[centre] = centre_obj.id
 	
-	return render_template('user_profile.html', content=content, provider=provider)
+	return render_template('user_profile.html', content=content, provider=provider, centres=centre_name_to_id)
 
 
 @login_required

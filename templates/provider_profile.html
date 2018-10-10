@@ -2,7 +2,8 @@
 {% block body %}
     <h2>Profile</h2>
     {% if content %}
-        <h3>Name: {{ " ".join([content['given_name'], content['surname']]) }} </h3>
+        <h3>Name: {{ content['fullname'].title() }} </h3>
+        <!-- <h3>Name: {{ " ".join([content['given_name'], content['surname']]) }} </h3> -->
         <h3>Provider No. {{ content['provider_no'] }}</h3>
         <h3>Service: {{ content['service'] }}</h3>
         <h3>Email: {{ content['email'] }}</h3>
