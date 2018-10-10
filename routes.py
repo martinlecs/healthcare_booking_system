@@ -281,7 +281,7 @@ def view_appointment(apptid):
 		raise IdentityError("Wrong user for Appointment")
 	content = appt.get_information()
 
-	if request.method == 'POST'
+	if request.method == 'POST':
 		notes = request.form["notes"]
 		meds = request.form["meds"]
 		return render_template('appointment.html', notes=notes, meds=meds)
