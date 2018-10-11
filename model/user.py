@@ -63,10 +63,10 @@ class User(UserMixin):
 
 
 	def get_past_appointments(self):
-		return [x for x in self._appointments if x.past == True]
+		return [x for x in self._appointments if x.past is True]
 
 	def get_upcoming_appointments(self):
-		return [x for x in self._appointments if x.past == False]
+		return [x for x in self._appointments if x.past is False]
 		
 	def set_past_appointments(self):
 		for a in self._appointments:

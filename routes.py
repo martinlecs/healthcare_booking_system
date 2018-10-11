@@ -148,7 +148,6 @@ def book_confirmation(provider, centre, date, time_slot, reason):
 
 	if appt not in appt_manager.appointments:
 		raise BookingError("Booking isn't being saved")
-
 	# Add appts object to patient and provider
 	current_user.add_appointment(appt)
 	if appt not in current_user.appointments:
@@ -276,9 +275,12 @@ def appointment_history():
 	else:
 		prov_view = False
 	user.set_past_appointments()
+	arg = 'current'
+	if request.args.get('appt'):
+		arg = request.args.get('appt')
+	
 	cur_appt = user.get_upcoming_appointments()
 	past_appt = user.get_past_appointments()
-	
 	content = {}
 	content['current'] = [x.get_information() for x in cur_appt]
 	content['past'] = [x.get_information() for x in past_appt]
@@ -295,7 +297,7 @@ def appointment_history():
 		patient = user_manager.get_user(appt['patient_email'])
 		appt['patient_name'] = " ".join([patient.given_name, patient.surname])
 		appt['centre_name'] = centre_manager.get_centre_from_id(appt['centre_id']).name
-	return render_template('appointment_history.html', content=content, prov_view=prov_view)
+	return render_template('appointment_history.html', content=content, prov_view=prov_view, arg=arg)
 
 
 @login_required
