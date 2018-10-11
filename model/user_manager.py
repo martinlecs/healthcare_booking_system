@@ -51,9 +51,9 @@ class UserManager:
 			return False	# Failed (already in patients)
 	
 	# Given provider info, add it to providers list
-	def add_provider_by_info(self, email, password, surname, given_name, provider_no, service):
+	def add_provider_by_info(self, email, password, surname, given_name, provider_no, service, specialist=False):
 		if not any(provider.email == email.lower() for provider in self._providers):
-			self._providers.append(Provider(email, password, surname, given_name, provider_no, service))
+			self._providers.append(Provider(email, password, surname, given_name, provider_no, service, specialist))
 			self.__add_provider_to_services(email.lower(), service.lower())
 			return True		# Success, could instead return new provider object
 		else:
@@ -189,6 +189,16 @@ class UserManager:
 				service = row[2].strip()
 				um.add_provider_by_info(email, pwd, surname, name, no, service)
 				#Need to insert error handling
+		with open('model/data/specialist.csv', newline='') as file:
+			reader = csv.reader(file, dialect='excel', quotechar="'")
+			for row in reader:
+				email = row[0].strip()
+				pwd = row[1].strip()
+				name = row[0].strip().split('@')[0]
+				surname = ""
+				no = 0
+				service = row[2].strip()
+				um.add_provider_by_info(email, pwd, surname, name, no, service, True)
 		with open('model/data/patient.csv', newline='') as file:
 			reader = csv.reader(file, dialect='excel', quotechar="'")
 			for row in reader:

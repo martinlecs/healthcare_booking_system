@@ -1,6 +1,6 @@
 from datetime import time, date, datetime
 from model.user import User
-from model.date_validity import date_valid, time_valid, time_slot_to_time
+from model.date_validity import *
 # Note about availability at the bottom
 # 
 
