@@ -104,8 +104,9 @@ class Appointment:
         med = med.lower()
         if med not in self._meds:
             self._meds.append(med)
+    
     @past.setter
-    def past(self):
-        self._past = True
+    def past(self, past_status):
+        self._past = past_status
 
    
