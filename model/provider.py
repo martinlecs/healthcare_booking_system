@@ -110,7 +110,7 @@ class Provider(User):
 	def make_time_slot_unavailable(self, centre_name, year, month, day, time_slot):
 		centre_name = centre_name.lower()
 		if centre_name not in self._availability.keys():
-			return None #ERROR
+			raise BookingError("Requested centre isn't associated with provider")
 		
 		given_date = date(year, month, day)
 		now_time = time_slot_to_time(datetime.now().time().isoformat(timespec='minutes'))

@@ -73,12 +73,15 @@ def user_profile():
 		content = user.get_information()
 		user_manager.save_data()
 
-	centre_name_to_id = {}
-	for centre in content['centres']:
-		centre_obj = centre_manager.get_centre_from_name(centre)
-		centre_name_to_id[centre] = centre_obj.id
-	
-	return render_template('user_profile.html', content=content, provider=provider, centres=centre_name_to_id)
+	if provider:
+		centre_name_to_id = {}
+		for centre in content['centres']:
+			centre_obj = centre_manager.get_centre_from_name(centre)
+			centre_name_to_id[centre] = centre_obj.id
+		return render_template('user_profile.html', content=content, provider=provider, centres=centre_name_to_id)
+		
+		
+	return render_template('user_profile.html', content=content, provider=provider)
 
 
 @login_required
@@ -142,26 +145,33 @@ def book_confirmation(provider, centre, date, time_slot, reason):
 		appt = appt_manager.make_appt_and_add_appointment_to_manager(current_user.email, provider, centre, date, time_slot, reason)
 	except BookingError as e:
 		raise e
-	# appt = appt_manager.make_appt_and_add_appointment_to_manager(current_user.email, provider, centre, date, time_slot, reason)
-	# if appt == False:
-	# 	raise BookingError("Booking taken OR provider and patient same person")
-	
-	# 	# return render_template('error.html', error_msg="Booking taken OR provider and patient same person")	# redirect to home page and display an error message
+
+	if appt not in appt_manager.appointments:
+		raise BookingError("Booking isn't being saved")
+
 	# Add appts object to patient and provider
 	current_user.add_appointment(appt)
+	if appt not in current_user.appointments:
+		raise BookingError("Booking isn't being saved in current user")
+	
 	p.add_appointment(appt)
+	if appt not in p.appointments:
+		raise BookingError("Booking isn't being saved in provider")
+
 	# Make time slot unavailable
 	date_split = date.split('-')
 	year = int(date_split[0])
 	month = int(date_split[1])
 	day = int(date_split[2])
-	checker = p.make_time_slot_unavailable(c.name, year, month, day, time_slot)
-	if checker != True:
-	# if checker == False:
-		return 'Something Wrong?'
+	try:
+		p.make_time_slot_unavailable(c.name, year, month, day, time_slot)
+	except BookingError as e:
+		appt_manager.remove_appointment(appt.id)
+		raise e
 	user_manager.save_data()
 	appt_manager.save_data()
-	return render_template('booking_confirmed.html', prov_name=p.fullname, centre_name=c.name, date=date, time=time_slot)
+	
+	return render_template('booking_confirmed.html', prov_name=user_manager.get_user(appt.provider_email).fullname, centre_name=centre_manager.get_centre_from_name(c.name).name, date=appt.date, time=appt.time_slot)
 	
 
 @login_required

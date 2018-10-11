@@ -18,5 +18,6 @@ class Patient(User):
 		return { 'email': self.email,
 				 'surname': self.surname,
 				 'given_name': self.given_name,
+				 'fullname': self.fullname,
 				 'medicare_no': self._medicare_no,
 				}
