@@ -305,6 +305,7 @@ def appointment_history():
 def view_appointment(apptid):
 
 	appt = appt_manager.search_by_id(int(apptid))
+	print(appt)
 	edit = False
 	# if appt is False:
 	# 	raise IdentityError("404")
@@ -318,14 +319,24 @@ def view_appointment(apptid):
 		identity = user_manager.get_user(appt.patient_email)
 
 	if not correct_identity(identity, user):
-		raise IdentityError("Wrong user for Appointment")
-	content = appt.get_information()
-
+    		raise IdentityError("Wrong user for Appointment")
 	if request.method == 'POST':
-		notes = request.form["notes"]
-		meds = request.form["meds"]
-		return render_template('appointment.html', notes=notes, meds=meds)
+		if request.form['notes']:
+			appt.notes = request.form["notes"]
+		if request.form['meds']:
+			appt.add_meds(request.form["meds"])
+		user_manager.save_data()
+		appt_manager.save_data()
 
+	content = appt.get_information()
+	prov = user_manager.get_user(appt.provider_email)
+	content['prov_name'] = " ".join([prov.given_name, prov.surname])
+	patient = user_manager.get_user(content['patient_email'])
+	content['patient_name'] = " ".join([patient.given_name, patient.surname])
+	content['centre_name'] = centre_manager.get_centre_from_id(content['centre_id']).name
+	content['meds'] = ", ".join(content['meds'])
+
+	print(appt.notes, appt.meds)
 	return render_template('appointment.html',content=content, edit=edit)
 
 
