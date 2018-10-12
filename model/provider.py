@@ -11,9 +11,9 @@ class Provider(User):
 		super().__init__(email, password, surname, given_name)
 		self._provider_no = provider_no
 		self._service = service.lower()
-		self._centres = [] #centres
+		self._centres = [] #centres [centre_name]
 		self._availability = {} #availability	#{centre_id:{date:[time_slot]}}
-		self._rating = {} #rating
+		self._rating = {} #rating {user:value}
 		self._average_rating = 0
 
 	@property

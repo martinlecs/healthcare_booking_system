@@ -7,6 +7,7 @@ class AppointmentManager:
     def __init__(self):
         self._appointments = []
         self._next_appt_id = 0
+    
     @property
     def appointments(self):
         return self._appointments
@@ -19,7 +20,7 @@ class AppointmentManager:
         else:
             return False
 
-    def get_appt_id(self):
+    def __get_appt_id(self):
         appt_id = self._next_appt_id
         self._next_appt_id += 1
         return appt_id
@@ -37,7 +38,7 @@ class AppointmentManager:
             raise BookingError("Provider can't book an appointment with themselves")
         
         if not any(appt.provider_email == provider_email and appt.date == date and appt.time_slot == time_slot for appt in self._appointments):      
-            appointment = Appointment(self.get_appt_id(), patient_email, provider_email, centre_id, date, time_slot, reason)
+            appointment = Appointment(self.__get_appt_id(), patient_email, provider_email, centre_id, date, time_slot, reason)
             # self._get_information(self, appointments)
             self._appointments.append(appointment)
             return appointment # successful.

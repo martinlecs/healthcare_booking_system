@@ -10,8 +10,8 @@ class Centre:
         self._type = type
         self._id = id
         self._phone = phone
-        self._services = {}
-        self._rating = {}
+        self._services = {} # {provider: service}
+        self._rating = {}   # {user_email:value}
         self._average_rating = 0
 
     #Getter Methods
