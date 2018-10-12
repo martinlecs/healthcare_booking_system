@@ -1,5 +1,6 @@
 from flask_login import UserMixin
 import string
+from datetime import datetime
 
 class User(UserMixin):
 	"User class"
@@ -25,6 +26,10 @@ class User(UserMixin):
 	@property
 	def given_name(self):
 		return self._given_name
+
+	@property
+	def fullname(self):
+		return " ".join([self._given_name, self._surname])
 
 	@property
 	def appointments(self):
@@ -58,11 +63,17 @@ class User(UserMixin):
 
 
 	def get_past_appointments(self):
-		return [x for x in self._appointments if x.past == True]
+		return [x for x in self._appointments if x.past is True]
 
 	def get_upcoming_appointments(self):
-		return [x for x in self._appointments if x.past == False]
+		return [x for x in self._appointments if x.past is False]
 		
+	def set_past_appointments(self):
+		for a in self._appointments:
+			s = " ".join([a.date, a.time_slot])
+			d = datetime.strptime(s,"%Y-%m-%d %H:%M")
+			if a.past is False and d < datetime.now():
+				a.past = True
 
 	def get_id(self):
 		return self._email

@@ -1,6 +1,7 @@
 from datetime import time, date, datetime
 from model.user import User
-from model.date_validity import date_valid, time_valid, time_slot_to_time
+from model.date_validity import time_slot_to_time
+from model.error import BookingError
 # Note about availability at the bottom
 # 
 
@@ -18,10 +19,6 @@ class Provider(User):
 	@property
 	def provider_no(self):
 		return self._provider_no
-
-	@property
-	def fullname(self):
-		return " ".join([self._given_name, self._surname])
 
 	@property
 	def service(self):
@@ -57,14 +54,13 @@ class Provider(User):
 				 'password' : self._password,
 				 'surname': self._surname,
 				 'given_name': self._given_name,
-				 'fullname' : " ".join([self._given_name, self._surname]),
+				 'fullname' : self.fullname,
 				 'provider_no': self._provider_no,
 				 'service': self._service,
 				 'centres': self._centres,
 				 'appointments': self._appointments,
 				 'availability': self._availability,
-				 'rating': self._rating,
-				 'average_rating' : self._average_rating,
+				 'rating': self._average_rating,
 				}
 
 	# Adds centre by name to prov's centres list
@@ -113,18 +109,20 @@ class Provider(User):
 	# Returns NONE when an invalid date values or a day in the past is passsed in
 	def make_time_slot_unavailable(self, centre_name, year, month, day, time_slot):
 		centre_name = centre_name.lower()
-		if centre_name in self._availability.keys():
-			new_date = date(year, month, day)
-			if new_date not in self._availability[centre_name].keys():
-				now_time = time_slot_to_time(datetime.now().time().isoformat(timespec='minutes'))
-				free_time_slots = self.__make_time_slots_list(new_date,now_time)
-				if time_slot not in free_time_slots:
-					return False	# ERROR
-				self._availability[centre_name][new_date] = free_time_slots
-			self._availability[centre_name][new_date].remove(time_slot)
-			return True
-		else:
-			False	# ERROR
+		if centre_name not in self._availability.keys():
+			raise BookingError("Requested centre isn't associated with provider")
+		
+		given_date = date(year, month, day)
+		now_time = time_slot_to_time(datetime.now().time().isoformat(timespec='minutes'))
+		for centre_name in self._availability.keys():
+			if given_date not in self._availability[centre_name].keys():
+				free_time_slots = self.__make_time_slots_list(given_date,now_time)
+				self._availability[centre_name][given_date] = free_time_slots
+			if time_slot not in self._availability[centre_name][given_date]:
+					raise BookingError("Invalid time slot")
+			self._availability[centre_name][given_date].remove(time_slot)
+
+		return True
 
 	# Makes a list of 48 strings representing 30 mins time slots, of 24 hours  
 	def __make_time_slots_list(self, req_date, now_time):

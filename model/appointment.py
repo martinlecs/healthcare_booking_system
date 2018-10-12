@@ -1,8 +1,8 @@
 class Appointment:
     " Appointment class"
-    appt_id = 0
-    def __init__(self, patient_email, provider_email, centre_id, date, time_slot, reason):
-        self._id = self.__set_id()
+
+    def __init__(self, given_id, patient_email, provider_email, centre_id, date, time_slot, reason):
+        self._id = given_id
         self._provider_email = provider_email
         self._patient_email = patient_email
         self._centre_id = centre_id
@@ -70,10 +70,6 @@ class Appointment:
     
 
 # setters
-    def __set_id(self):
-        Appointment.appt_id += 1
-        return Appointment.appt_id
-
     @provider_email.setter
     def provider_email(self, provider_email):
         self._provider_email = provider_email
@@ -108,8 +104,8 @@ class Appointment:
         med = med.lower()
         if med not in self._meds:
             self._meds.append(med)
-
-    def in_the_past(self):
+    @past.setter
+    def past(self):
         self._past = True
 
    

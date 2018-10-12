@@ -1,10 +1,12 @@
 from model.appointment import Appointment
+from model.error import BookingError
+from model.date_validity import date_and_time_valid
 import pickle
 
 class AppointmentManager:
     def __init__(self):
         self._appointments = []
-
+        self._next_appt_id = 0
     @property
     def appointments(self):
         return self._appointments
@@ -17,7 +19,10 @@ class AppointmentManager:
         else:
             return False
 
-
+    def get_appt_id(self):
+        appt_id = self._next_appt_id
+        self._next_appt_id += 1
+        return appt_id
     # add appointments given appointment information
     # If appointment with certain provider, date and time slot doesn't exist
     #   AND the provider and patient is not the same, 
@@ -25,18 +30,24 @@ class AppointmentManager:
     # Else,
     #       send False
     def make_appt_and_add_appointment_to_manager(self, patient_email, provider_email, centre_id, date, time_slot, reason):
-        if not any(appt.provider_email == provider_email and appt.date == date and appt.time_slot == time_slot for appt in self._appointments) and patient_email.lower() != provider_email.lower():      
-            appointment = Appointment(patient_email, provider_email, centre_id, date, time_slot, reason)
+        if date_and_time_valid(time_slot, date) == False:
+            raise BookingError("Invalid date or time")
+        
+        if patient_email.lower() == provider_email.lower():
+            raise BookingError("Provider can't book an appointment with themselves")
+        
+        if not any(appt.provider_email == provider_email and appt.date == date and appt.time_slot == time_slot for appt in self._appointments):      
+            appointment = Appointment(self.get_appt_id(), patient_email, provider_email, centre_id, date, time_slot, reason)
             # self._get_information(self, appointments)
             self._appointments.append(appointment)
             return appointment # successful.
         else:
-            return False # Fail. Already in appointment list.
+            raise BookingError("Booking taken") # Fail. Already in appointment list.
 
 
     def remove_appointment(self, appointment_id):
         for appt in self._appointments:
-            if appt.appointment_id == appointment_id:
+            if appt.id == appointment_id:
                 self._appointments.remove(appt)
                 return True 
             else:
