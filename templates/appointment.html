@@ -1,11 +1,31 @@
 {% extends 'base.html' %}
 {% block body %}
+
     {% if content %}
-        <h2> Appointment stuff goes here </h2>
+        <h2> Your appointment </h2>
+        <div class="content">
+          <ul>
+            <h3>Date: {{content['date']}}</h3>
+            <h3>Time: {{ content['time_slot']}}</h3>
+            {% if prov_view %}
+            <h3> Patient: <a href="{{ url_for('patient_profile', patient=content['patient_email']) }}"> {{ content['patient_name'] }}</a> </h3>
+            <h3> Reason: {{ content['reason']}} </h3>
+            {% else %}
+            <h3>Provider: <a href="{{ url_for('provider_profile', provider=content['provider_email']) }}"> {{content['prov_name']}}</a></h3>
+            {% endif %}
+            <h3>Health Centre: <a href="{{ url_for('centre_profile', centre=content['centre_id']) }}"> {{content['centre_name']}}</a></h3>
+            <form action = "{{ url_for('view_appointment', apptid=content['id'])}}" method="post">
+                <h3>Notes: {{ content['notes']}} </h3> 
+                <input type="text" name="notes" placeholder="update notes"> 
+                <h3>Medication:  {{ content['meds'] }}</h3>
+                <input type="text" name="meds" placeholder="medication">
+                <h3><button type="submit"> Update Appointment Notes</button></h3>
+            </form>
+          </ul>
+        </div>
     {% else %}
         <h3>Sorry, it seems that this appointment doesn't exist.</h3>
     {% endif%}
-
 
 
 {% endblock %}

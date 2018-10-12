@@ -93,10 +93,10 @@ def book(provider, centre):
 	:param centre: a centre id
 	:return: booking.html if all works out, otherwise 'Something Wrong?'
 	"""
-	# date_split = 
+	# date_split =
 	p = user_manager.get_user(provider)
 	c = centre_manager.get_centre_from_id(centre)
-	
+
 	# If current user is the chosen provider, render error template
 	if p.email.lower() == current_user.email.lower():
 		raise BookingError("Provider can't book an appointment with themselves")
@@ -185,7 +185,7 @@ def provider_profile(provider):
 	if request.method == 'POST':
 		rating = int(request.form['rate'])
 		p.add_rating(current_user.get_id(), rating)
-		user_manager.save_data() 
+		user_manager.save_data()
 	content = p.get_information()
 	centre_name_to_id = {}
 	for centre in content['centres']:
@@ -205,7 +205,7 @@ def centre_profile(centre):
 	if request.method == 'POST':
 		rating = int(request.form['rate'])
 		c.add_rating(current_user.get_id(), rating)
-		centre_manager.save_data() 
+		centre_manager.save_data()
 	content = c.get_information()
 	return render_template('centre_profile.html', content=content)
 
@@ -225,7 +225,7 @@ def patient_profile(patient):
 @login_required
 @app.route('/search', methods=['POST'])
 def search():
-	""" 
+	"""
 	Returns search results of providers/centres depending on
 	search category
 	:param query: search term and category
@@ -268,7 +268,7 @@ def not_a_secret():
 def appointment_history():
 	if not correct_identity(current_user, current_user):
 		raise IdentityError("Wrong user for URL")
-	
+
 	user = user_manager.get_user(current_user.get_id())
 	if type(user) is Provider:
 		prov_view = True
@@ -303,7 +303,9 @@ def appointment_history():
 @login_required
 @app.route('/appointment/<apptid>', methods=['GET','POST'])
 def view_appointment(apptid):
+
 	appt = appt_manager.search_by_id(int(apptid))
+	print(appt)
 	edit = False
 	# if appt is False:
 	# 	raise IdentityError("404")
@@ -317,10 +319,24 @@ def view_appointment(apptid):
 		identity = user_manager.get_user(appt.patient_email)
 
 	if not correct_identity(identity, user):
-		raise IdentityError("Wrong user for Appointment")
+    		raise IdentityError("Wrong user for Appointment")
+	if request.method == 'POST':
+		if request.form['notes']:
+			appt.notes = request.form["notes"]
+		if request.form['meds']:
+			appt.add_meds(request.form["meds"])
+		user_manager.save_data()
+		appt_manager.save_data()
+
 	content = appt.get_information()
+	prov = user_manager.get_user(appt.provider_email)
+	content['prov_name'] = " ".join([prov.given_name, prov.surname])
+	patient = user_manager.get_user(content['patient_email'])
+	content['patient_name'] = " ".join([patient.given_name, patient.surname])
+	content['centre_name'] = centre_manager.get_centre_from_id(content['centre_id']).name
+	content['meds'] = ", ".join(content['meds'])
 
-
+	print(appt.notes, appt.meds)
 	return render_template('appointment.html',content=content, edit=edit)
 
 
