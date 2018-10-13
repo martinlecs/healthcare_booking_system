@@ -25,21 +25,24 @@ def date_string_to_date(given_date):
 
 def date_and_time_valid(time_slot, given_date):
 	"""
-	If given_date < today => Invalid!
-	If given_day is today but time_slot is before current time => Invalid!
-	Else => VALID!
+	If given time and date is in the past => Invalid
 	"""
-	if not date_valid(given_date):
+	s = " ".join([given_date, time_slot])
+	d = datetime.strptime(s,"%Y-%m-%d %H:%M")
+	if d < datetime.now():
 		return False
 
-	given_date = date_string_to_date(given_date)
+	# if not date_valid(given_date):
+	# 	return False
 
-	now_time = time_slot_to_time(datetime.now().time().isoformat(timespec='minutes'))
+	# given_date = date_string_to_date(given_date)
+
+	# now_time = time_slot_to_time(datetime.now().time().isoformat(timespec='minutes'))
 	
-	time_slot = time_slot_to_time(time_slot)
+	# time_slot = time_slot_to_time(time_slot)
 
-	if given_date == date.today():
-		if now_time > time_slot:
-			return False
-	else:
-		return True
+	# if given_date == date.today():
+	# 	if now_time > time_slot:
+	# 		return False
+	# else:
+	# 	return True
