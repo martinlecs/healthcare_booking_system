@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block body %}
+    {% if notif %}
+        {% for i in notif %}
+            <b>i.message</b>
+        {% endfor %}
+    {% else %}
+        <b>No new notifications</b>
+    {% endif %}
+{% endblock %}

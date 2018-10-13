@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
-from server import app, user_manager, centre_manager, appt_manager
+from server import app, user_manager, centre_manager, appt_manager, notifications_manager
 from model.provider import Provider
 from model.system import correct_identity
 from model.date_validity import date_valid, date_and_time_valid, date_string_to_date
@@ -14,6 +14,10 @@ login_manager.login_view = 'login'
 @app.context_processor
 def inject_services_into_all_templates():
 	return dict(services=[''] + user_manager.get_service_names()) #Details for the drop down box
+
+@app.context_processor
+def inject_current_user_into_all_templates():
+    return dict(curr_user=current_user)
 
 @app.route('/', methods=['GET', 'POST'])
 @login_required
@@ -169,6 +173,9 @@ def book_confirmation(provider, centre, date, time_slot, reason):
 		raise e
 	user_manager.save_data()
 	appt_manager.save_data()
+
+	# send notification to provider
+	notifications_manager.add_notification(current_user.email, provider.email)
 	
 	return render_template('booking_confirmed.html', prov_name=user_manager.get_user(appt.provider_email).fullname, centre_name=centre_manager.get_centre_from_name(c.name).name, date=appt.date, time=appt.time_slot)
 	
@@ -338,6 +345,12 @@ def view_appointment(apptid):
 
 	print(appt.notes, appt.meds)
 	return render_template('appointment.html',content=content, edit=edit)
+
+@login_required
+@app.route('/notifications', methods=['GET', 'POST'])
+def notifications():
+	notif = notifications_manager.get_notifications(current_user.get_id())
+	return render_template('notifications.html', notifications=notif)
 
 
 @login_manager.user_loader
