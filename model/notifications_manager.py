@@ -21,6 +21,7 @@ class NotificationsManager():
     def add_notification(self, owner, target):
         n = BookingNotification("You have a booking", owner, target)
         self._notifications_matrix[target].append(n)
+        print(self._notifications_matrix)
 
     def remove_notification(self):
         pass

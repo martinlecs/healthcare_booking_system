@@ -40,6 +40,19 @@ class BookingNotification(Notification):
         self._owner = owner
         self._target = target
 
+
+    @property
+    def message(self):
+        return self._message
+
+    @property
+    def owner(self):
+        return self._owner
+
+    @property
+    def target(self):
+        return self._target
+
     # patient logs in -> patient books appointment with provider -> provider receives notification
     # -> provider requests access to modify notes from patient(?)
 

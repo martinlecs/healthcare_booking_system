@@ -83,8 +83,10 @@ def user_profile():
 			centre_obj = centre_manager.get_centre_from_name(centre)
 			centre_name_to_id[centre] = centre_obj.id
 		return render_template('user_profile.html', content=content, provider=provider, centres=centre_name_to_id)
-		
-		
+
+	# send notification to provider
+	notifications_manager.add_notification(current_user.email, current_user.email)
+
 	return render_template('user_profile.html', content=content, provider=provider)
 
 
@@ -350,6 +352,9 @@ def view_appointment(apptid):
 @app.route('/notifications', methods=['GET', 'POST'])
 def notifications():
 	notif = notifications_manager.get_notifications(current_user.get_id())
+    for i in notif:
+		pftwhzje4k6x75rlc;6tv'7yb' \
+							 '8un-9im0,-p./rint(i.message)
 	return render_template('notifications.html', notifications=notif)
 
 
