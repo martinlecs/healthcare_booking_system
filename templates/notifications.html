@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
 {% block body %}
-    {% if notif %}
-        {% for i in notif %}
-            <b>i.message</b>
+    {% if notifications %}
+        {% for i in notifications %}
+            <ul>
+                <form method="post"><li>{{ i.message }} <input type="submit" name="submit_button" value="{{ i.id }}"></li></form>
+            </ul>
         {% endfor %}
     {% else %}
         <b>No new notifications</b>

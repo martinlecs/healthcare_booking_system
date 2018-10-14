@@ -35,10 +35,14 @@ class AccessNotesNotification(Notification):
 
 class BookingNotification(Notification):
 
+    idCounter = 0
+
     def __init__(self, message, owner, target):
         self._message = message
         self._owner = owner
         self._target = target
+        BookingNotification.idCounter += 1
+        self._id = BookingNotification.idCounter
 
 
     @property
@@ -52,6 +56,10 @@ class BookingNotification(Notification):
     @property
     def target(self):
         return self._target
+
+    @property
+    def id(self):
+        return self._id
 
     # patient logs in -> patient books appointment with provider -> provider receives notification
     # -> provider requests access to modify notes from patient(?)

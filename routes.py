@@ -17,7 +17,7 @@ def inject_services_into_all_templates():
 
 @app.context_processor
 def inject_current_user_into_all_templates():
-    return dict(curr_user=current_user)
+	return dict(curr_user=current_user)
 
 @app.route('/', methods=['GET', 'POST'])
 @login_required
@@ -63,7 +63,7 @@ def user_profile():
 	provider = False
 	content = user.get_information()
 	if type(user) is Provider:
-    		provider = True
+			provider = True
 	if request.args.get('edit'):
 		return render_template('user_profile.html', content=content, edit=True, provider=provider)
 
@@ -328,7 +328,7 @@ def view_appointment(apptid):
 		identity = user_manager.get_user(appt.patient_email)
 
 	if not correct_identity(identity, user):
-    		raise IdentityError("Wrong user for Appointment")
+			raise IdentityError("Wrong user for Appointment")
 	if request.method == 'POST':
 		if request.form['notes']:
 			appt.notes = request.form["notes"]
@@ -351,10 +351,12 @@ def view_appointment(apptid):
 @login_required
 @app.route('/notifications', methods=['GET', 'POST'])
 def notifications():
+
+	if request.method == 'POST':
+		notifications_manager.remove_notification(current_user.get_id() ,request.form['submit_button'])
+		return render_template('notifications.html', notifications=notifications_manager.get_notifications(current_user.get_id()))
+
 	notif = notifications_manager.get_notifications(current_user.get_id())
-    for i in notif:
-		pftwhzje4k6x75rlc;6tv'7yb' \
-							 '8un-9im0,-p./rint(i.message)
 	return render_template('notifications.html', notifications=notif)
 
 
