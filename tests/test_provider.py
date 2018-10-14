@@ -1,5 +1,7 @@
 import pytest
 from model.provider import Provider
+from model.error import *
+from model.date_validity import *
 # Test provider
 
 
@@ -18,8 +20,8 @@ from model.provider import Provider
 
 def test_getters():
 	p = Provider('test@gmail.com','1234','McTester', 'Test','124024114', 'Official Tester')
-	info = p.get_information
-	assert(info["email"] == 'test@gmail.com'.lower())
+	info = p.get_information()
+	assert(info["email"] == 'test@gmail.com')
 	assert(info["password"]	== '1234'.lower())
 	assert(info["surname"] 	== 'McTester'.lower())
 	assert(info["given_name"] == 'Test'.lower())
@@ -28,34 +30,33 @@ def test_getters():
 	assert(info["appointments"] == [])
 	assert(info["centres"] == [])
 	assert(info["availability"] == {})
-	assert(info["rating"] == {})
-	assert(info["average_rating"] == 0)
+	assert(info["rating"] == 0)
 
 def test_setters():
 	p = Provider('test@gmail.com','1234','McTester', 'Test','124024114', 'Official Tester')
 	
 	p.email = 'TESting@gmail.Com'
-	info = p.get_information
+	info = p.get_information()
 	assert(info['email'] == 'testing@gmail.com' )
 	
 	p.password = 'WoooWThatsGreat'
-	info = p.get_information
+	info = p.get_information()
 	assert(info['password'] != 'wooowthatsgreat' and info['password'] == 'WoooWThatsGreat')
 	
 	p.surname = 'MCTESTing'
-	info = p.get_information
+	info = p.get_information()
 	assert(info['surname'] == 'mctesting')
 	
 	p.given_name = 'TEEEESt'
-	info = p.get_information
+	info = p.get_information()
 	assert(info['given_name'] == 'teeeest')
 	
 	p.provider_no = '123123'
-	info = p.get_information
+	info = p.get_information()
 	assert(info['provider_no'] == '123123')
 	
 	p.service = 'OFFicial TESTer'
-	info = p.get_information
+	info = p.get_information()
 	assert(info['service'] == 'official tester')
 
 
@@ -151,47 +152,42 @@ def test_calc_average_rating_with_out_ratings():
 	p.remove_rating('patient@gmail.com')
 	assert(p.average_rating == 0)
 	
-
-def test_get_availability_for_non_existing_centre_and_non_existing_but_valid_date():
+def test_get_availability_invalid_date():
+	p = Provider('1','1','1','','','')
+	with pytest.raises(DateTimeValidityError) as info:
+		checker = p.get_availability('centre', 13, 22, 414)
+	with pytest.raises(DateTimeValidityError) as info:
+		checker = p.get_availability('centre', 'lol', 22, 414)
+		
+	
+def test_get_availability_for_non_existing_centre_but_valid_date():
 	p = Provider('1','1','1','','','')
 	# p.add_centre('rand')
-	checker = p.get_availability('rand', 2018, 9, 20)
-	assert(checker == False)
+	with pytest.raises(BookingError) as info:
+		p.get_availability('centre', 2019, 12, 14)
 
-def test_get_availability_for_existing_centre_and_non_existing_date():
+def test_get_availability_for_existing_centre_and_valid_date():
 	p = Provider('1','1','1','','','')
 	p.add_centre('rand')
-	val = p.get_availability('rand', 2018, 9, 20)
-	assert(len(val) == 48)
-
-def test_get_availability_for_invalid_date():
-	p = Provider('1','1','1','','','')
-	p.add_centre('rand')
-	checker = p.get_availability('rand', 2018, 19, 220)
-	assert(checker == None)
-	checker = p.get_availability('rand', 2018, 8, 20)
-	assert(checker == None)
+	val = p.get_availability('rand', 2019, 9, 20)
+	assert(len(val) == 48 and type(val) == list)
 
 def test_make_non_existing_and_available_slots_unavailable():
 	p = Provider('1','1','1','','','')
 	p.add_centre('rand')
-	p.get_availability('rand', 2018, 9, 20)
-	checker = p.make_time_slot_unavailable('rand', 2018, 9, 20, '08:30')
+	p.get_availability('rand', 2019, 9, 20)
+	checker = p.make_time_slot_unavailable('rand', 2019, 9, 20, '08:30')
 	assert(checker == True)
-	val = p.get_availability('rand', 2018, 9, 20)
+	val = p.get_availability('rand', 2019, 9, 20)
 	assert('08:30' not in val)
-	checker = p.make_time_slot_unavailable('rand', 2018, 9, 20, '09:30')
-	val = p.get_availability('rand', 2018, 9, 20)
+	checker = p.make_time_slot_unavailable('rand', 2019, 9, 20, '09:30')
+	val = p.get_availability('rand', 2019, 9, 20)
 	assert('08:30' not in val and '09:30' not in val)
 
 def test_get_availability_for_existing_date():
 	p = Provider('1','1','1','','','')
 	p.add_centre('rand')
-	p.get_availability('rand', 2018, 9, 20)
-	p.make_time_slot_unavailable('rand', 2018, 9, 20, '08:30')
-	val = p.get_availability('rand', 2018, 9, 20)
+	p.get_availability('rand', 2019, 9, 20)
+	p.make_time_slot_unavailable('rand', 2019, 9, 20, '08:30')
+	val = p.get_availability('rand', 2019, 9, 20)
 	assert('08:30' not in val and type(val) is list)
-
-
-
-

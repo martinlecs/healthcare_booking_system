@@ -1,7 +1,7 @@
 from datetime import time, date, datetime
 from model.user import User
-from model.date_validity import time_slot_to_time
-from model.error import BookingError
+from model.date_validity import time_slot_to_time, date_valid, date_and_time_valid
+from model.error import BookingError, DateTimeValidityError
 # Note about availability at the bottom
 # 
 
@@ -81,6 +81,12 @@ class Provider(User):
 	# 	doesn't exist in provider's centres (which shouldn't happen and if it did, then its a big problem)
 	# Returns NONE when an invalid date values or a day in the past is passsed in 
 	def get_availability(self, centre_name, year, month, day):
+		req_date = "-".join([str(year), str(month), str(day)])
+		try:
+			date_valid(req_date)
+		except DateTimeValidityError as e:
+			raise e
+
 		centre_name = centre_name.lower()
 		if centre_name in self._centres:
 			if centre_name not in self._availability.keys():
@@ -100,7 +106,7 @@ class Provider(User):
 			else:
 				return self.__make_time_slots_list(req_date, now_time) # Default slots as if they exist and then add date & time slots later
 		else:
-			return False	# ERROR, centre doesn't exist or centre isn't in provider's centes attribute
+			raise BookingError("Centre isn't associated with provider")	# ERROR, centre doesn't exist or centre isn't in provider's centes attribute
 
 	# Removes time slot from availability. If time slot and date don't exist, add them, 
 	# 	then remove time slot
@@ -112,6 +118,12 @@ class Provider(User):
 		if centre_name not in self._availability.keys():
 			raise BookingError("Requested centre isn't associated with provider")
 		
+		req_date = "-".join([str(year), str(month), str(day)])
+		try:
+			date_and_time_valid(time_slot, req_date)
+		except DateTimeValidityError as e:
+			raise e
+
 		given_date = date(year, month, day)
 		now_time = time_slot_to_time(datetime.now().time().isoformat(timespec='minutes'))
 		for centre_name in self._availability.keys():

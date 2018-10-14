@@ -3,7 +3,7 @@ from flask_login import LoginManager, current_user, login_user, logout_user, log
 from server import app, user_manager, centre_manager, appt_manager, notifications_manager, permissions
 from model.provider import Provider
 from model.system import correct_identity
-from model.date_validity import date_valid, date_and_time_valid, date_string_to_date
+from model.date_validity import date_valid
 from model.error import *
 from datetime import date, datetime, time
 
@@ -120,7 +120,11 @@ def book(provider, centre):
 	if reason is None or reason is "":
 		reason = " "
 	form_date = request.args.get("date")
-	if form_date is not "" and form_date is not None and date_valid(form_date) != False:
+	if form_date is not "" and form_date is not None:
+		try:
+			date_valid(form_date)
+		except DateTimeValidityError as e:
+			raise e
 		date_split = form_date.split('-')
 		year = int(date_split[0])
 		month = int(date_split[1])
@@ -170,6 +174,8 @@ def book_confirmation(provider, centre, date, time_slot, reason):
 		appt = appt_manager.make_appt_and_add_appointment_to_manager(current_user.email, provider, centre, date, time_slot, reason)
 	except BookingError as e:
 		raise e
+	except DateTimeValidityError as e:
+		raise e
 
 	if appt not in appt_manager.appointments:
 		raise BookingError("Booking isn't being saved")
@@ -192,6 +198,10 @@ def book_confirmation(provider, centre, date, time_slot, reason):
 	except BookingError as e:
 		appt_manager.remove_appointment(appt.id)
 		raise e
+	except DateTimeValidityError as e:
+		appt_manager.remove_appointment(appt.id)
+		raise e
+	
 	user_manager.save_data()
 	appt_manager.save_data()
 
@@ -209,7 +219,11 @@ def provider_profile(provider):
 	:param user: a Provider email
 	:return: renders the provider_profile.html template
 	"""
-	p = user_manager.get_user(provider)
+	try:
+		p = user_manager.get_user(provider)
+	except IdentityError as e:
+		raise e
+
 	if request.method == 'POST':
 		rating = int(request.form['rate'])
 		p.add_rating(current_user.get_id(), rating)
@@ -229,7 +243,11 @@ def centre_profile(centre):
 	:param centre: a Centre id
 	:return: renders the centre_profile.html template
 	"""
-	c = centre_manager.get_centre_from_id(centre)
+	try:
+		c = centre_manager.get_centre_from_id(centre)
+	except IdentityError as e:
+		raise e
+
 	if request.method == 'POST':
 		rating = int(request.form['rate'])
 		c.add_rating(current_user.get_id(), rating)
@@ -246,7 +264,11 @@ def patient_profile(patient):
 	:param centre: a Centre id
 	:return: renders the centre_profile.html template
 	"""
-	p = user_manager.get_user(patient)
+	try:
+		p = user_manager.get_user(patient)
+	except IdentityError as e:
+		raise e
+	
 	content = p.get_information()
 	appointments = p.get_upcoming_appointments()
 
@@ -334,7 +356,11 @@ def appointment_history():
 @app.route('/appointment/<apptid>', methods=['GET','POST'])
 def view_appointment(apptid):
 
-	appt = appt_manager.search_by_id(int(apptid))
+	try:
+		appt = appt_manager.search_by_id(int(apptid))
+	except IdentityError as e:
+		raise e
+	print(appt)
 	edit = False
 	# if appt is False:
 	# 	raise IdentityError("404")
@@ -392,6 +418,10 @@ def handle_identity_error(error):
 
 @app.errorhandler(BookingError)
 def handle_booking_error(error):
+	return render_template('error.html', error_msg=error.msg)
+
+@app.errorhandler(DateTimeValidityError)
+def handle_date_time_validity_error(error):
 	return render_template('error.html', error_msg=error.msg)
 	
 @app.errorhandler(404)
