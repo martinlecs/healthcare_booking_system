@@ -21,7 +21,7 @@ from model.date_validity import *
 def test_getters():
 	p = Provider('test@gmail.com','1234','McTester', 'Test','124024114', 'Official Tester')
 	info = p.get_information()
-	assert(info["email"] == 'test@gmail.com')
+	assert(info["email"] == 'test@gmail.com'.lower())
 	assert(info["password"]	== '1234'.lower())
 	assert(info["surname"] 	== 'McTester'.lower())
 	assert(info["given_name"] == 'Test'.lower())

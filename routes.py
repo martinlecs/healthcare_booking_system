@@ -277,7 +277,7 @@ def patient_profile(patient):
 		raise e
 	
 	content = p.get_information()
-	appointments = p.get_upcoming_appointments()
+	appointments = p.get_upcoming_appointments() + p.get_past_appointments()
 
 	return render_template('patient_profile.html', content=content, appointments=appointments)
 
@@ -388,11 +388,16 @@ def view_appointment(apptid):
 	else:
 		identity = user_manager.get_user(appt.patient_email)
 
-	correct_identity(identity, user)
+	if permissions.check_permissions(current_user.get_id(), appt.patient_email):
+		pass
+	elif user.email == appt.patient_email:
+		pass
+	elif not correct_identity(identity, user):
+		raise IdentityError("Wrong user for Appointment")
 
 	if request.method == 'POST':
 		if request.form['notes']:
-			appt.notes = request.form["notes"]
+			appt.notes = {'provider': current_user.get_id(), 'notes': request.form['notes']}
 		if request.form['meds']:
 			appt.add_meds(request.form["meds"])
 		user_manager.save_data()
@@ -439,6 +444,7 @@ def referral(apptid):
 @login_required
 @app.route('/notifications', methods=['GET', 'POST'])
 def notifications():
+	print(permissions.display_all_permissions())
 
 	if request.method == 'POST':
 		notifications_manager.get_notification(current_user.get_id(), request.form['submit_button']).process_notification()
