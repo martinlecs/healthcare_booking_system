@@ -22,12 +22,13 @@
 			</tr>
 			{% for r in content %}
 			<tr>
-				<td>{{ r['spec'] }}</td>
-				<td>{{ r['gp'] }}</td>
+				<td><a href = "{{ url_for('provider_profile', provider=r['spec']) }}" >{{ r['spec'] }}</a></td>
+				<td><a href = "{{ url_for('provider_profile', provider=r['gp']) }}">{{ r['gp'] }}</a></td>
 				<td>{{ r['msg'] }}</td>
 			</tr>
 			{% endfor %}
 			{% endif %}
+			<a>
 		</table>
 	{% else %}
 		{% if arg == 'past' %}

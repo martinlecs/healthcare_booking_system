@@ -195,6 +195,13 @@ def book_confirmation(provider, centre, date, time_slot, reason):
 	if appt not in p.appointments:
 		raise BookingError("Booking isn't being saved in provider")
 
+	if p.specialist is True:
+		user = user_manager.get_user(current_user.email)
+		try:
+			user.rem_referral(p.email)
+		except:
+			pass #Do not want system to crash on exception, system can go on without this
+
 	# Make time slot unavailable
 	date_split = date.split('-')
 	year = int(date_split[0])
@@ -238,8 +245,11 @@ def provider_profile(provider):
 	content = p.get_information()
 	centre_name_to_id = {}
 	for centre in content['centres']:
-		centre_obj = centre_manager.get_centre_from_name(centre)
-		centre_name_to_id[centre] = centre_obj.id
+		try:
+			centre_obj = centre_manager.get_centre_from_name(centre)
+			centre_name_to_id[centre] = centre_obj.id
+		except IdentityError:
+			pass # Still want to present profile page if centre returns error
 	return render_template('provider_profile.html', content=content, centres=centre_name_to_id)
 
 @login_required
@@ -462,7 +472,7 @@ def load_user(email):
 
 @app.errorhandler(IdentityError)
 def handle_identity_error(error):
-	return render_template('error_identity.html')
+	return render_template('error_identity.html', msg=error.msg)
 
 @app.errorhandler(BookingError)
 def handle_booking_error(error):
