@@ -2,19 +2,22 @@ from model.notifications import *
 from collections import defaultdict
 import pickle
 
+
+def generate_notifications_matrix(patients, providers):
+    d = {}
+    d = defaultdict(lambda:[], d)
+    for i in patients + providers:
+        d[i.email]
+    return d
+
 class NotificationsManager():
 
     def __init__(self, patients, providers, permissions):
-
-        def generate_notifications_matrix(patients, providers):
-            d = {}
-            d = defaultdict(lambda:[], d)
-            for i in patients + providers:
-                d[i.email]
-            return d
-
-        self._notifications_matrix = generate_notifications_matrix(patients, providers)
+        self._patients = patients
+        self._providers = providers
+        self._notifications_matrix = None
         self._permissions_manager = permissions
+
 
     def get_all_notifications(self, user_email):
         return self._notifications_matrix[user_email]
@@ -46,6 +49,9 @@ class NotificationsManager():
         for n in self._notifications_matrix[user]:
             if str(n.id) == str(notification_id):
                 self._notifications_matrix[user].remove(n)
+
+    def generate_matrix(self):
+        self._notifications_matrix = generate_notifications_matrix(self._patients, self._providers)
 
 
     """  
