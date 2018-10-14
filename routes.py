@@ -266,8 +266,7 @@ def not_a_secret():
 @login_required
 @app.route('/appointments', methods=['GET'])
 def appointment_history():
-	if not correct_identity(current_user, current_user):
-		raise IdentityError("Wrong user for URL")
+	correct_identity(current_user, current_user)
 
 	user = user_manager.get_user(current_user.get_id())
 	if type(user) is Provider:
@@ -305,11 +304,7 @@ def appointment_history():
 def view_appointment(apptid):
 
 	appt = appt_manager.search_by_id(int(apptid))
-	print(appt)
 	edit = False
-	# if appt is False:
-	# 	raise IdentityError("404")
-	# Validate identity for appointment first
 	user = user_manager.get_user(current_user.get_id())
 	if type(user) is Provider:
 		identity = user_manager.get_user(appt.provider_email)
@@ -318,8 +313,8 @@ def view_appointment(apptid):
 	else:
 		identity = user_manager.get_user(appt.patient_email)
 
-	if not correct_identity(identity, user):
-    		raise IdentityError("Wrong user for Appointment")
+	correct_identity(identity, user)
+	
 	if request.method == 'POST':
 		if request.form['notes']:
 			appt.notes = request.form["notes"]
@@ -336,7 +331,6 @@ def view_appointment(apptid):
 	content['centre_name'] = centre_manager.get_centre_from_id(content['centre_id']).name
 	content['meds'] = ", ".join(content['meds'])
 
-	print(appt.notes, appt.meds)
 	return render_template('appointment.html',content=content, edit=edit)
 
 
@@ -355,4 +349,8 @@ def handle_booking_error(error):
 @app.errorhandler(404)
 def handle_404_error(error):
 	return render_template('error_404.html'), 404
+
+@app.errorhandler(ValueError)
+def handle_value_error(error):
+	return render_template('error.html', error_msg=error.msg)
 	

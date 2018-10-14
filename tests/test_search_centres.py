@@ -40,10 +40,13 @@ def cm(prov_fixture):
     cm = CentreManager()
     c1 = Centre("Randwick Hospital", "Randwick", "Hospital",1234,93000000)
     c2 = Centre("Prince of Wales", "Randwick", "Hospital",1234,93000000)
-    c3 = Centre("Randwick Hospital", "Randwick", "Hospital", 1234, 93000000, 
-                [prov_fixture[0], prov_fixture[2]])
-    c4 = Centre("RPA", "Camperdown", "Hospital", 1234, 93000000, [
-                prov_fixture[0], prov_fixture[1], prov_fixture[2]])
+    c3 = Centre("Randwick Hospital", "Randwick", "Hospital", 1234, 93000000)
+    c3.add_provider(prov_fixture[0])
+    c3.add_provider(prov_fixture[2])
+    c4 = Centre("RPA", "Camperdown", "Hospital", 1234, 93000000)
+    c4.add_provider(prov_fixture[0])
+    c4.add_provider(prov_fixture[1])
+    c4.add_provider(prov_fixture[2])
     for centre in [c1,c2,c3,c4]:
         cm.add_centre(centre)
     return cm

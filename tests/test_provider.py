@@ -18,7 +18,7 @@ from model.provider import Provider
 
 def test_getters():
 	p = Provider('test@gmail.com','1234','McTester', 'Test','124024114', 'Official Tester')
-	info = p.get_information
+	info = p.get_information()
 	assert(info["email"] == 'test@gmail.com'.lower())
 	assert(info["password"]	== '1234'.lower())
 	assert(info["surname"] 	== 'McTester'.lower())
@@ -28,34 +28,33 @@ def test_getters():
 	assert(info["appointments"] == [])
 	assert(info["centres"] == [])
 	assert(info["availability"] == {})
-	assert(info["rating"] == {})
-	assert(info["average_rating"] == 0)
+	assert(info["rating"] == 0)
 
 def test_setters():
 	p = Provider('test@gmail.com','1234','McTester', 'Test','124024114', 'Official Tester')
 	
 	p.email = 'TESting@gmail.Com'
-	info = p.get_information
+	info = p.get_information()
 	assert(info['email'] == 'testing@gmail.com' )
 	
 	p.password = 'WoooWThatsGreat'
-	info = p.get_information
+	info = p.get_information()
 	assert(info['password'] != 'wooowthatsgreat' and info['password'] == 'WoooWThatsGreat')
 	
 	p.surname = 'MCTESTing'
-	info = p.get_information
+	info = p.get_information()
 	assert(info['surname'] == 'mctesting')
 	
 	p.given_name = 'TEEEESt'
-	info = p.get_information
+	info = p.get_information()
 	assert(info['given_name'] == 'teeeest')
 	
 	p.provider_no = '123123'
-	info = p.get_information
+	info = p.get_information()
 	assert(info['provider_no'] == '123123')
 	
 	p.service = 'OFFicial TESTer'
-	info = p.get_information
+	info = p.get_information()
 	assert(info['service'] == 'official tester')
 
 
@@ -167,10 +166,9 @@ def test_get_availability_for_existing_centre_and_non_existing_date():
 def test_get_availability_for_invalid_date():
 	p = Provider('1','1','1','','','')
 	p.add_centre('rand')
-	checker = p.get_availability('rand', 2018, 19, 220)
-	assert(checker == None)
-	checker = p.get_availability('rand', 2018, 8, 20)
-	assert(checker == None)
+	with pytest.raises(ValueError) as info:
+		checker = p.get_availability('rand', 2018, 19, 220)
+	
 
 def test_make_non_existing_and_available_slots_unavailable():
 	p = Provider('1','1','1','','','')

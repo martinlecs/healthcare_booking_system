@@ -1,5 +1,6 @@
 from model.centre_manager import CentreManager
 from model.user_manager import UserManager
+from model.error import *
 
 def link_centre_provider(centre_manager, user_manager):
     for centre in centre_manager.centres:
@@ -8,7 +9,5 @@ def link_centre_provider(centre_manager, user_manager):
                 centre.add_provider(prov)
 
 def correct_identity(user, current_user):
-    if user.email == current_user.email:
-        return True
-    else:
-        return False
+    if user.email is not current_user.email:
+        raise IdentityError("Wrong user for request")
