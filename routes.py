@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
-from server import app, user_manager, centre_manager, appt_manager
+from server import app, user_manager, centre_manager, appt_manager, notifications_manager, permissions
 from model.provider import Provider
 from model.system import correct_identity
 from model.date_validity import date_valid
@@ -14,6 +14,10 @@ login_manager.login_view = 'login'
 @app.context_processor
 def inject_services_into_all_templates():
 	return dict(services=[''] + user_manager.get_service_names()) #Details for the drop down box
+
+@app.context_processor
+def inject_current_user_into_all_templates():
+	return dict(curr_user=current_user)
 
 @app.route('/', methods=['GET', 'POST'])
 @login_required
@@ -59,7 +63,7 @@ def user_profile():
 	provider = False
 	content = user.get_information()
 	if type(user) is Provider:
-    		provider = True
+			provider = True
 	if request.args.get('edit'):
 		return render_template('user_profile.html', content=content, edit=True, provider=provider)
 
@@ -79,8 +83,7 @@ def user_profile():
 			centre_obj = centre_manager.get_centre_from_name(centre)
 			centre_name_to_id[centre] = centre_obj.id
 		return render_template('user_profile.html', content=content, provider=provider, centres=centre_name_to_id)
-		
-		
+
 	return render_template('user_profile.html', content=content, provider=provider)
 
 
@@ -201,6 +204,9 @@ def book_confirmation(provider, centre, date, time_slot, reason):
 	
 	user_manager.save_data()
 	appt_manager.save_data()
+
+	# send notification to patient
+	notifications_manager.add_notification(provider, current_user.get_id())
 	
 	return render_template('booking_confirmed.html', prov_name=user_manager.get_user(appt.provider_email).fullname, centre_name=centre_manager.get_centre_from_name(c.name).name, date=appt.date, time=appt.time_slot)
 	
@@ -264,7 +270,9 @@ def patient_profile(patient):
 		raise e
 	
 	content = p.get_information()
-	return render_template('patient_profile.html', content=content)
+	appointments = p.get_upcoming_appointments()
+
+	return render_template('patient_profile.html', content=content, appointments=appointments)
 
 @login_required
 @app.route('/search', methods=['POST'])
@@ -366,7 +374,7 @@ def view_appointment(apptid):
 		identity = user_manager.get_user(appt.patient_email)
 
 	if not correct_identity(identity, user):
-    		raise IdentityError("Wrong user for Appointment")
+			raise IdentityError("Wrong user for Appointment")
 	if request.method == 'POST':
 		if request.form['notes']:
 			appt.notes = request.form["notes"]
@@ -383,8 +391,21 @@ def view_appointment(apptid):
 	content['centre_name'] = centre_manager.get_centre_from_id(content['centre_id']).name
 	content['meds'] = ", ".join(content['meds'])
 
-	print(appt.notes, appt.meds)
-	return render_template('appointment.html',content=content, edit=edit)
+	return render_template('appointment.html',content=content, edit=edit, has_permission=permissions.check_permissions(current_user.get_id(), patient.email))
+
+
+@login_required
+@app.route('/notifications', methods=['GET', 'POST'])
+def notifications():
+
+	if request.method == 'POST':
+		notifications_manager.get_notification(current_user.get_id(), request.form['submit_button']).process_notification()
+		permissions.save_data()
+		notifications_manager.remove_notification(current_user.get_id() ,request.form['submit_button'])
+		# notifications_manager.save_data()
+		return render_template('notifications.html', notifications=notifications_manager.get_all_notifications(current_user.get_id()))
+
+	return render_template('notifications.html', notifications=notifications_manager.get_all_notifications(current_user.get_id()))
 
 
 @login_manager.user_loader
