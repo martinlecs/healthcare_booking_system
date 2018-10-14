@@ -1,5 +1,6 @@
 from model.notifications import *
 from collections import defaultdict
+import pickle
 
 class NotificationsManager():
 
@@ -46,6 +47,25 @@ class NotificationsManager():
             if str(n.id) == str(notification_id):
                 self._notifications_matrix[user].remove(n)
 
+
+    """  
+    Load/Save Data methods:
+    load_data checks if there is a pickle file for the users (currently only implemented providers)
+    if it does, loads that and returns user manager object, otherwise opens the csv and extracts data
+    bootstrap is the init function on 'startup' that performs this
+    """
+    def save_data(self):
+        with open('model/data/notifications.dat', 'wb') as file:
+            pickle.dump(self, file)
+
+    @classmethod
+    def load_data(cls):
+        try:
+            with open('model/data/notifications.dat', 'rb') as file:
+                notifications = pickle.load(file)
+        except IOError:
+            notifications = NotificationsManager()
+        return notifications
 
 
 

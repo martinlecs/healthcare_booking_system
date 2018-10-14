@@ -1,6 +1,6 @@
 from flask import render_template, request, redirect, url_for
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
-from server import app, user_manager, centre_manager, appt_manager, notifications_manager
+from server import app, user_manager, centre_manager, appt_manager, notifications_manager, permissions
 from model.provider import Provider
 from model.system import correct_identity
 from model.date_validity import date_valid, date_and_time_valid, date_string_to_date
@@ -248,7 +248,9 @@ def patient_profile(patient):
 	"""
 	p = user_manager.get_user(patient)
 	content = p.get_information()
-	return render_template('patient_profile.html', content=content)
+	appointments = p.get_upcoming_appointments()
+
+	return render_template('patient_profile.html', content=content, appointments=appointments)
 
 @login_required
 @app.route('/search', methods=['POST'])
@@ -333,7 +335,6 @@ def appointment_history():
 def view_appointment(apptid):
 
 	appt = appt_manager.search_by_id(int(apptid))
-	print(appt)
 	edit = False
 	# if appt is False:
 	# 	raise IdentityError("404")
@@ -364,8 +365,7 @@ def view_appointment(apptid):
 	content['centre_name'] = centre_manager.get_centre_from_id(content['centre_id']).name
 	content['meds'] = ", ".join(content['meds'])
 
-	print(appt.notes, appt.meds)
-	return render_template('appointment.html',content=content, edit=edit)
+	return render_template('appointment.html',content=content, edit=edit, has_permission=permissions.check_permissions(current_user.get_id(), patient.email))
 
 
 @login_required
@@ -374,7 +374,9 @@ def notifications():
 
 	if request.method == 'POST':
 		notifications_manager.get_notification(current_user.get_id(), request.form['submit_button']).process_notification()
+		permissions.save_data()
 		notifications_manager.remove_notification(current_user.get_id() ,request.form['submit_button'])
+		# notifications_manager.save_data()
 		return render_template('notifications.html', notifications=notifications_manager.get_all_notifications(current_user.get_id()))
 
 	return render_template('notifications.html', notifications=notifications_manager.get_all_notifications(current_user.get_id()))

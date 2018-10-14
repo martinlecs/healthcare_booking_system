@@ -1,4 +1,5 @@
 from collections import defaultdict
+import pickle
 # This class keeps track of what permissions each user in the system has.
 # Specifc permissions are required to access certain data
 
@@ -31,6 +32,24 @@ class Permissions:
         """ Checks if User a is able to access/modify User b """
         return self._notes_permissions[a][b]
 
+    """  
+    Load/Save Data methods:
+    load_data checks if there is a pickle file for the users (currently only implemented providers)
+    if it does, loads that and returns user manager object, otherwise opens the csv and extracts data
+    bootstrap is the init function on 'startup' that performs this
+    """
+    def save_data(self):
+        with open('model/data/permissions.dat', 'wb') as file:
+            pickle.dump(self, file)
+
+    @classmethod
+    def load_data(cls):
+        try:
+            with open('model/data/permissions.dat', 'rb') as file:
+                permissions = pickle.load(file)
+        except IOError:
+            permissions = Permissions()
+        return permissions
 
 
 
