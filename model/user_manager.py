@@ -1,6 +1,7 @@
 import string
 from model.patient import Patient
 from model.provider import Provider
+from model.error import IdentityError
 import csv
 import pickle
 
@@ -41,6 +42,7 @@ class UserManager:
 		user = self.__get_provider(email.lower())
 		if user is not None:
 			return user
+		raise IdentityError("User doesn't exist")
 
 	# Given patient info, add it to patients list
 	def add_patient_by_info(self, email, password, surname, given_name, medicare_no):
@@ -221,29 +223,6 @@ class UserManager:
 		return um
 
 
-'''
-So our program needs to be able to read the csv file
-	and from there get its patient, provider, centres
-	and all other information.
-I reached this conclusion from the response to my post on
-	the assignment specs page: https://webcms3.cse.unsw.edu.au/COMP1531/18s2/resources/20423
-
-So, when the information is read, it is passed to the user manager which instantiates objects.
-So, when adding information, have to assume all info given is accurate, correct and spelled
-	properly.
-'''
-
-
-'''
-services dillema
-Will services be of enum type? Is there a benefit to it?
-Seem kind of restricted and look like it would just make things more complicated.
-Should service names be strings?
-When we have to implement registration, how will we take in new services?
-Lets say we add a new service when providers register and say they provide a 
-	service that isn't already on the system. What if this isn't a legit service?
-	What if it's mispelled and added to the dictionary?
-'''
 
 '''
 ******* NOTES FOR SEARCH ** *******

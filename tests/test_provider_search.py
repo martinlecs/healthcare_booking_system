@@ -105,6 +105,6 @@ def test_service_all(um):
     assert(result == um.providers)
 
 def test_provider_search_service_exact(um):
-    text = "GP"
+    text = "gp"
     result = um.search_service(text)
     assert(len(result) == 2)

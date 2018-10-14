@@ -1,5 +1,5 @@
 from model.appointment import Appointment
-from model.error import BookingError
+from model.error import BookingError, DateTimeValidityError, IdentityError
 from model.date_validity import date_and_time_valid
 import pickle
 
@@ -7,6 +7,7 @@ class AppointmentManager:
     def __init__(self):
         self._appointments = []
         self._next_appt_id = 0
+    
     @property
     def appointments(self):
         return self._appointments
@@ -16,10 +17,9 @@ class AppointmentManager:
             for appt in self._appointments:
                 if appt.id == id_num:
                     return appt
-        else:
-            return False
+        raise IdentityError("Appointment id doesn't exist")
 
-    def get_appt_id(self):
+    def __get_appt_id(self):
         appt_id = self._next_appt_id
         self._next_appt_id += 1
         return appt_id
@@ -30,14 +30,16 @@ class AppointmentManager:
     # Else,
     #       send False
     def make_appt_and_add_appointment_to_manager(self, patient_email, provider_email, centre_id, date, time_slot, reason):
-        if date_and_time_valid(time_slot, date) == False:
-            raise BookingError("Invalid date or time")
+        try:
+            date_and_time_valid(time_slot, date)
+        except DateTimeValidityError as e:
+            raise e
         
         if patient_email.lower() == provider_email.lower():
             raise BookingError("Provider can't book an appointment with themselves")
         
         if not any(appt.provider_email == provider_email and appt.date == date and appt.time_slot == time_slot for appt in self._appointments):      
-            appointment = Appointment(self.get_appt_id(), patient_email, provider_email, centre_id, date, time_slot, reason)
+            appointment = Appointment(self.__get_appt_id(), patient_email, provider_email, centre_id, date, time_slot, reason)
             # self._get_information(self, appointments)
             self._appointments.append(appointment)
             return appointment # successful.

@@ -1,4 +1,5 @@
 from model.centre import Centre
+from model.error import IdentityError
 import csv
 import pickle
 # from appointment import Appointment
@@ -47,7 +48,7 @@ class CentreManager:
         for centre in self._centres:
             if centre.name.lower() == centre_name.lower():
                 return centre
-        return None
+        raise IdentityError("Centre does't exist")
 
     def get_centre_from_id(self, id):
         """
@@ -58,7 +59,7 @@ class CentreManager:
         for c in self._centres:
             if c.id == id:
                 return c
-        return None
+        raise IdentityError("Centre does't exist")
 
 
     #-------- Search Functions ---------#
