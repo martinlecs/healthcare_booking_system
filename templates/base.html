@@ -7,9 +7,6 @@
 	</head>
 	<body>
         <header>
-            {% if curr_user.is_authenticated %}
-                <b>Hi {{ curr_user.get_id() }}!</b>
-            {% endif %}
             <div class="topnav">
                 <a href="{{ url_for('index') }}">Home</a>
                 <a href="{{ url_for('user_profile') }}">Profile</a>
