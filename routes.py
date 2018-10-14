@@ -84,9 +84,6 @@ def user_profile():
 			centre_name_to_id[centre] = centre_obj.id
 		return render_template('user_profile.html', content=content, provider=provider, centres=centre_name_to_id)
 
-	# send notification to provider
-	notifications_manager.add_notification(current_user.email, current_user.email)
-
 	return render_template('user_profile.html', content=content, provider=provider)
 
 
@@ -198,8 +195,8 @@ def book_confirmation(provider, centre, date, time_slot, reason):
 	user_manager.save_data()
 	appt_manager.save_data()
 
-	# send notification to provider
-	notifications_manager.add_notification(current_user.email, provider.email)
+	# send notification to patient
+	notifications_manager.add_notification(provider, current_user.get_id())
 	
 	return render_template('booking_confirmed.html', prov_name=user_manager.get_user(appt.provider_email).fullname, centre_name=centre_manager.get_centre_from_name(c.name).name, date=appt.date, time=appt.time_slot)
 	
@@ -370,16 +367,17 @@ def view_appointment(apptid):
 	print(appt.notes, appt.meds)
 	return render_template('appointment.html',content=content, edit=edit)
 
+
 @login_required
 @app.route('/notifications', methods=['GET', 'POST'])
 def notifications():
 
 	if request.method == 'POST':
+		notifications_manager.get_notification(current_user.get_id(), request.form['submit_button']).process_notification()
 		notifications_manager.remove_notification(current_user.get_id() ,request.form['submit_button'])
-		return render_template('notifications.html', notifications=notifications_manager.get_notifications(current_user.get_id()))
+		return render_template('notifications.html', notifications=notifications_manager.get_all_notifications(current_user.get_id()))
 
-	notif = notifications_manager.get_notifications(current_user.get_id())
-	return render_template('notifications.html', notifications=notif)
+	return render_template('notifications.html', notifications=notifications_manager.get_all_notifications(current_user.get_id()))
 
 
 @login_manager.user_loader
