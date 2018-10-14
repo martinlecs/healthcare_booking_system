@@ -195,6 +195,10 @@ def book_confirmation(provider, centre, date, time_slot, reason):
 	except BookingError as e:
 		appt_manager.remove_appointment(appt.id)
 		raise e
+	except DateTimeValidityError as e:
+		appt_manager.remove_appointment(appt.id)
+		raise e
+	
 	user_manager.save_data()
 	appt_manager.save_data()
 	

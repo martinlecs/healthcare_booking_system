@@ -1,6 +1,6 @@
 from datetime import time, date, datetime
 from model.user import User
-from model.date_validity import time_slot_to_time, date_valid
+from model.date_validity import time_slot_to_time, date_valid, date_and_time_valid
 from model.error import BookingError, DateTimeValidityError
 # Note about availability at the bottom
 # 
@@ -118,6 +118,12 @@ class Provider(User):
 		if centre_name not in self._availability.keys():
 			raise BookingError("Requested centre isn't associated with provider")
 		
+		req_date = "-".join([str(year), str(month), str(day)])
+		try:
+			date_and_time_valid(time_slot, req_date)
+		except DateTimeValidityError as e:
+			raise e
+
 		given_date = date(year, month, day)
 		now_time = time_slot_to_time(datetime.now().time().isoformat(timespec='minutes'))
 		for centre_name in self._availability.keys():
