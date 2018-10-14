@@ -169,7 +169,7 @@ def test_get_availability_for_non_existing_centre_but_valid_date():
 def test_get_availability_for_existing_centre_and_valid_date():
 	p = Provider('1','1','1','','','')
 	p.add_centre('rand')
-	with pytest.raises(ValueError) as info:
+	with pytest.raises(DateTimeValidityError) as info:
 		checker = p.get_availability('rand', 2018, 19, 220)
 	
 
