@@ -370,7 +370,6 @@ def view_appointment(apptid):
 		identity = user_manager.get_user(appt.patient_email)
 
 	correct_identity(identity, user)
-	has_permission=permissions.check_permissions(current_user.get_id(), patient.email)
 
 	if request.method == 'POST':
 		if request.form['notes']:
@@ -388,7 +387,7 @@ def view_appointment(apptid):
 	content['centre_name'] = centre_manager.get_centre_from_id(content['centre_id']).name
 	content['meds'] = ", ".join(content['meds'])
 
-	return render_template('appointment.html',content=content, edit=edit, has_permission=has_permission)
+	return render_template('appointment.html',content=content, edit=edit)
 
 
 @login_required
