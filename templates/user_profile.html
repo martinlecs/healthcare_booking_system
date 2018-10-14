@@ -2,8 +2,7 @@
 {% block body %}
     <h2>User Profile</h2>
     {% if content %}
-        <h3>Name: {{ content['fullname'].title() }} </h3>
-        <!-- <h3>Name: {{ " ".join([content['given_name'], content['surname']]) }} </h3> -->
+        <h3>Name: {{ " ".join([content['given_name'], content['surname']]) }} </h3>
         <h3>Email: {{ content['email'] }}</h3>
         {% if not provider %} 
             <h3> Medicare No: {{ content['medicare_no'] }}</h3>
@@ -12,7 +11,7 @@
             <h3>Affiliated Centres: </h3>
             <table>
                 {% for t in content['centres'] %}
-                <tr><td><a href="{{ url_for('centre_profile', centre=centres[t]) }}"> {{ t }} </td></tr>
+                <tr><td><a href="{{ url_for('centre_profile', centre=t) }}"> {{ t }} </td></tr>
                 {% endfor %}
             </table>
         {% endif %}

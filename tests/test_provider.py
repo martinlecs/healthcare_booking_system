@@ -169,8 +169,9 @@ def test_get_availability_for_non_existing_centre_but_valid_date():
 def test_get_availability_for_existing_centre_and_valid_date():
 	p = Provider('1','1','1','','','')
 	p.add_centre('rand')
-	val = p.get_availability('rand', 2019, 9, 20)
-	assert(len(val) == 48 and type(val) == list)
+	with pytest.raises(DateTimeValidityError) as info:
+		checker = p.get_availability('rand', 2018, 19, 220)
+	
 
 def test_make_non_existing_and_available_slots_unavailable():
 	p = Provider('1','1','1','','','')

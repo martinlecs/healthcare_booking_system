@@ -9,72 +9,64 @@
 	<form action="{{ url_for('appointment_history') }}" method="get">
 		<button type="submit" name="appt" value="current"> Current Appointments</button>
 		<button type="submit" name="appt" value="past"> Past Appointments</button>
+		{% if not prov_view %} <button type="submit" name="appt" value="ref"> Referrals</button> {% endif %}
 	</form>
-	{% if arg == 'past' %}
-	<h3>Past Appointments</h3><br>
-		{% if content['past'] %}
-			<table>
-				<tr>
-					<th>Date</th>
-					<th>Time</th>
-					{% if prov_view %}
-					<th> Patient </th>
-					<th> Reason </th>
-					{% else %}
-					<th>Provider</th>
-					{% endif %}
-					<th>Health Centre</th>
-				</tr>
-				{% for appt in content['past'] %}
-				<tr>
-					<td>{{ appt['date'] }}</td>
-					<td>{{ appt['time_slot']}} </td>
-					{% if prov_view %}
-					<td><a href="{{ url_for('patient_profile', patient=appt['patient_email']) }}"> {{ appt['patient_name'] }}</a></td>
-					<td>{{ appt['reason']}} </td>
-					{% else %}
-					<td><a href="{{ url_for('provider_profile', provider=appt['provider_email']) }}"> {{appt['prov_name']}}</a></td>
-					{% endif %}
-					<td><a href="{{ url_for('centre_profile', centre=appt['centre_id']) }}"> {{appt['centre_name']}}</a></td>
-					<td><a href="{{ url_for('view_appointment', apptid=appt['id']) }}"> View Appointment </a></td>
-				</tr>
-				{% endfor%}
-			</table>
-		{% else %}
-		<h4> You have no past appointments </h4>
-		{% endif %}
+	{% if arg == 'ref' %}
+		<h3>Referrals</h3>
+		<table>
+			{% if content %}
+			<tr>
+				<th>Specialist</th>
+				<th>GP</th>
+				<th>Message</th>
+			</tr>
+			{% for r in content %}
+			<tr>
+				<td><a href = "{{ url_for('provider_profile', provider=r['spec']) }}" >{{ r['spec'] }}</a></td>
+				<td><a href = "{{ url_for('provider_profile', provider=r['gp']) }}">{{ r['gp'] }}</a></td>
+				<td>{{ r['msg'] }}</td>
+			</tr>
+			{% endfor %}
+			{% endif %}
+			<a>
+		</table>
 	{% else %}
-	<h3>Current Appointments</h3><br>
-		{% if content['current'] %}
-			<table>
-				<tr>
-					<th>Date</th>
-					<th>Time</th>
-					{% if prov_view %}
-					<th> Patient </th>
-					<th> Reason </th>
-					{% else %}
-					<th>Provider</th>
-					{% endif %}
-					<th>Health Centre</th>
-				</tr>
-				{% for appt in content['current'] %}
-				<tr>
-					<td>{{ appt['date'] }}</td>
-					<td>{{ appt['time_slot']}} </td>
-					{% if prov_view %}
-					<td><a href="{{ url_for('patient_profile', patient=appt['patient_email']) }}"> {{ appt['patient_name'] }}</a></td>
-					<td>{{ appt['reason']}} </td>
-					{% else %}
-					<td><a href="{{ url_for('provider_profile', provider=appt['provider_email']) }}"> {{appt['prov_name']}}</a></td>
-					{% endif %}
-					<td><a href="{{ url_for('centre_profile', centre=appt['centre_id']) }}"> {{appt['centre_name']}}</a></td>
-					<td><a href="{{ url_for('view_appointment', apptid=appt['id']) }}"> View Appointment </a></td>
-				</tr>
-				{% endfor%}
-			</table>
+		{% if arg == 'past' %}
+		<h3>Past Appointments</h3><br>
 		{% else %}
-			<h4> You have no upcoming appointments </h4>
+		<h3>Current Appointments</h3><br>
 		{% endif %}
+			{% if content %}
+				<table>
+					<tr>
+						<th>Date</th>
+						<th>Time</th>
+						{% if prov_view %}
+						<th> Patient </th>
+						<th> Reason </th>
+						{% else %}
+						<th>Provider</th>
+						{% endif %}
+						<th>Health Centre</th>
+					</tr>
+					{% for appt in content %}
+					<tr>
+						<td>{{ appt['date'] }}</td>
+						<td>{{ appt['time_slot']}} </td>
+						{% if prov_view %}
+						<td><a href="{{ url_for('patient_profile', patient=appt['patient_email']) }}"> {{ appt['patient_name'] }}</a></td>
+						<td>{{ appt['reason']}} </td>
+						{% else %}
+						<td><a href="{{ url_for('provider_profile', provider=appt['provider_email']) }}"> {{appt['prov_name']}}</a></td>
+						{% endif %}
+						<td><a href="{{ url_for('centre_profile', centre=appt['centre_id']) }}"> {{appt['centre_name']}}</a></td>
+						<td><a href="{{ url_for('view_appointment', apptid=appt['id']) }}"> View Appointment </a></td>
+					</tr>
+					{% endfor%}
+				</table>
+			{% else %}
+				<h4> You have no past appointments </h4>
+			{% endif %}
 	{% endif %}
+	
 {% endblock %}

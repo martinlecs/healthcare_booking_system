@@ -1,5 +1,6 @@
 import pytest
 from model.user_manager import UserManager
+from model.error import *
 
 # Pytest testing file
 # A total of 28 tests
@@ -103,8 +104,8 @@ def test_get_non_existing_user():
 	um = UserManager()
 	um.add_provider_by_info('example@gmail.com', 'password', 'Cena', 'John', '02141244235' ,'GP')
 	um.add_provider_by_info('example2222@gmail.com', 'password', 'Cena', 'John', '02141244235' ,'GP')
-	p1 = um.get_user('exampl23123e@gmail.com')
-	assert(p1 is None)
+	with pytest.raises(IdentityError) as error:
+		p1 = um.get_user('exampl23123e@gmail.com')
 
 
 # test removing existing from patients

@@ -72,8 +72,9 @@ def user_profile():
 			user.given_name = request.form['given_name']
 		if request.form['surname']:
 			user.surname = request.form['surname']
-		if request.form['medicare_no']:
-			user.medicare_no = request.form['medicare_no']
+		if provider is False:
+			if request.form['medicare_no']:
+				user.medicare_no = request.form['medicare_no']
 		content = user.get_information()
 		user_manager.save_data()
 
@@ -106,6 +107,7 @@ def book(provider, centre):
 	except IdentityError as e:
 		raise e
 
+
 	# Check that provider is associated with centre
 	if c.name.lower() not in p.centres:
 		raise BookingError("Provider isn't associated with centre")
@@ -113,7 +115,12 @@ def book(provider, centre):
 	# If current user is the chosen provider, render error template
 	if p.email.lower() == current_user.email.lower():
 		raise BookingError("Provider can't book an appointment with themselves")
-
+	# If a specialist, check for a referral
+	if p.specialist is True:
+		user = user_manager.get_user(current_user.email)
+		if provider not in user.referrals:
+			raise BookingError("You need a referral to book with this specialist")
+	
 	today = date.today().isoformat()
 
 	reason = request.args.get("reason")
@@ -163,7 +170,7 @@ def book_confirmation(provider, centre, date, time_slot, reason):
 		c = centre_manager.get_centre_from_id(centre)
 	except IdentityError as e:
 		raise e
-
+	
 	# Check that provider is associated with centre
 	if c.name.lower() not in p.centres:
 		raise BookingError("Provider isn't associated with centre")
@@ -187,6 +194,13 @@ def book_confirmation(provider, centre, date, time_slot, reason):
 	p.add_appointment(appt)
 	if appt not in p.appointments:
 		raise BookingError("Booking isn't being saved in provider")
+
+	if p.specialist is True:
+		user = user_manager.get_user(current_user.email)
+		try:
+			user.rem_referral(p.email)
+		except:
+			pass #Do not want system to crash on exception, system can go on without this
 
 	# Make time slot unavailable
 	date_split = date.split('-')
@@ -231,8 +245,11 @@ def provider_profile(provider):
 	content = p.get_information()
 	centre_name_to_id = {}
 	for centre in content['centres']:
-		centre_obj = centre_manager.get_centre_from_name(centre)
-		centre_name_to_id[centre] = centre_obj.id
+		try:
+			centre_obj = centre_manager.get_centre_from_name(centre)
+			centre_name_to_id[centre] = centre_obj.id
+		except IdentityError:
+			pass # Still want to present profile page if centre returns error
 	return render_template('provider_profile.html', content=content, centres=centre_name_to_id)
 
 @login_required
@@ -329,25 +346,34 @@ def appointment_history():
 	arg = 'current'
 	if request.args.get('appt'):
 		arg = request.args.get('appt')
-	
-	cur_appt = user.get_upcoming_appointments()
-	past_appt = user.get_past_appointments()
+
 	content = {}
-	content['current'] = [x.get_information() for x in cur_appt]
-	content['past'] = [x.get_information() for x in past_appt]
-	# This isn't particularly pretty now, will refactor eventually
-	for appt in content['current']:
-		prov = user_manager.get_user(appt['provider_email'])
-		appt['prov_name'] = " ".join([prov.given_name, prov.surname])
-		patient = user_manager.get_user(appt['patient_email'])
-		appt['patient_name'] = " ".join([patient.given_name, patient.surname])
-		appt['centre_name'] = centre_manager.get_centre_from_id(appt['centre_id']).name
-	for appt in content['past']:
-		prov = user_manager.get_user(appt['provider_email'])
-		appt['prov_name'] = " ".join([prov.given_name, prov.surname])
-		patient = user_manager.get_user(appt['patient_email'])
-		appt['patient_name'] = " ".join([patient.given_name, patient.surname])
-		appt['centre_name'] = centre_manager.get_centre_from_id(appt['centre_id']).name
+	if arg == "current":
+		appt = user.get_upcoming_appointments()
+	elif arg == "past":
+		appt = user.get_past_appointments()
+	elif arg == "ref":
+		appt = user.referrals.values()
+	else:
+		raise AppointmentError("Appointment History not Found")
+
+	# content['current'] = [x.get_information() for x in cur_appt]
+	# content['past'] = [x.get_information() for x in past_appt]
+	# # This isn't particularly pretty now, will refactor eventually
+	content = [x.get_information() for x in appt]
+	if arg != "ref":
+		for appt in content:
+			prov = user_manager.get_user(appt['provider_email'])
+			appt['prov_name'] = " ".join([prov.given_name, prov.surname])
+			patient = user_manager.get_user(appt['patient_email'])
+			appt['patient_name'] = " ".join([patient.given_name, patient.surname])
+			appt['centre_name'] = centre_manager.get_centre_from_id(appt['centre_id']).name
+	# for appt in content['past']:
+	# 	prov = user_manager.get_user(appt['provider_email'])
+	# 	appt['prov_name'] = " ".join([prov.given_name, prov.surname])
+	# 	patient = user_manager.get_user(appt['patient_email'])
+	# 	appt['patient_name'] = " ".join([patient.given_name, patient.surname])
+	# 	appt['centre_name'] = centre_manager.get_centre_from_id(appt['centre_id']).name
 	return render_template('appointment_history.html', content=content, prov_view=prov_view, arg=arg)
 
 
@@ -359,13 +385,16 @@ def view_appointment(apptid):
 		appt = appt_manager.search_by_id(int(apptid))
 	except IdentityError as e:
 		raise e
-	print(appt)
+
 	edit = False
+	gp = False
 	user = user_manager.get_user(current_user.get_id())
 	if type(user) is Provider:
 		identity = user_manager.get_user(appt.provider_email)
 		if appt.past is False:
 			edit = True
+		if user.service == "gp":
+			gp = True
 	else:
 		identity = user_manager.get_user(appt.patient_email)
 
@@ -391,9 +420,35 @@ def view_appointment(apptid):
 	content['patient_name'] = " ".join([patient.given_name, patient.surname])
 	content['centre_name'] = centre_manager.get_centre_from_id(content['centre_id']).name
 	content['meds'] = ", ".join(content['meds'])
-	permission = permissions.check_permissions(current_user.get_id(), patient.email)
+	return render_template('appointment.html',content=content, edit=edit, gp=gp)
 
-	return render_template('appointment.html',content=content, edit=edit, has_permission=permission, curr_user=current_user.get_id())
+@login_required
+@app.route('/appointment/<apptid>/referral', methods=['GET','POST'])
+def referral(apptid):
+	
+	appt = appt_manager.search_by_id(int(apptid))
+	user = user_manager.get_user(current_user.get_id())
+	
+	if type(user) is Provider:
+    		identity = user_manager.get_user(appt.provider_email)
+	else:
+    		identity = user_manager.get_user(appt.patient_email)
+	correct_identity(identity, user)
+	
+	specialist = user_manager.specialists()
+	if request.method == 'POST':
+		patient = user_manager.get_user(appt.patient_email)
+		spec = request.form['ref_tgt']
+		gp = appt.provider_email
+		msg = request.form['ref_msg']
+		patient.add_referral(spec,gp,msg)
+		print(patient.referrals)
+		print(spec)
+		user_manager.save_data()
+		content = {"spec": spec, "patient": patient.email, "msg":msg}
+		return render_template('referral.html', apptid=apptid, specialist=specialist, content=content)
+    
+	return render_template('referral.html', apptid=apptid, specialist=specialist)
 
 
 @login_required
@@ -415,7 +470,7 @@ def load_user(email):
 
 @app.errorhandler(IdentityError)
 def handle_identity_error(error):
-	return render_template('error_identity.html')
+	return render_template('error_identity.html', msg=error.msg)
 
 @app.errorhandler(BookingError)
 def handle_booking_error(error):
