@@ -399,8 +399,6 @@ def view_appointment(apptid):
 @login_required
 @app.route('/notifications', methods=['GET', 'POST'])
 def notifications():
-	print(permissions.display_all_permissions())
-
 	if request.method == 'POST':
 		notifications_manager.get_notification(current_user.get_id(), request.form['submit_button']).process_notification()
 		permissions.save_data()
