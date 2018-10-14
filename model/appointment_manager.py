@@ -1,5 +1,5 @@
 from model.appointment import Appointment
-from model.error import BookingError, DateTimeValidityError, IdentityError
+from model.error import *
 from model.date_validity import date_and_time_valid
 import pickle
 
@@ -17,7 +17,7 @@ class AppointmentManager:
             for appt in self._appointments:
                 if appt.id == id_num:
                     return appt
-        raise IdentityError("Appointment id doesn't exist")
+        raise AppointmentError("Appointment id doesn't exist")
 
     def __get_appt_id(self):
         appt_id = self._next_appt_id

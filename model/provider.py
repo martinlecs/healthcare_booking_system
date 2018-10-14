@@ -7,7 +7,7 @@ from model.error import BookingError, DateTimeValidityError
 
 class Provider(User):
 	"Provider class"
-	def __init__(self, email, password, surname, given_name, provider_no, service):
+	def __init__(self, email, password, surname, given_name, provider_no, service, specialist=False):
 		super().__init__(email, password, surname, given_name)
 		self._provider_no = provider_no
 		self._service = service.lower()
@@ -15,6 +15,7 @@ class Provider(User):
 		self._availability = {} #availability	#{centre_id:{date:[time_slot]}}
 		self._rating = {} #rating {user:value}
 		self._average_rating = 0
+		self._specialist = specialist
 
 	@property
 	def provider_no(self):
@@ -39,7 +40,10 @@ class Provider(User):
 	@property
 	def average_rating(self):
 		return self._average_rating
-	
+
+	@property
+	def specialist(self):
+		return self._specialist
 
 	@provider_no.setter
 	def provider_no(self, provider_no):

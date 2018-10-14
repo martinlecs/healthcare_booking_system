@@ -31,6 +31,13 @@ class UserManager:
 	def services(self):
 		return self._services
 
+	def specialists(self):
+		spec = []
+		for p in self.providers:
+			if p.specialist is True:
+				spec.append(p)
+		return spec
+
 	# Returns List of service names
 	def get_service_names(self):
 		return [*self._services]
