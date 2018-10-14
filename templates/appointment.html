@@ -15,17 +15,22 @@
             {% endif %}
             <h3>Health Centre: <a href="{{ url_for('centre_profile', centre=content['centre_id']) }}"> {{content['centre_name']}}</a></h3>
 
-            {% if has_permission %}
+            {% if has_permission and curr_user == content['provider_email'] %}
                 <form action = "{{ url_for('view_appointment', apptid=content['id'])}}" method="post">
-                    <h3>Notes: {{ content['notes']}} </h3>
-                    <input type="text" name="notes" placeholder="update notes">
+                    <h3>Notes:</h3>
+                    {% if content['notes'] %}
+                        <p>{{ content['notes']['notes'] }}</p>
+                    {% endif %}
+                    <input type="text" name="notes" placeholder="add notes">
                     <h3>Medication:  {{ content['meds'] }}</h3>
                     <input type="text" name="meds" placeholder="medication">
                     <h3><button type="submit"> Update Appointment Notes</button></h3>
                 </form>
             {% else %}
-                <p> You don't have permission to edit this.</p>
-                <h3>Notes: {{ content['notes']}} </h3>
+                <h3>Notes:</h3>
+                {% if content['notes'] %}
+                    <p>{{ content['notes']['notes'] }}</p>
+                {% endif %}
                 <h3>Medication:  {{ content['meds'] }}</h3>
             {% endif %}
 

@@ -8,7 +8,7 @@ class Appointment:
         self._centre_id = centre_id
         self._date = date
         self._time_slot = time_slot
-        self._notes = ""
+        self._notes = {}
         self._meds = []
         self._reason = reason
         self._past = False
@@ -90,16 +90,10 @@ class Appointment:
     def time_slot(self, time_slot):
         self._time = time_slot
 
-    @notes.setter
-    def notes(self, notes):
-        self._notes = notes
-
     @reason.setter
     def reason(self, reason):
         self._reason = reason
 
-
-    
     def add_meds(self, med):
         med = med.lower()
         if med not in self._meds:
@@ -109,4 +103,7 @@ class Appointment:
     def past(self, past_status):
         self._past = past_status
 
+    @notes.setter
+    def notes(self, notes):
+        self._notes = notes
    
