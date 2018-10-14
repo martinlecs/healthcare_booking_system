@@ -14,21 +14,6 @@
             <h3>Provider: <a href="{{ url_for('provider_profile', provider=content['provider_email']) }}"> {{content['prov_name']}}</a></h3>
             {% endif %}
             <h3>Health Centre: <a href="{{ url_for('centre_profile', centre=content['centre_id']) }}"> {{content['centre_name']}}</a></h3>
-<<<<<<< HEAD
-            <h3>Notes: {{ content['notes']}} </h3>
-            <h3>Medication: {{ content['meds'] }}</h3>
-            {% if edit %}
-            <form action = "{{ url_for('view_appointment', apptid=content['id'])}}" method="post">
-                <input type="text" name="notes" placeholder="update notes"> 
-                <input type="text" name="meds" placeholder="medication">
-                <h3><button type="submit"> Update Appointment Notes</button></h3>
-            </form>
-                {% if gp %}
-                    <form action="{{ url_for('referral', apptid=content['id']) }}">
-                        <input type="submit" value="Create Referral">
-                    </form>
-                {% endif %}
-=======
 
             {% if has_permission and curr_user == content['provider_email'] %}
                 <form action = "{{ url_for('view_appointment', apptid=content['id'])}}" method="post">
@@ -48,7 +33,6 @@
                 {% endif %}
                 <h3>Medication:  {{ content['meds'] }}</h3>
 
->>>>>>> a9430470aabc2c3de5ae02eb2681b066a659a4f8
             {% endif %}
           </ul>
         </div>

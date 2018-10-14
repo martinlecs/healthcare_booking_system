@@ -420,7 +420,10 @@ def view_appointment(apptid):
 	content['patient_name'] = " ".join([patient.given_name, patient.surname])
 	content['centre_name'] = centre_manager.get_centre_from_id(content['centre_id']).name
 	content['meds'] = ", ".join(content['meds'])
-	return render_template('appointment.html',content=content, edit=edit, gp=gp)
+
+	can_edit = permissions.check_permissions(current_user.get_id(), content['patient_email'])
+
+	return render_template('appointment.html',content=content, edit=edit, gp=gp, has_permission=can_edit, curr_user=current_user.get_id())
 
 @login_required
 @app.route('/appointment/<apptid>/referral', methods=['GET','POST'])
