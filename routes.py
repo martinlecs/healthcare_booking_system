@@ -318,8 +318,7 @@ def not_a_secret():
 @login_required
 @app.route('/appointments', methods=['GET'])
 def appointment_history():
-	if not correct_identity(current_user, current_user):
-		raise IdentityError("Wrong user for URL")
+	correct_identity(current_user, current_user)
 
 	user = user_manager.get_user(current_user.get_id())
 	if type(user) is Provider:
@@ -362,9 +361,6 @@ def view_appointment(apptid):
 		raise e
 	print(appt)
 	edit = False
-	# if appt is False:
-	# 	raise IdentityError("404")
-	# Validate identity for appointment first
 	user = user_manager.get_user(current_user.get_id())
 	if type(user) is Provider:
 		identity = user_manager.get_user(appt.provider_email)
@@ -432,4 +428,8 @@ def handle_date_time_validity_error(error):
 @app.errorhandler(404)
 def handle_404_error(error):
 	return render_template('error_404.html'), 404
+
+@app.errorhandler(ValueError)
+def handle_value_error(error):
+	return render_template('error.html', error_msg=error.msg)
 	

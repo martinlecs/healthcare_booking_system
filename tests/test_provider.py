@@ -21,7 +21,11 @@ from model.date_validity import *
 def test_getters():
 	p = Provider('test@gmail.com','1234','McTester', 'Test','124024114', 'Official Tester')
 	info = p.get_information()
+<<<<<<< HEAD
+	assert(info["email"] == 'test@gmail.com'.lower())
+=======
 	assert(info["email"] == 'test@gmail.com')
+>>>>>>> c6111404ec6de735b3757698d28c95337b54dc42
 	assert(info["password"]	== '1234'.lower())
 	assert(info["surname"] 	== 'McTester'.lower())
 	assert(info["given_name"] == 'Test'.lower())
@@ -169,8 +173,14 @@ def test_get_availability_for_non_existing_centre_but_valid_date():
 def test_get_availability_for_existing_centre_and_valid_date():
 	p = Provider('1','1','1','','','')
 	p.add_centre('rand')
+<<<<<<< HEAD
+	with pytest.raises(ValueError) as info:
+		checker = p.get_availability('rand', 2018, 19, 220)
+	
+=======
 	val = p.get_availability('rand', 2019, 9, 20)
 	assert(len(val) == 48 and type(val) == list)
+>>>>>>> c6111404ec6de735b3757698d28c95337b54dc42
 
 def test_make_non_existing_and_available_slots_unavailable():
 	p = Provider('1','1','1','','','')

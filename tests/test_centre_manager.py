@@ -96,7 +96,6 @@ def test_add_from_details(prov_fixture):
     cm.add_centre_from_details(
         "Prince of Wales", "Randwick", "Hospital", 1234, 93000000)
     assert(len(cm.centres) == 2)
-    assert(cm.centres[1].providers[0] is not None)
 
 def test_add_from_details_duplicate(cm, centre_fixture):
     bef = len(cm.centres)
