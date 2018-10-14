@@ -1,6 +1,7 @@
 import string
 from model.patient import Patient
 from model.provider import Provider
+from model.error import IdentityError
 import csv
 import pickle
 
@@ -41,6 +42,7 @@ class UserManager:
 		user = self.__get_provider(email.lower())
 		if user is not None:
 			return user
+		raise IdentityError("User doesn't exist")
 
 	# Given patient info, add it to patients list
 	def add_patient_by_info(self, email, password, surname, given_name, medicare_no):

@@ -1,9 +1,9 @@
 from flask import render_template, request, redirect, url_for
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
-from server import app, user_manager, centre_manager, appt_manager
+from server import app, user_manager, centre_manager, appt_manager, notifications_manager, permissions
 from model.provider import Provider
 from model.system import correct_identity
-from model.date_validity import date_valid, date_and_time_valid, date_string_to_date
+from model.date_validity import date_valid
 from model.error import *
 from datetime import date, datetime, time
 
@@ -14,6 +14,10 @@ login_manager.login_view = 'login'
 @app.context_processor
 def inject_services_into_all_templates():
 	return dict(services=[''] + user_manager.get_service_names()) #Details for the drop down box
+
+@app.context_processor
+def inject_current_user_into_all_templates():
+	return dict(curr_user=current_user)
 
 @app.route('/', methods=['GET', 'POST'])
 @login_required
@@ -59,7 +63,7 @@ def user_profile():
 	provider = False
 	content = user.get_information()
 	if type(user) is Provider:
-    		provider = True
+			provider = True
 	if request.args.get('edit'):
 		return render_template('user_profile.html', content=content, edit=True, provider=provider)
 
@@ -79,8 +83,7 @@ def user_profile():
 			centre_obj = centre_manager.get_centre_from_name(centre)
 			centre_name_to_id[centre] = centre_obj.id
 		return render_template('user_profile.html', content=content, provider=provider, centres=centre_name_to_id)
-		
-		
+
 	return render_template('user_profile.html', content=content, provider=provider)
 
 
@@ -93,9 +96,19 @@ def book(provider, centre):
 	:param centre: a centre id
 	:return: booking.html if all works out, otherwise 'Something Wrong?'
 	"""
-	# date_split =
-	p = user_manager.get_user(provider)
-	c = centre_manager.get_centre_from_id(centre)
+	# Check that provider and centre exist
+	try:
+		p = user_manager.get_user(provider)
+	except IdentityError as e:
+		raise e
+	try:
+		c = centre_manager.get_centre_from_id(centre)
+	except IdentityError as e:
+		raise e
+
+	# Check that provider is associated with centre
+	if c.name.lower() not in p.centres:
+		raise BookingError("Provider isn't associated with centre")
 
 	# If current user is the chosen provider, render error template
 	if p.email.lower() == current_user.email.lower():
@@ -107,7 +120,11 @@ def book(provider, centre):
 	if reason is None or reason is "":
 		reason = " "
 	form_date = request.args.get("date")
-	if form_date is not "" and form_date is not None and date_valid(form_date) != False:
+	if form_date is not "" and form_date is not None:
+		try:
+			date_valid(form_date)
+		except DateTimeValidityError as e:
+			raise e
 		date_split = form_date.split('-')
 		year = int(date_split[0])
 		month = int(date_split[1])
@@ -136,14 +153,28 @@ def book_confirmation(provider, centre, date, time_slot, reason):
 	"""
 	# if date_and_time_valid(time_slot, date) == False:
 	# 	raise BookingError("Invalid date or time")
+	
+	# Check that provider and centre exist
+	try:
+		p = user_manager.get_user(provider)
+	except IdentityError as e:
+		raise e
+	try:
+		c = centre_manager.get_centre_from_id(centre)
+	except IdentityError as e:
+		raise e
 
-	p = user_manager.get_user(provider)
-	c = centre_manager.get_centre_from_id(centre)
+	# Check that provider is associated with centre
+	if c.name.lower() not in p.centres:
+		raise BookingError("Provider isn't associated with centre")
+	
 	# make appointment object
 	# 
 	try:
 		appt = appt_manager.make_appt_and_add_appointment_to_manager(current_user.email, provider, centre, date, time_slot, reason)
 	except BookingError as e:
+		raise e
+	except DateTimeValidityError as e:
 		raise e
 
 	if appt not in appt_manager.appointments:
@@ -167,8 +198,15 @@ def book_confirmation(provider, centre, date, time_slot, reason):
 	except BookingError as e:
 		appt_manager.remove_appointment(appt.id)
 		raise e
+	except DateTimeValidityError as e:
+		appt_manager.remove_appointment(appt.id)
+		raise e
+	
 	user_manager.save_data()
 	appt_manager.save_data()
+
+	# send notification to patient
+	notifications_manager.add_notification(provider, current_user.get_id())
 	
 	return render_template('booking_confirmed.html', prov_name=user_manager.get_user(appt.provider_email).fullname, centre_name=centre_manager.get_centre_from_name(c.name).name, date=appt.date, time=appt.time_slot)
 	
@@ -181,7 +219,11 @@ def provider_profile(provider):
 	:param user: a Provider email
 	:return: renders the provider_profile.html template
 	"""
-	p = user_manager.get_user(provider)
+	try:
+		p = user_manager.get_user(provider)
+	except IdentityError as e:
+		raise e
+
 	if request.method == 'POST':
 		rating = int(request.form['rate'])
 		p.add_rating(current_user.get_id(), rating)
@@ -201,7 +243,11 @@ def centre_profile(centre):
 	:param centre: a Centre id
 	:return: renders the centre_profile.html template
 	"""
-	c = centre_manager.get_centre_from_id(centre)
+	try:
+		c = centre_manager.get_centre_from_id(centre)
+	except IdentityError as e:
+		raise e
+
 	if request.method == 'POST':
 		rating = int(request.form['rate'])
 		c.add_rating(current_user.get_id(), rating)
@@ -218,9 +264,15 @@ def patient_profile(patient):
 	:param centre: a Centre id
 	:return: renders the centre_profile.html template
 	"""
-	p = user_manager.get_user(patient)
+	try:
+		p = user_manager.get_user(patient)
+	except IdentityError as e:
+		raise e
+	
 	content = p.get_information()
-	return render_template('patient_profile.html', content=content)
+	appointments = p.get_upcoming_appointments()
+
+	return render_template('patient_profile.html', content=content, appointments=appointments)
 
 @login_required
 @app.route('/search', methods=['POST'])
@@ -303,7 +355,11 @@ def appointment_history():
 @app.route('/appointment/<apptid>', methods=['GET','POST'])
 def view_appointment(apptid):
 
-	appt = appt_manager.search_by_id(int(apptid))
+	try:
+		appt = appt_manager.search_by_id(int(apptid))
+	except IdentityError as e:
+		raise e
+	print(appt)
 	edit = False
 	user = user_manager.get_user(current_user.get_id())
 	if type(user) is Provider:
@@ -314,7 +370,8 @@ def view_appointment(apptid):
 		identity = user_manager.get_user(appt.patient_email)
 
 	correct_identity(identity, user)
-	
+	has_permission=permissions.check_permissions(current_user.get_id(), patient.email)
+
 	if request.method == 'POST':
 		if request.form['notes']:
 			appt.notes = request.form["notes"]
@@ -331,7 +388,21 @@ def view_appointment(apptid):
 	content['centre_name'] = centre_manager.get_centre_from_id(content['centre_id']).name
 	content['meds'] = ", ".join(content['meds'])
 
-	return render_template('appointment.html',content=content, edit=edit)
+	return render_template('appointment.html',content=content, edit=edit, has_permission=has_permission)
+
+
+@login_required
+@app.route('/notifications', methods=['GET', 'POST'])
+def notifications():
+
+	if request.method == 'POST':
+		notifications_manager.get_notification(current_user.get_id(), request.form['submit_button']).process_notification()
+		permissions.save_data()
+		notifications_manager.remove_notification(current_user.get_id() ,request.form['submit_button'])
+		# notifications_manager.save_data()
+		return render_template('notifications.html', notifications=notifications_manager.get_all_notifications(current_user.get_id()))
+
+	return render_template('notifications.html', notifications=notifications_manager.get_all_notifications(current_user.get_id()))
 
 
 @login_manager.user_loader
@@ -344,6 +415,10 @@ def handle_identity_error(error):
 
 @app.errorhandler(BookingError)
 def handle_booking_error(error):
+	return render_template('error.html', error_msg=error.msg)
+
+@app.errorhandler(DateTimeValidityError)
+def handle_date_time_validity_error(error):
 	return render_template('error.html', error_msg=error.msg)
 	
 @app.errorhandler(404)

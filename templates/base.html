@@ -7,10 +7,14 @@
 	</head>
 	<body>
         <header>
+            {% if curr_user.is_authenticated %}
+                <b>Hi {{ curr_user.get_id() }}!</b>
+            {% endif %}
             <div class="topnav">
                 <a href="{{ url_for('index') }}">Home</a>
-               <a href="{{ url_for('user_profile') }}">Profile</a>
+                <a href="{{ url_for('user_profile') }}">Profile</a>
                 <a href="{{ url_for('appointment_history') }}">Appointments</a>
+                <a href="{{ url_for('notifications') }}">Notifications</a>
                 <a href="{{ url_for('logout') }}">Logout</a>
                 <form style="display: inline;" action="{{ url_for('search') }}" method="post" name="search">
                     <input name="search" type="text" placeholder="Search..">

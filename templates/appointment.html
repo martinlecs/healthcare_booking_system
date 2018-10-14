@@ -16,7 +16,7 @@
             <h3>Health Centre: <a href="{{ url_for('centre_profile', centre=content['centre_id']) }}"> {{content['centre_name']}}</a></h3>
             <h3>Notes: {{ content['notes']}} </h3>
             <h3>Medication: {{ content['meds'] }}</h3>
-            {% if edit %}
+            {% if has_permission and edit %}
             <form action = "{{ url_for('view_appointment', apptid=content['id'])}}" method="post">
                 <input type="text" name="notes" placeholder="update notes"> 
                 <input type="text" name="meds" placeholder="medication">

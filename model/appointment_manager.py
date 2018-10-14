@@ -1,5 +1,5 @@
 from model.appointment import Appointment
-from model.error import BookingError
+from model.error import BookingError, DateTimeValidityError, IdentityError
 from model.date_validity import date_and_time_valid
 import pickle
 
@@ -17,8 +17,7 @@ class AppointmentManager:
             for appt in self._appointments:
                 if appt.id == id_num:
                     return appt
-        else:
-            return False
+        raise IdentityError("Appointment id doesn't exist")
 
     def __get_appt_id(self):
         appt_id = self._next_appt_id
@@ -31,8 +30,10 @@ class AppointmentManager:
     # Else,
     #       send False
     def make_appt_and_add_appointment_to_manager(self, patient_email, provider_email, centre_id, date, time_slot, reason):
-        if date_and_time_valid(time_slot, date) == False:
-            raise BookingError("Invalid date or time")
+        try:
+            date_and_time_valid(time_slot, date)
+        except DateTimeValidityError as e:
+            raise e
         
         if patient_email.lower() == provider_email.lower():
             raise BookingError("Provider can't book an appointment with themselves")
