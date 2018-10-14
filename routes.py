@@ -103,6 +103,9 @@ def book(provider, centre):
 	except IdentityError as e:
 		raise e
 
+	if c.name.lower() not in p.centres:
+		raise BookingError("Provider isn't associated with centre")
+
 	# If current user is the chosen provider, render error template
 	if p.email.lower() == current_user.email.lower():
 		raise BookingError("Provider can't book an appointment with themselves")
