@@ -94,8 +94,17 @@ def book(provider, centre):
 	:return: booking.html if all works out, otherwise 'Something Wrong?'
 	"""
 	# date_split =
-	p = user_manager.get_user(provider)
-	c = centre_manager.get_centre_from_id(centre)
+	try:
+		p = user_manager.get_user(provider)
+	except IdentityError as e:
+		raise e
+	try:
+		c = centre_manager.get_centre_from_id(centre)
+	except IdentityError as e:
+		raise e
+
+	if c.name.lower() not in p.centres:
+		raise BookingError("Provider isn't associated with centre")
 
 	# If current user is the chosen provider, render error template
 	if p.email.lower() == current_user.email.lower():
