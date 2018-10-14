@@ -371,6 +371,8 @@ def view_appointment(apptid):
 
 	if permissions.check_permissions(current_user.get_id(), appt.patient_email):
 		pass
+	elif user.email == appt.patient_email:
+		pass
 	elif not correct_identity(identity, user):
 		raise IdentityError("Wrong user for Appointment")
 
