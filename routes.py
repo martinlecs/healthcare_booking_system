@@ -99,9 +99,19 @@ def book(provider, centre):
 	:param centre: a centre id
 	:return: booking.html if all works out, otherwise 'Something Wrong?'
 	"""
-	# date_split =
-	p = user_manager.get_user(provider)
-	c = centre_manager.get_centre_from_id(centre)
+	# Check that provider and centre exist
+	try:
+		p = user_manager.get_user(provider)
+	except IdentityError as e:
+		raise e
+	try:
+		c = centre_manager.get_centre_from_id(centre)
+	except IdentityError as e:
+		raise e
+
+	# Check that provider is associated with centre
+	if c.name.lower() not in p.centres:
+		raise BookingError("Provider isn't associated with centre")
 
 	# If current user is the chosen provider, render error template
 	if p.email.lower() == current_user.email.lower():
@@ -142,9 +152,21 @@ def book_confirmation(provider, centre, date, time_slot, reason):
 	"""
 	# if date_and_time_valid(time_slot, date) == False:
 	# 	raise BookingError("Invalid date or time")
+	
+	# Check that provider and centre exist
+	try:
+		p = user_manager.get_user(provider)
+	except IdentityError as e:
+		raise e
+	try:
+		c = centre_manager.get_centre_from_id(centre)
+	except IdentityError as e:
+		raise e
 
-	p = user_manager.get_user(provider)
-	c = centre_manager.get_centre_from_id(centre)
+	# Check that provider is associated with centre
+	if c.name.lower() not in p.centres:
+		raise BookingError("Provider isn't associated with centre")
+	
 	# make appointment object
 	# 
 	try:
